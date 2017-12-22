@@ -1,0 +1,40 @@
+commands:
+  - cmake . && make lint test drmemory
+  - mkdir -p ${ARTIFACTS}
+  - cp bin/fewer ${ARTIFACTS}
+  - cp bin/fewer.so ${ARTIFACTS}
+
+environments:
+  - name: gnu-linux-amd64
+    box: mcandre/debian-buildbot
+  # - name: gnu-linux-i386
+  #   box: mcandre/debian-buildbot-i386
+  # - name: musl-linux-amd64
+  #   box: mcandre/alpine-buildbot
+  # - name: uclibc-linux-amd64
+  #   box: mcandre/busybox-buildbot
+  # - name: darwin-amd64
+  #   box: mcandre/macos-buildbot
+  # - name: freebsd-amd64
+  #   box: mcandre/freebsd-buildbot
+  # - name: dragonflybsd-amd64
+  #   box: mcandre/dragonflybsd-buildbot
+  # - name: solaris-i386
+  #   box: mcandre/dilos-buildbot
+  # - name: solaris-sparc
+  #   box: mcandre/dilos-buildbot-sparc
+  # - name: openbsd-amd64
+  #   box: mcandre/openbsd-buildbot
+  # - name: netbsd-amd64
+  #   box: mcandre/netbsd-buildbot
+  # - name: minix-i386
+  #   box: mcandre/minix-buildbot
+  # - name: windows-cygwin-amd64
+  #   box: mcandre/windows-cygwin-buildbot
+  # - name: windows-comspec-amd64
+  #   box: mcandre/windows-buildbot
+  #   commands:
+  #     - cmake . & nmake lint test drmemory
+  #     - md ${ARTIFACTS_WINDOWS}
+  #     - copy bin\fewer.exe ${ARTIFACTS_WINDOWS}
+  #     - copy bin\fewer.dll ${ARTIFACTS_WINDOWS}
