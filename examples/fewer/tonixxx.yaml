@@ -1,38 +1,37 @@
-commands:
+Steps:
   - cmake . && make test drmemory
-  - mkdir -p ${ARTIFACTS}
-  - cp bin/fewer ${ARTIFACTS}
-  - cp bin/fewer.so ${ARTIFACTS}
+  - mkdir -p "$TONIXXX_ARTIFACTS"
+  - cp bin/* "$TONIXXX_ARTIFACTS"
 
-environments:
-  - name: gnu-linux-amd64
-    box: mcandre/fewer-buildbot-debian
-  # - name: gnu-linux-i386
-  #   box: mcandre/fewer-buildbot-debian-i386
-  # - name: musl-linux-amd64
-  #   box: mcandre/fewer-buildbot-alpine
-  # - name: uclibc-linux-amd64
-  #   box: mcandre/fewer-buildbot-busybox
-  # - name: darwin-amd64
-  #   box: mcandre/fewer-buildbot-macos
-  # - name: freebsd-amd64
-  #   box: mcandre/fewer-buildbot-freebsd
-  # - name: dragonflybsd-amd64
-  #   box: mcandre/fewer-buildbot-dragonflybsd
-  # - name: solaris-i386
-  #   box: mcandre/fewer-buildbot-dilos
-  # - name: solaris-sparc
-  #   box: mcandre/fewer-buildbot-dilos-sparc
-  # - name: openbsd-amd64
-  #   box: mcandre/fewer-buildbot-openbsd
-  # - name: netbsd-amd64
-  #   box: mcandre/fewer-buidlbot-netbsd
-  # - name: minix-i386
-  #   box: mcandre/fewer-buildbot-minix
-  # - name: windows-comspec-amd64
-  #   box: mcandre/fewer-buildbot-windows
-  #   commands:
+Recipes:
+  - Name: gnu-linux-amd64
+    Base: mcandre/fewer-buildbot-debian
+  # - Name: gnu-linux-i386
+  #   Base: mcandre/fewer-buildbot-debian-i386
+  # - Name: musl-linux-amd64
+  #   Base: mcandre/fewer-buildbot-alpine
+  # - Name: uclibc-linux-amd64
+  #   Base: mcandre/fewer-buildbot-busybox
+  # - Name: darwin-amd64
+  #   Base: mcandre/fewer-buildbot-macos
+  # - Name: freebsd-amd64
+  #   Base: mcandre/fewer-buildbot-freebsd
+  # - Name: dragonflybsd-amd64
+  #   Base: mcandre/fewer-buildbot-dragonflybsd
+  # - Name: solaris-i386
+  #   Base: mcandre/fewer-buildbot-dilos
+  # - Name: solaris-sparc
+  #   Base: mcandre/fewer-buildbot-dilos-sparc
+  # - Name: openbsd-amd64
+  #   Base: mcandre/fewer-buildbot-openbsd
+  # - Name: netbsd-amd64
+  #   Base: mcandre/fewer-buidlbot-netbsd
+  # - Name: minix-i386
+  #   Base: mcandre/fewer-buildbot-minix
+  # - Name: windows-comspec-amd64
+  #   Base: mcandre/fewer-buildbot-windows
+  #   Type: COMSPEC
+  #   Steps:
   #     - cmake . & nmake lint test drmemory
-  #     - md ${ARTIFACTS_WINDOWS}
-  #     - copy bin\fewer.exe ${ARTIFACTS_WINDOWS}
-  #     - copy bin\fewer.dll ${ARTIFACTS_WINDOWS}
+  #     - md "%TONIXXX_ARTIFACTS%"
+  #     - copy bin\* "%TONIXXX_ARTIFACTS%"
