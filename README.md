@@ -1,4 +1,4 @@
-# tonixxx: a virtual distillery for boiling binaries
+# tonixxx: a virtual distillery for cross-compiling binaries
 
 # EXAMPLE
 
@@ -25,9 +25,48 @@ tonixxx masters cross-platform builds by pouring your code through arrays of Vag
 # BUILDTIME REQUIREMENTS
 
 * [Go](https://golang.org/) 1.9+
+* sh (e.g. bash)
+* [make](https://www.gnu.org/software/make/)
+* [zipc](https://github.com/mcandre/zipc)
+* [golint](https://github.com/golang/lint)
+* [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports)
+* [errcheck](https://github.com/kisielk/errcheck)
+* [nakedret](https://github.com/alexkohler/nakedret)
+* [opennota/check](https://github.com/opennota/check)
+* [megacheck](https://github.com/dominikh/go-tools/tree/master/cmd/megacheck)
+* [gox](https://github.com/mitchellh/gox), a tool so cool that it inspired tonixxx!
+
+## CHECKOUT DEPENDENCIES
+
+```console
+$ git submodule update --init
+```
+
+## LINT
+
+```console
+$ make lint
+```
+
+## BUILD AND INSTALL
+
+```console
+$ make install
+```
+
+## PORT
+
+```console
+$ make port
+```
+
+## UNINSTALL
+
+```console
+$ make uninstall
+```
 
 # HONORABLE MENTIONS
 
 * Cross-platform [toolchains](https://elinux.org/Toolchains) can be configured, though the process is fairly masochistic.
 * [Docker](https://www.docker.com/) is a fantastic resource for projects targeting the Linux kernel from different operating systems.
-* [gox](https://github.com/mitchellh/gox) loops over all available Go targets, helping developers to quickly produce ports for a wide variety of different target environments. gox inspired tonixxx to support porting applications for Rust and other systems languages!
