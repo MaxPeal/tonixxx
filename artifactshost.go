@@ -13,5 +13,5 @@ func ArtifactsHost() (string, error) {
 		return "", err
 	}
 
-	return path.Join(dir, TONIXXX_DATA), nil
+	return path.Join(dir, TonixxxData), nil
 }

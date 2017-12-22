@@ -6,12 +6,12 @@ import (
 )
 
 // Recipe describes the user's build workflow for some target environment.
-// By default, recipes assume POSIXy guests.
+// By default, recipes assume "POSIX".
 type Recipe struct {
-	Name string
-	Base string
-	Type GuestType
-	Steps []Step
+	Name  string
+	Base  string
+	Type  string
+	Steps []string
 }
 
 func (o Recipe) IsPOSIX() bool {
@@ -25,9 +25,9 @@ func (o Recipe) IsCOMSPEC() bool {
 // ArtifactsGuest names the guest path for artifacts to be copied during building.
 func (o Recipe) ArtifactsGuest() string {
 	if o.IsCOMSPEC() {
-		return fmt.Sprintf("%s\\%s", VAGRANT_SYNCED_FOLDER_COMSPEC, o.Name)
+		return fmt.Sprintf("%s\\%s", VagrantSyncedFolderCOMSPEC, o.Name)
 	} else {
-		return fmt.Sprintf("%s/%s", VAGRANT_SYNCED_FOLDER, o.Name)
+		return fmt.Sprintf("%s/%s", VagrantSyncedFolder, o.Name)
 	}
 }
 
@@ -64,13 +64,13 @@ func (o Recipe) SpinUp() error {
 }
 
 // Run executes a shell command in a Vagrant box.
-func (o Recipe) Run(step Step) error {
+func (o Recipe) Run(step string) error {
 	panic("Unimplemented")
 	// ...
 }
 
 // ConfigureEnvironmentVariable generates a shell command for configuring an environment variable.
-func (o Recipe) ConfigureEnvironmentVariable(key string, value string) Step {
+func (o Recipe) ConfigureEnvironmentVariable(key string, value string) string {
 	if o.IsCOMSPEC() {
 		return fmt.Sprintf("set %s=\"%s\"", key, value)
 	} else {
@@ -80,11 +80,11 @@ func (o Recipe) ConfigureEnvironmentVariable(key string, value string) Step {
 
 // Pour executes a build recipe.
 func (o Recipe) Pour() error {
-	if err := o.Run(o.ConfigureEnvironmentVariable(TONIXXX_ARTIFACTS_KEY, o.ArtifactsGuest())); err != nil {
+	if err := o.Run(o.ConfigureEnvironmentVariable(TonixxxArtifactsKey, o.ArtifactsGuest())); err != nil {
 		return err
 	}
 
-	for _, step := range(o.Steps) {
+	for _, step := range o.Steps {
 		if err := o.Run(step); err != nil {
 			return err
 		}

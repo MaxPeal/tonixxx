@@ -5,16 +5,20 @@ import (
 	"fmt"
 	"log"
 	"os"
+
 	"github.com/mcandre/tonixxx"
 )
 
+var flagDebug = flag.Bool("debug", false, "Enable debugging logs")
 var flagVersion = flag.Bool("version", false, "Show version information")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 
-const TASK_UP = "up"
-const TASK_BOIL = "boil"
-const TASK_DOWN = "down"
-const TASK_CLEAN = "clean"
+const taskUp = "up"
+const taskBoil = "boil"
+const taskDown = "down"
+const taskClean = "clean"
+
+var taskNames = []string{taskUp, taskBoil, taskDown, taskClean}
 
 func main() {
 	flag.Parse()
@@ -26,6 +30,12 @@ func main() {
 	case *flagHelp:
 		flag.PrintDefaults()
 		os.Exit(0)
+	}
+
+	tasks := flag.Args()
+
+	if len(tasks) < 1 {
+		log.Fatalf("Missing task names, try one of %v", taskNames)
 	}
 
 	configFilename, err := tonixxx.ConfigFile()
@@ -42,26 +52,30 @@ func main() {
 
 	distillery := *distilleryP
 
-	tasks := flag.Args()
+	if *flagDebug {
+		log.Printf("Loaded distillery: %v", distillery)
+	}
 
-	for _, task := range(tasks) {
+	for _, task := range tasks {
 		switch task {
-		case TASK_UP:
+		case taskUp:
 			if err := distillery.Up(); err != nil {
 				log.Panic(err)
 			}
-		case TASK_BOIL:
+		case taskBoil:
 			if err := distillery.Boil(); err != nil {
 				log.Panic(err)
 			}
-		case TASK_DOWN:
+		case taskDown:
 			if err := distillery.Down(); err != nil {
 				log.Panic(err)
 			}
-		case TASK_CLEAN:
+		case taskClean:
 			if err := distillery.Clean(); err != nil {
 				log.Panic(err)
 			}
+		default:
+			log.Fatalf("Invalid task name, try one of %v", taskNames)
 		}
 	}
 }

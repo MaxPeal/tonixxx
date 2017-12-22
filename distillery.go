@@ -5,19 +5,20 @@ import (
 	"log"
 	"os"
 	"path"
+
 	"gopkg.in/yaml.v2"
 )
 
 // Distillery describes a multi-platform build configuration.
 type Distillery struct {
-	Steps []Step
+	Steps   []string
 	Recipes []Recipe
 }
 
-// AddData ensures the TONIXXX_DATA host directory is allocated.
+// EnsureData checks the TonixxxData host directory is allocated.
 func (o Distillery) EnsureData() error {
-	if _, err := os.Stat(TONIXXX_DATA); os.IsNotExist(err) {
-		return os.Mkdir(TONIXXX_DATA, os.ModeDir)
+	if _, err := os.Stat(TonixxxData); os.IsNotExist(err) {
+		return os.Mkdir(TonixxxData, os.ModeDir)
 	}
 
 	return nil
@@ -45,6 +46,11 @@ func (o Distillery) Boil() error {
 	}
 
 	for _, recipe := range o.Recipes {
+		// Default to top-level steps
+		if len(recipe.Steps) == 0 {
+			recipe.Steps = o.Steps
+		}
+
 		if err := recipe.Boil(); err != nil {
 			return err
 		}
@@ -68,14 +74,14 @@ func (o Distillery) Down() error {
 	return nil
 }
 
-// RemoveData removes the TONIXXX_DATA host directory.
+// RemoveData removes the TonixxxData host directory.
 func (o Distillery) RemoveData() error {
-	return os.RemoveAll(TONIXXX_DATA)
+	return os.RemoveAll(TonixxxData)
 }
 
-// Clean halts Vagrant boxes and removes the TONIXXX_DATA host directory.
+// Clean halts Vagrant boxes and removes the TonixxxData host directory.
 func (o Distillery) Clean() error {
-	for _, recipe := range(o.Recipes) {
+	for _, recipe := range o.Recipes {
 		if err := recipe.Clean(); err != nil {
 			log.Print(err)
 		}
@@ -99,6 +105,7 @@ func LoadDistillery(pth string) (*Distillery, error) {
 	return &distillery, err
 }
 
+// ConfigFile names the host path to the tonixxx default configuration file.
 func ConfigFile() (string, error) {
 	dir, err := os.Getwd()
 
@@ -106,5 +113,5 @@ func ConfigFile() (string, error) {
 		return "", err
 	}
 
-	return path.Join(dir, TONIXXX_CONFIG_BASENAME), nil
+	return path.Join(dir, TonixxxConfigBasename), nil
 }

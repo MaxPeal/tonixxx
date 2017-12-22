@@ -9,6 +9,8 @@ $ tonixxx boil
 $ tree .tonixxx/artifacts
 ```
 
+See `tonixxx -help` for more information.
+
 # ABOUT
 
 tonixxx masters cross-platform builds by pouring your code through arrays of Vagrant boxes, yielding robust, reliable binaries for multiple operating system kernels. It's great for managing software ports from your laptop or CI server!
