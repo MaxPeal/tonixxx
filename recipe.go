@@ -1,6 +1,7 @@
 package tonixxx
 
 import (
+	"errors"
 	"fmt"
 	"log"
 )
@@ -14,21 +15,37 @@ type Recipe struct {
 	Steps []string
 }
 
-func (o Recipe) IsPOSIX() bool {
-	return o.Type == "POSIX" || o.Type == ""
+// Validate applies some semantic checks to a Recipe configuration.
+func (o Recipe) Validate() error {
+	if o.Name == "" {
+		return errors.New("Recipe has empty name")
+	}
+
+	if o.Base == "" {
+		return errors.New("Recipe has empty Vagrant base box")
+	}
+
+	return nil
 }
 
+// IsCOMSPEC checks whether a recipe is configured as COMSPEC (Windows) type.
 func (o Recipe) IsCOMSPEC() bool {
 	return o.Type == "COMSPEC"
+}
+
+// IsPOSIX checks whether a recipe is configured as POSIX type.
+// Recipes default to POSIX type if unspecified.
+func (o Recipe) IsPOSIX() bool {
+	return o.Type == "POSIX" || o.Type == ""
 }
 
 // ArtifactsGuest names the guest path for artifacts to be copied during building.
 func (o Recipe) ArtifactsGuest() string {
 	if o.IsCOMSPEC() {
 		return fmt.Sprintf("%s\\%s", VagrantSyncedFolderCOMSPEC, o.Name)
-	} else {
-		return fmt.Sprintf("%s/%s", VagrantSyncedFolder, o.Name)
 	}
+
+	return fmt.Sprintf("%s/%s", VagrantSyncedFolder, o.Name)
 }
 
 // EnsureClone allocates space for a Vagrant box to be cloned.

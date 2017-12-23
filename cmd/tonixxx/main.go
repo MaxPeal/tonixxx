@@ -44,13 +44,15 @@ func main() {
 		log.Panic(err)
 	}
 
-	distilleryP, err := tonixxx.LoadDistillery(configFilename)
-
-	if err != nil {
-		log.Panic(err)
+	if *flagDebug {
+		log.Printf("Reading distillery configuration from %s", configFilename)
 	}
 
-	distillery := *distilleryP
+	distillery := tonixxx.Distillery{}
+
+	if err := distillery.Load(configFilename); err != nil {
+		log.Panic(err)
+	}
 
 	if *flagDebug {
 		log.Printf("Loaded distillery: %v", distillery)

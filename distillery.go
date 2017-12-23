@@ -1,6 +1,7 @@
 package tonixxx
 
 import (
+	"errors"
 	"io/ioutil"
 	"log"
 	"os"
@@ -15,10 +16,64 @@ type Distillery struct {
 	Recipes []Recipe
 }
 
-// EnsureData checks the TonixxxData host directory is allocated.
-func (o Distillery) EnsureData() error {
+// ConfigFile names the host path to the tonixxx default configuration file.
+func ConfigFile() (string, error) {
+	dir, err := os.Getwd()
+
+	if err != nil {
+		return "", err
+	}
+
+	return path.Join(dir, TonixxxConfigBasename), nil
+}
+
+// Parse transforms a byte sequence into a Distillery struct.
+func (o *Distillery) Parse(data []byte) error {
+	return yaml.Unmarshal(data, o)
+}
+
+// Load reads and parses a Distillery struct from a YAML file on disk.
+func (o *Distillery) Load(pth string) error {
+	contentYAML, err := ioutil.ReadFile(pth)
+
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Read YAML: %s", contentYAML)
+
+	if err := o.Parse(contentYAML); err != nil {
+		return err
+	}
+
+	log.Printf("Parsed distillery: %v", o)
+
+	if err := o.Validate(); err != nil {
+		return err
+	}
+
+	for _, recipe := range o.Recipes {
+		if err := recipe.Validate(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Validate applies some semantic checks to a Distillery configuration.
+func (o Distillery) Validate() error {
+	if len(o.Recipes) < 1 {
+		return errors.New("Distillery configuration missing at least one recipe.")
+	}
+
+	return nil
+}
+
+// CheckData checks the TonixxxData host directory.
+func (o Distillery) CheckData() error {
 	if _, err := os.Stat(TonixxxData); os.IsNotExist(err) {
-		return os.Mkdir(TonixxxData, os.ModeDir)
+		return os.Mkdir(TonixxxData, os.ModeDir|0755)
 	}
 
 	return nil
@@ -26,7 +81,7 @@ func (o Distillery) EnsureData() error {
 
 // Up ensures that the configured Vagrant boxes are booted.
 func (o Distillery) Up() error {
-	if err := o.EnsureData(); err != nil {
+	if err := o.CheckData(); err != nil {
 		return err
 	}
 
@@ -61,7 +116,7 @@ func (o Distillery) Boil() error {
 
 // Down pauses the configured Vagrant boxes.
 func (o Distillery) Down() error {
-	if err := o.EnsureData(); err != nil {
+	if err := o.CheckData(); err != nil {
 		return err
 	}
 
@@ -81,6 +136,10 @@ func (o Distillery) RemoveData() error {
 
 // Clean halts Vagrant boxes and removes the TonixxxData host directory.
 func (o Distillery) Clean() error {
+	if err := o.CheckData(); err != nil {
+		return err
+	}
+
 	for _, recipe := range o.Recipes {
 		if err := recipe.Clean(); err != nil {
 			log.Print(err)
@@ -88,30 +147,4 @@ func (o Distillery) Clean() error {
 	}
 
 	return o.RemoveData()
-}
-
-// LoadDistillery reads and parses a Distillery struct from a YAML file on disk.
-func LoadDistillery(pth string) (*Distillery, error) {
-	contentYAML, err := ioutil.ReadFile(pth)
-
-	if err != nil {
-		return nil, err
-	}
-
-	distillery := Distillery{}
-
-	err = yaml.Unmarshal(contentYAML, &distillery)
-
-	return &distillery, err
-}
-
-// ConfigFile names the host path to the tonixxx default configuration file.
-func ConfigFile() (string, error) {
-	dir, err := os.Getwd()
-
-	if err != nil {
-		return "", err
-	}
-
-	return path.Join(dir, TonixxxConfigBasename), nil
 }

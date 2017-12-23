@@ -28,7 +28,7 @@ opennota-check:
 megacheck:
 	megacheck
 
-lint: govet golint gofmt goimports errcheck nakedret opennota-check megacheck editorconfig
+lint: govet golint gofmt goimports errcheck nakedret opennota-check megacheck
 
 install:
 	sh -c "cd cmd/tonixxx && go install"
