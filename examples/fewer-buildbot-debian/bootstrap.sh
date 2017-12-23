@@ -6,5 +6,4 @@ sudo apt-get update &&
         cmake \
         cppcheck \
         splint \
-        vera++ \
-        drmemory
+        vera++
