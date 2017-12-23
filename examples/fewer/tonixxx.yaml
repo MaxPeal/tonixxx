@@ -14,8 +14,8 @@ recipes:
   #   base: mcandre/fewer-buildbot-alpine
   # - name: uclibc-linux-amd64
   #   base: mcandre/fewer-buildbot-busybox
-  - name: darwin-amd64
-    base: mcandre/fewer-buildbot-macos
+  # - name: darwin-amd64
+  #   base: mcandre/fewer-buildbot-macos
   # - name: freebsd-amd64
   #   base: mcandre/fewer-buildbot-freebsd
   # - name: dragonflybsd-amd64
@@ -30,10 +30,10 @@ recipes:
   #   base: mcandre/fewer-buidlbot-netbsd
   # - name: minix-i386
   #   base: mcandre/fewer-buildbot-minix
-  - name: windows-comspec-amd64
-    base: mcandre/fewer-buildbot-windows
-    type: COMSPEC
-    steps:
-      - cmake . & nmake lint test drmemory
-      - md "%TONIXXX_ARTIFACTS%"
-      - copy bin\* "%TONIXXX_ARTIFACTS%"
+  # - name: windows-comspec-amd64
+  #   base: mcandre/fewer-buildbot-windows
+  #   type: COMSPEC
+  #   steps:
+  #     - cmake . & nmake lint test drmemory
+  #     - md "%TONIXXX_ARTIFACTS%"
+  #     - copy bin\* "%TONIXXX_ARTIFACTS%"

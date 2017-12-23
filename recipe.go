@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 // BinariesDirectoryBasename provides a location for Vagrant synced folders to emit any artifacts produced during a build. This directory is relative to the recipe's project directory.
@@ -71,4 +72,12 @@ func (o Recipe) ConfigureEnvironmentVariable(key string, value string) string {
 	} else {
 		return fmt.Sprintf("export %s=\"%s\"", key, value)
 	}
+}
+
+func (o Recipe) AggregateSteps(steps []string) string {
+	if o.IsCOMSPEC() {
+		return strings.Join(steps, " & ")
+	}
+
+	return strings.Join(steps, " && ")
 }

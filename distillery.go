@@ -10,7 +10,6 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
-	"strings"
 
 	"github.com/otiai10/copy"
 	"gopkg.in/yaml.v2"
@@ -340,14 +339,15 @@ func (o Distillery) VagrantRunRecipe(recipe Recipe, step string) error {
 
 // Pour executes a build recipe.
 func (o Distillery) PourRecipe(recipe Recipe) error {
-	var stepAccumulator bytes.Buffer
-	stepAccumulator.WriteString(recipe.ConfigureEnvironmentVariable(TonixxxArtifactsKey, recipe.ArtifactsGuest()))
-	stepAccumulator.WriteString("\n")
-	stepAccumulator.WriteString(strings.Join(recipe.Steps, "\n"))
+	configureEnvironmentVariableStep := recipe.ConfigureEnvironmentVariable(TonixxxArtifactsKey, recipe.ArtifactsGuest())
 
-	stepsAggregate := stepAccumulator.String()
+	var stepsWithEnvironmentVariables []string
+	stepsWithEnvironmentVariables = append(stepsWithEnvironmentVariables, configureEnvironmentVariableStep)
+	stepsWithEnvironmentVariables = append(stepsWithEnvironmentVariables, recipe.Steps...)
 
-	if err := o.VagrantRunRecipe(recipe, stepsAggregate); err != nil {
+	stepsAggregated := recipe.AggregateSteps(stepsWithEnvironmentVariables)
+
+	if err := o.VagrantRunRecipe(recipe, stepsAggregated); err != nil {
 		return err
 	}
 
