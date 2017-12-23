@@ -272,6 +272,7 @@ func (o Distillery) VagrantStatus(recipe Recipe) (string, error) {
 	cmd := exec.Command("vagrant", "status")
 	cmd.Dir = cloneHost
 	cmd.Stdout = &outBuffer
+	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
 		return "", err
@@ -331,6 +332,8 @@ func (o Distillery) VagrantRunRecipe(recipe Recipe, step string) error {
 
 	cmd := exec.Command("vagrant", "ssh", "-c", stepQuoteEscaped)
 	cmd.Dir = cloneHost
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
 	return cmd.Run()
 }
