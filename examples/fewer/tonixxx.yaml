@@ -1,2 +1,37 @@
-Steps: ["cmake . && make test drmemory", "mkdir -p \"$TONIXXX_ARTIFACTS\"", "cp bin/* \"$TONIXXX_ARTIFACTS\""]
-Recipes: [{Name: "gnu-linux-amd64", Base: "mcandre/fewer-buildbot-debian"}, {Name: "darwin-amd64", Base: "mcandre/fewer-buildbot-macos"}, {Name: "windows-comspec-amd64", Base: "mcandre/fewer-buildbot-windows", Type: "COMSPEC", Steps: ["cmake . & nmake lint test drmemory", "md \"%TONIXXX_ARTIFACTS%\"", "copy bin\\* \"%TONIXXX_ARTIFACTS%\""]}]
+Steps:
+  - cmake . && make test drmemory
+  - mkdir -p "$TONIXXX_ARTIFACTS"
+  - cp bin/* "$TONIXXX_ARTIFACTS"
+
+Recipes:
+  - Name: gnu-linux-amd64
+    Base: mcandre/fewer-buildbot-debian
+  # - Name: gnu-linux-i386
+  #   Base: mcandre/fewer-buildbot-debian-i386
+  # - Name: musl-linux-amd64
+  #   Base: mcandre/fewer-buildbot-alpine
+  # - Name: uclibc-linux-amd64
+  #   Base: mcandre/fewer-buildbot-busybox
+  - Name: darwin-amd64
+    Base: mcandre/fewer-buildbot-macos
+  # - Name: freebsd-amd64
+  #   Base: mcandre/fewer-buildbot-freebsd
+  # - Name: dragonflybsd-amd64
+  #   Base: mcandre/fewer-buildbot-dragonflybsd
+  # - Name: solaris-i386
+  #   Base: mcandre/fewer-buildbot-dilos
+  # - Name: solaris-sparc
+  #   Base: mcandre/fewer-buildbot-dilos-sparc
+  # - Name: openbsd-amd64
+  #   Base: mcandre/fewer-buildbot-openbsd
+  # - Name: netbsd-amd64
+  #   Base: mcandre/fewer-buidlbot-netbsd
+  # - Name: minix-i386
+  #   Base: mcandre/fewer-buildbot-minix
+  - Name: windows-comspec-amd64
+    Base: mcandre/fewer-buildbot-windows
+    Type: COMSPEC
+    Steps:
+      - cmake . & nmake lint test drmemory
+      - md "%TONIXXX_ARTIFACTS%"
+      - copy bin\* "%TONIXXX_ARTIFACTS%"
