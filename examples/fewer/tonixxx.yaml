@@ -1,3 +1,5 @@
+project: fewer
+
 steps:
   - cmake . && make test drmemory
   - mkdir -p "$TONIXXX_ARTIFACTS"

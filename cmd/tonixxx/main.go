@@ -12,6 +12,7 @@ import (
 var flagDebug = flag.Bool("debug", false, "Enable debugging logs")
 var flagVersion = flag.Bool("version", false, "Show version information")
 var flagHelp = flag.Bool("help", false, "Show usage information")
+var flagListTasks = flag.Bool("listTasks", false, "Show task information")
 
 const taskWander = "wander"
 const taskUp = "up"
@@ -30,6 +31,9 @@ func main() {
 		os.Exit(0)
 	case *flagHelp:
 		flag.PrintDefaults()
+		os.Exit(0)
+	case *flagListTasks:
+		log.Printf("Available tasks: %v", taskNames)
 		os.Exit(0)
 	}
 
@@ -62,7 +66,7 @@ func main() {
 	for _, task := range tasks {
 		switch task {
 		case taskWander:
-			projectDir, err := ProjectData()
+			projectDir, err := distillery.ProjectData()
 
 			if err != nil {
 				log.Panic(err)
