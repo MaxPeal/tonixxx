@@ -1,12 +1,14 @@
 package tonixxx
 
 import (
-	"crypto/md5"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
+	"path/filepath"
+	"regexp"
 
 	"gopkg.in/yaml.v2"
 )
@@ -49,17 +51,23 @@ func (o Distillery) ProjectData() (string, error) {
 		return "", err
 	}
 
-	return path.Join(TonixxxHome(), o.Project), nil
+	tonixxxHome, err := TonixxxHome()
+
+	if err != nil {
+		return "", err
+	}
+
+	return path.Join(tonixxxHome, o.Project), nil
 }
 
-func (o Distillery) ProjectArtifacts(string, error) {
+func (o Distillery) ProjectArtifacts() (string, error) {
 	projectData, err := o.ProjectData()
 
 	if err != nil {
 		return "", err
 	}
 
-	return path.Join(projectData, ProjectBinaryDirectoryBasename), nil
+	return path.Join(projectData, ProjectBinariesDirectoryBasename), nil
 }
 
 // Parse transforms a byte sequence into a Distillery struct.
@@ -105,9 +113,16 @@ func (o Distillery) Validate() error {
 	return nil
 }
 
-// CheckData checks the TonixxxData host directory.
+// CheckData checks that the TonixxxHome host directory exists.
+// If not, CheckData constructs the directory.
 func (o Distillery) CheckData() error {
-	return EnsureDirectory(TonixxxData)
+	tonixxxHome, err := TonixxxHome()
+
+	if err != nil {
+		return err
+	}
+
+	return EnsureDirectory(tonixxxHome)
 }
 
 // Up ensures that the configured Vagrant boxes are booted.
@@ -141,7 +156,13 @@ func (o Distillery) Boil() error {
 			return err
 		}
 
-		if err := recipe.MergeArtifacts(o.ProjectArtifacts); err != nil {
+		projectArtifacts, err := o.ProjectArtifacts()
+
+		if err != nil {
+			return err
+		}
+
+		if err := recipe.MergeArtifacts(projectArtifacts); err != nil {
 			return err
 		}
 	}
@@ -166,7 +187,13 @@ func (o Distillery) Down() error {
 
 // RemoveData removes the TonixxxData host directory.
 func (o Distillery) RemoveData() error {
-	return os.RemoveAll(TonixxxData)
+	tonixxxHome, err := TonixxxHome()
+
+	if err != nil {
+		return err
+	}
+
+	return os.RemoveAll(tonixxxHome)
 }
 
 // Clean halts Vagrant boxes and removes the TonixxxData host directory.

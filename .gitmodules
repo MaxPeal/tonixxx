@@ -1,3 +1,6 @@
 [submodule "vendor/gopkg.in/yaml.v2"]
 	path = vendor/gopkg.in/yaml.v2
 	url = https://github.com/go-yaml/yaml.git
+[submodule "vendor/github.com/otiai10/copy"]
+	path = vendor/github.com/otiai10/copy
+	url = https://github.com/otiai10/copy.git

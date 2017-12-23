@@ -3,6 +3,7 @@ package tonixxx
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -14,6 +15,9 @@ const RecipeBinariesDirectoryBasename = "bin"
 
 // VagrantfileBasename refers to the standard configuration file basename for configuring Vagrant boxes.
 const VagrantfileBasename = "Vagrantfile"
+
+// VagrantStatusRunningPattern identifies when a Vagrant box is running.
+var VagrantStatusRunningPattern *regexp.Regexp = regexp.MustCompile("running")
 
 // RecipeNamePattern constrains names in order to use names as-is for file paths while building a project.
 var RecipeNamePattern *regexp.Regexp = regexp.MustCompile("^[a-zA-Z\\.\\-_]+$")
@@ -87,7 +91,7 @@ func (o Recipe) VagrantfilePath() (string, error) {
 
 // Generate a basic Vagrantfile from the recipe base box url.
 func (o Recipe) EnsureVagrantfile() error {
-	contentVagrantfile = fmt.Sprintf("Vagrant.configure('2') do |config|\n  config.vm.box = \"%s\"\nend", o.Base)
+	contentVagrantfile := fmt.Sprintf("Vagrant.configure('2') do |config|\n  config.vm.box = \"%s\"\nend", o.Base)
 
 	vagrantfilePath, err := o.VagrantfilePath()
 
@@ -95,11 +99,9 @@ func (o Recipe) EnsureVagrantfile() error {
 		return err
 	}
 
-	// Write Vagrantfile...
+	contentVagrantfileBytes := []byte(contentVagrantfile)
 
-
-	panic("Unimplemented")
-	// ...
+	return ioutil.WriteFile(vagrantfilePath, contentVagrantfileBytes, 0644)
 }
 
 // ArtifactsHost provides a recipe relative output directory.
@@ -139,6 +141,28 @@ func (o Recipe) EnsureClonePath() error {
 	return EnsureDirectory(pth)
 }
 
+// VagrantStatus queries a Vagrant box clone's status.
+func (o Recipe) VagrantStatus() (string, error) {
+	var outBuffer bytes.Buffer
+
+	cmd := exec.Command("vagrant", "status")
+	cmd.Dir = o.CloneHost()
+	cmd.Stdout = &outBuffer
+
+	if err := cmd.Run(); err != nil {
+		return "", error
+	}
+
+	return outBuffer.String(), nil
+}
+
+// VagrantUp boots a Vagrant box.
+func (o Recipe) VagrantUp() error {
+	cmd := exec.Command("vagrant", "up")
+	cmd.Dir = o.CloneHost()
+	return cmd.Run()
+}
+
 // EnsureClone allocates space for a Vagrant box to be cloned.
 func (o Recipe) EnsureClone() error {
 	if err := o.EnsureClonePath(); err != nil {
@@ -163,27 +187,19 @@ func (o Recipe) EnsureClone() error {
 	if err := o.EnsureVagrantfile(); err != nil {
 		return err
 	}
-
-	// generate Vagrantfile in the ClonePath directory
-
-	// `vagrant up` (in the ClonePath directory)
-	// ...
-
-	panic("Unimplemented")
-	// ...
-}
-
-// EnsureImported checks that a Vagrant box is imported.
-// If not, EnsureImported attempts to download the box from the public Vagrant Cloud repository.
-func (o Recipe) EnsureImported() error {
-	panic("Unimplemented")
-	// ...
 }
 
 // EnsureBooted checks that a Vagrant box is booted.
 func (o Recipe) EnsureBooted() error {
-	panic("Unimplemented")
-	// ...
+	status, err := o.VagrantStatus()
+
+	if err != nil {
+		return err
+	}
+
+	if !VagrantStatusRunningPattern.MatchString(status) {
+		return os.VagrantUp()
+	}
 }
 
 // SpinUp checks that a Vagrant box is imported and booted.
@@ -192,17 +208,16 @@ func (o Recipe) SpinUp() error {
 		return err
 	}
 
-	if err := o.EnsureImported(); err != nil {
-		return err
-	}
-
 	return o.EnsureBooted()
 }
 
 // Run executes a shell command in a Vagrant box.
-func (o Recipe) Run(step string) error {
-	panic("Unimplemented")
-	// ...
+func (o Recipe) VagrantRun(step string) error {
+	stepQuoteEscaped := fmt.Sprintf("%q", step)
+
+	cmd := exec.Command("vagrant", "ssh", "-c", stepQuoteEscaped)
+	cmd.Dir = o.CloneHost()
+	return cmd.Run()
 }
 
 // ConfigureEnvironmentVariable generates a shell command for configuring an environment variable.
@@ -216,14 +231,15 @@ func (o Recipe) ConfigureEnvironmentVariable(key string, value string) string {
 
 // Pour executes a build recipe.
 func (o Recipe) Pour() error {
-	if err := o.Run(o.ConfigureEnvironmentVariable(TonixxxArtifactsKey, o.ArtifactsGuest())); err != nil {
-		return err
-	}
+	var stepAccumulator bytes.Buffer
+	stepAccumulator.WriteString(o.ConfigureEnvironmentVariable(TonixxxArtifactsKey, o.ArtifactsGuest()))
+	stepAccumulator.WriteString("\n")
+	stepAccumulator.WriteString(strings.Join(o.Steps, "\n"))
 
-	for _, step := range o.Steps {
-		if err := o.Run(step); err != nil {
-			return err
-		}
+	stepsAggregate = stepAccumulator.String()
+
+	if err := o.VagrantRun(stepsAggregate); err != nil {
+		return err
 	}
 
 	log.Printf("A build completed. Select artifacts may appear in %s", ProjectArtifacts())
@@ -247,8 +263,10 @@ func (o Recipe) Boil() error {
 
 // SpinDown halts a Vagrant box.
 func (o Recipe) SpinDown() error {
-	panic("Unimplemented")
-	// ...
+	o.EnsureClone()
+
+	cmd := exec.Command("vagrant", "halt")
+	cmd.Dir = o.CloneHost()
 }
 
 // MergeArtifacts copies per-recipe build artifacts up to the top-level per-project binary directory.
@@ -258,17 +276,11 @@ func (o Recipe) MergeArtifacts(projectArtifactsPath string) error {
 	return copy.Copy(o.ArtifactsHost, topLevelRecipeArtifactsDirectory)
 }
 
-// Remove deletes a Vagrant box clone from disk.
-func (o Recipe) Remove() error {
-	panic("Unimplemented")
-	// ...
-}
-
 // Clean halts a Vagrant box and removes the files from disk.
 func (o Recipe) Clean() error {
 	if err := o.SpinDown(); err != nil {
 		log.Print(err)
 	}
 
-	return o.Remove()
+	return os.RemoveAll(o.CloneHost())
 }
