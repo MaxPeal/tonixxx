@@ -6,7 +6,7 @@
 $ cd examples/fewer
 $ tonixxx boil
 ...
-$ tree .tonixxx/artifacts
+$ tree ~/.tonixxx/fewer/bin
 ...
 ```
 

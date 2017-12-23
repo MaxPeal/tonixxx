@@ -13,12 +13,13 @@ var flagDebug = flag.Bool("debug", false, "Enable debugging logs")
 var flagVersion = flag.Bool("version", false, "Show version information")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 
+const taskWander = "wander"
 const taskUp = "up"
 const taskBoil = "boil"
 const taskDown = "down"
 const taskClean = "clean"
 
-var taskNames = []string{taskUp, taskBoil, taskDown, taskClean}
+var taskNames = []string{taskWander, taskUp, taskBoil, taskDown, taskClean}
 
 func main() {
 	flag.Parse()
@@ -60,6 +61,14 @@ func main() {
 
 	for _, task := range tasks {
 		switch task {
+		case taskWander:
+			projectDir, err := ProjectData()
+
+			if err != nil {
+				log.Panic(err)
+			}
+
+			fmt.Println(projectDir)
 		case taskUp:
 			if err := distillery.Up(); err != nil {
 				log.Panic(err)

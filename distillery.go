@@ -1,6 +1,7 @@
 package tonixxx
 
 import (
+	"crypto/md5"
 	"errors"
 	"io/ioutil"
 	"log"
@@ -10,8 +11,15 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// ProjectBinariesDirectoryBasename locates project-wide binary aggregation at the end of a build, relative to the tonixxx per-project metadata directory.
+const ProjectBinariesDirectoryBasename = "bin"
+
+// ProjectNamePattern constrains names in order to use names as-is for file paths while building a project.
+var ProjectNamePattern *regexp.Regexp = regexp.MustCompile("^[a-zA-Z\\.\\-_]+$")
+
 // Distillery describes a multi-platform build configuration.
 type Distillery struct {
+	Project string
 	Steps   []string
 	Recipes []Recipe
 }
@@ -25,6 +33,33 @@ func ConfigFile() (string, error) {
 	}
 
 	return path.Join(dir, TonixxxConfigBasename), nil
+}
+
+// ProjectData calculates the per-project tonixxx data directory based on a hash of the project directory absolute path.
+func (o Distillery) ProjectData() (string, error) {
+	cwd, err := os.Getwd()
+
+	if err != nil {
+		return "", err
+	}
+
+	cwdAbsolute, err := filepath.Abs(cwd)
+
+	if err != nil {
+		return "", err
+	}
+
+	return path.Join(TonixxxHome(), o.Project), nil
+}
+
+func (o Distillery) ProjectArtifacts(string, error) {
+	projectData, err := o.ProjectData()
+
+	if err != nil {
+		return "", err
+	}
+
+	return path.Join(projectData, ProjectBinaryDirectoryBasename), nil
 }
 
 // Parse transforms a byte sequence into a Distillery struct.
@@ -59,6 +94,10 @@ func (o *Distillery) Load(pth string) error {
 
 // Validate applies some semantic checks to a Distillery configuration.
 func (o Distillery) Validate() error {
+	if !ProjectNamePattern.MatchString(o.Project) {
+		return errors.New(fmt.Sprintf("Distillery must have a non-empty project name matching %s", ProjectNamePattern))
+	}
+
 	if len(o.Recipes) < 1 {
 		return errors.New("Distillery configuration missing at least one recipe.")
 	}
@@ -68,11 +107,7 @@ func (o Distillery) Validate() error {
 
 // CheckData checks the TonixxxData host directory.
 func (o Distillery) CheckData() error {
-	if _, err := os.Stat(TonixxxData); os.IsNotExist(err) {
-		return os.Mkdir(TonixxxData, os.ModeDir|0755)
-	}
-
-	return nil
+	return EnsureDirectory(TonixxxData)
 }
 
 // Up ensures that the configured Vagrant boxes are booted.
@@ -103,6 +138,10 @@ func (o Distillery) Boil() error {
 		}
 
 		if err := recipe.Boil(); err != nil {
+			return err
+		}
+
+		if err := recipe.MergeArtifacts(o.ProjectArtifacts); err != nil {
 			return err
 		}
 	}
