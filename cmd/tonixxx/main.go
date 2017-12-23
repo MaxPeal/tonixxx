@@ -48,7 +48,7 @@ func main() {
 		log.Printf("Reading distillery configuration from %s", configFilename)
 	}
 
-	distillery := tonixxx.Distillery{}
+	var distillery = tonixxx.Distillery{}
 
 	if err := distillery.Load(configFilename); err != nil {
 		log.Panic(err)

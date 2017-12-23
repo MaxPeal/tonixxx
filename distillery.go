@@ -29,7 +29,7 @@ func ConfigFile() (string, error) {
 
 // Parse transforms a byte sequence into a Distillery struct.
 func (o *Distillery) Parse(data []byte) error {
-	return yaml.Unmarshal(data, o)
+	return yaml.UnmarshalStrict(data, o)
 }
 
 // Load reads and parses a Distillery struct from a YAML file on disk.
@@ -40,13 +40,9 @@ func (o *Distillery) Load(pth string) error {
 		return err
 	}
 
-	log.Printf("Read YAML: %s", contentYAML)
-
 	if err := o.Parse(contentYAML); err != nil {
 		return err
 	}
-
-	log.Printf("Parsed distillery: %v", o)
 
 	if err := o.Validate(); err != nil {
 		return err
