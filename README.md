@@ -7,6 +7,7 @@ $ cd examples/fewer
 $ tonixxx boil
 ...
 $ tree .tonixxx/artifacts
+...
 ```
 
 See `tonixxx -help` for more information.
