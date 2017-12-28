@@ -6,32 +6,45 @@ steps:
   - cp bin/* "$TONIXXX_ARTIFACTS"
 
 recipes:
-  - name: gnu-linux-amd64
-    base: mcandre/fewer-buildbot-debian
-  # - name: gnu-linux-i386
-  #   base: mcandre/fewer-buildbot-debian-i386
-  # - name: musl-linux-amd64
-  #   base: mcandre/fewer-buildbot-alpine
-  # - name: uclibc-linux-amd64
-  #   base: mcandre/fewer-buildbot-busybox
-  # - name: darwin-amd64
-  #   base: mcandre/fewer-buildbot-macos
-  # - name: freebsd-amd64
-  #   base: mcandre/fewer-buildbot-freebsd
-  # - name: dragonflybsd-amd64
-  #   base: mcandre/fewer-buildbot-dragonflybsd
-  # - name: solaris-i386
-  #   base: mcandre/fewer-buildbot-dilos
-  # - name: solaris-sparc
-  #   base: mcandre/fewer-buildbot-dilos-sparc
-  # - name: openbsd-amd64
-  #   base: mcandre/fewer-buildbot-openbsd
-  # - name: netbsd-amd64
-  #   base: mcandre/fewer-buidlbot-netbsd
-  # - name: minix-i386
-  #   base: mcandre/fewer-buildbot-minix
-  # - name: windows-comspec-amd64
-  #   base: mcandre/fewer-buildbot-windows
+  - label: gnu-linux-amd64
+    box: mcandre/fewer-buildbot-debian
+    version: 0.0.1
+  # - label: gnu-linux-i386
+  #   box: mcandre/fewer-buildbot-debian-i386
+  #   version: 0.0.1
+  # - label: musl-linux-amd64
+  #   box: mcandre/fewer-buildbot-alpine
+  #   version: 0.0.1
+  # - label: uclibc-linux-amd64
+  #   box: mcandre/fewer-buildbot-busybox
+  #   version: 0.0.1
+  # - label: darwin-amd64
+  #   box: mcandre/fewer-buildbot-macos
+  #   version: 0.0.1
+  # - label: freebsd-amd64
+  #   box: mcandre/fewer-buildbot-freebsd
+  #   version: 0.0.1
+  # - label: dragonflybsd-amd64
+  #   box: mcandre/fewer-buildbot-dragonflybsd
+  #   version: 0.0.1
+  # - label: solaris-i386
+  #   box: mcandre/fewer-buildbot-dilos
+  #   version: 0.0.1
+  # - label: solaris-sparc
+  #   box: mcandre/fewer-buildbot-dilos-sparc
+  #   version: 0.0.1
+  # - label: openbsd-amd64
+  #   box: mcandre/fewer-buildbot-openbsd
+  #   version: 0.0.1
+  # - label: netbsd-amd64
+  #   box: mcandre/fewer-buidlbot-netbsd
+  #   version: 0.0.1
+  # - label: minix-i386
+  #   box: mcandre/fewer-buildbot-minix
+  #   version: 0.0.1
+  # - label: windows-comspec-amd64
+  #   box: mcandre/fewer-buildbot-windows
+  #   version: 0.0.1
   #   type: COMSPEC
   #   steps:
   #     - cmake . & nmake lint test drmemory

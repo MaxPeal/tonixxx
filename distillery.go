@@ -19,7 +19,7 @@ import (
 const ProjectBinariesDirectoryBasename = "bin"
 
 // ProjectNamePattern constrains names in order to use names as-is for file paths while building a project.
-var ProjectNamePattern *regexp.Regexp = regexp.MustCompile("^[a-zA-Z0-9\\.\\-_]+$")
+var ProjectNamePattern = regexp.MustCompile(`^[a-zA-Z0-9\.\-_]+$`)
 
 // Distillery describes a multi-platform build configuration.
 type Distillery struct {
@@ -41,7 +41,7 @@ func ConfigFile() (string, error) {
 
 // ProjectData calculates the per-project tonixxx data directory based on a hash of the project directory absolute path.
 func (o Distillery) ProjectData() (string, error) {
-	tonixxxHome, err := TonixxxHome()
+	tonixxxHome, err := DataHome()
 
 	if err != nil {
 		return "", err
@@ -50,6 +50,7 @@ func (o Distillery) ProjectData() (string, error) {
 	return path.Join(tonixxxHome, o.Project), nil
 }
 
+// EnsureProjectDirectory checks that a tonixxx project's metadata directory appears in ~/.tonixxx
 func (o Distillery) EnsureProjectDirectory() error {
 	projectData, err := o.ProjectData()
 
@@ -60,6 +61,7 @@ func (o Distillery) EnsureProjectDirectory() error {
 	return EnsureDirectory(projectData)
 }
 
+// ProjectArtifacts supplies the host path to the aggregated artifacts produced for a project after any Vagrant builds.
 func (o Distillery) ProjectArtifacts() (string, error) {
 	projectData, err := o.ProjectData()
 
@@ -103,7 +105,7 @@ func (o *Distillery) Load(pth string) error {
 // Validate applies some semantic checks to a Distillery configuration.
 func (o Distillery) Validate() error {
 	if !ProjectNamePattern.MatchString(o.Project) {
-		return errors.New(fmt.Sprintf("Distillery must have a non-empty project name matching %s", ProjectNamePattern))
+		return fmt.Errorf("Distillery must have a non-empty project name matching %s", ProjectNamePattern)
 	}
 
 	if len(o.Recipes) < 1 {
@@ -116,7 +118,7 @@ func (o Distillery) Validate() error {
 // CheckData checks that the TonixxxHome host directory exists.
 // If not, CheckData constructs the directory.
 func (o Distillery) CheckData() error {
-	tonixxxHome, err := TonixxxHome()
+	tonixxxHome, err := DataHome()
 
 	if err != nil {
 		return err
@@ -125,6 +127,7 @@ func (o Distillery) CheckData() error {
 	return EnsureDirectory(tonixxxHome)
 }
 
+// CloneHost supplies the directory path inside ~/.tonixxx in which a particular recipe's Vagrant clone resides.
 func (o Distillery) CloneHost(recipe Recipe) (string, error) {
 	projectData, err := o.ProjectData()
 
@@ -132,9 +135,10 @@ func (o Distillery) CloneHost(recipe Recipe) (string, error) {
 		return "", err
 	}
 
-	return path.Join(projectData, recipe.Name), nil
+	return path.Join(projectData, recipe.Label), nil
 }
 
+// EnsureCloneRecipePath checks that a recipe's Vagrant clone directory appears inside ~/.tonixxx
 func (o Distillery) EnsureCloneRecipePath(recipe Recipe) error {
 	if err := o.EnsureProjectDirectory(); err != nil {
 		return err
@@ -149,7 +153,7 @@ func (o Distillery) EnsureCloneRecipePath(recipe Recipe) error {
 	return EnsureDirectory(pth)
 }
 
-// VagrantHostDirectory provides the path to a recipe's Vagrant directory.
+// VagrantHostRecipeDirectory provides the path to a recipe's Vagrant directory.
 func (o Distillery) VagrantHostRecipeDirectory(recipe Recipe) (string, error) {
 	projectData, err := o.ProjectData()
 
@@ -157,9 +161,10 @@ func (o Distillery) VagrantHostRecipeDirectory(recipe Recipe) (string, error) {
 		return "", nil
 	}
 
-	return path.Join(projectData, recipe.Name), nil
+	return path.Join(projectData, recipe.Label), nil
 }
 
+// VagrantfilePath supplies the file path to a recipe's Vagrantfile within ~/.tonixxx
 func (o Distillery) VagrantfilePath(recipe Recipe) (string, error) {
 	vagrantHostDir, err := o.VagrantHostRecipeDirectory(recipe)
 
@@ -170,9 +175,9 @@ func (o Distillery) VagrantfilePath(recipe Recipe) (string, error) {
 	return path.Join(vagrantHostDir, VagrantfileBasename), nil
 }
 
-// Generate a basic Vagrantfile from the recipe base box url.
+// EnsureVagrantfile checks that a Vagrantfile for a recipe is written to disk.
 func (o Distillery) EnsureVagrantfile(recipe Recipe) error {
-	contentVagrantfile := fmt.Sprintf("Vagrant.configure('2') do |config|\n  config.vm.box = \"%s\"\nend\n", recipe.Base)
+	contentVagrantfile := recipe.GenerateVagrantfile()
 
 	vagrantfilePath, err := o.VagrantfilePath(recipe)
 
@@ -185,7 +190,7 @@ func (o Distillery) EnsureVagrantfile(recipe Recipe) error {
 	return ioutil.WriteFile(vagrantfilePath, contentVagrantfileBytes, 0644)
 }
 
-// EnsureClone allocates space for a Vagrant box to be cloned.
+// EnsureCloneRecipe allocates space for a Vagrant box to be cloned.
 func (o Distillery) EnsureCloneRecipe(recipe Recipe) error {
 	if err := o.EnsureCloneRecipePath(recipe); err != nil {
 		return err
@@ -219,7 +224,7 @@ func (o Distillery) EnsureCloneRecipe(recipe Recipe) error {
 	return nil
 }
 
-// ArtifactsHost provides a recipe relative output directory.
+// ArtifactsRecipeHost provides a recipe relative output directory.
 // If all builds in a distillery are successful,
 // then these artifacts are copied to a project relative directory.
 func (o Distillery) ArtifactsRecipeHost(recipe Recipe) (string, error) {
@@ -232,6 +237,7 @@ func (o Distillery) ArtifactsRecipeHost(recipe Recipe) (string, error) {
 	return path.Join(vagrantHostDir, RecipeBinariesDirectoryBasename), nil
 }
 
+// EnsureArtifactsRecipeHost checks that a recipe's artifacts output directory is allocated.
 func (o Distillery) EnsureArtifactsRecipeHost(recipe Recipe) error {
 	artifactsHost, err := o.ArtifactsRecipeHost(recipe)
 
@@ -280,7 +286,7 @@ func (o Distillery) VagrantStatus(recipe Recipe) (string, error) {
 	return outBuffer.String(), nil
 }
 
-// EnsureBooted checks that a Vagrant box is booted.
+// EnsureBootedRecipe checks that a Vagrant box is booted.
 func (o Distillery) EnsureBootedRecipe(recipe Recipe) error {
 	status, err := o.VagrantStatus(recipe)
 
@@ -295,7 +301,7 @@ func (o Distillery) EnsureBootedRecipe(recipe Recipe) error {
 	return nil
 }
 
-// SpinUp checks that a Vagrant box is imported and booted.
+// SpinUpRecipe checks that a Vagrant box is imported and booted.
 func (o Distillery) SpinUpRecipe(recipe Recipe) error {
 	if err := o.EnsureCloneRecipe(recipe); err != nil {
 		return err
@@ -319,7 +325,7 @@ func (o Distillery) Up() error {
 	return nil
 }
 
-// Run executes a shell command in a Vagrant box.
+// VagrantRunRecipe executes a shell command in a Vagrant box.
 func (o Distillery) VagrantRunRecipe(recipe Recipe, step string) error {
 	cloneHost, err := o.CloneHost(recipe)
 
@@ -337,7 +343,7 @@ func (o Distillery) VagrantRunRecipe(recipe Recipe, step string) error {
 	return cmd.Run()
 }
 
-// Pour executes a build recipe.
+// PourRecipe executes a build recipe.
 func (o Distillery) PourRecipe(recipe Recipe) error {
 	configureEnvironmentVariableStep := recipe.ConfigureEnvironmentVariable(TonixxxArtifactsKey, recipe.ArtifactsGuest())
 
@@ -347,14 +353,10 @@ func (o Distillery) PourRecipe(recipe Recipe) error {
 
 	stepsAggregated := recipe.AggregateSteps(stepsWithEnvironmentVariables)
 
-	if err := o.VagrantRunRecipe(recipe, stepsAggregated); err != nil {
-		return err
-	}
-
-	return nil
+	return o.VagrantRunRecipe(recipe, stepsAggregated)
 }
 
-// Boil spins up a Vagrant box and executes a build recipe.
+// BoilRecipe spins up a Vagrant box and executes a build recipe.
 //
 // Select artifacts may be copied by user steps to ProjectArtifacts path.
 //
@@ -400,9 +402,11 @@ func (o Distillery) Boil() error {
 	return nil
 }
 
-// SpinDown halts a Vagrant box.
+// SpinDownRecipe halts a Vagrant box.
 func (o Distillery) SpinDownRecipe(recipe Recipe) error {
-	o.EnsureCloneRecipe(recipe)
+	if err := o.EnsureCloneRecipe(recipe); err != nil {
+		return err
+	}
 
 	cloneHost, err := o.CloneHost(recipe)
 
@@ -415,7 +419,6 @@ func (o Distillery) SpinDownRecipe(recipe Recipe) error {
 
 	return cmd.Run()
 }
-
 
 // Down pauses the configured Vagrant boxes.
 func (o Distillery) Down() error {
@@ -440,7 +443,7 @@ func (o Distillery) MergeArtifacts(recipe Recipe) error {
 		return err
 	}
 
-	topLevelRecipeArtifactsDirectory := path.Join(projectArtifacts, recipe.Name)
+	topLevelRecipeArtifactsDirectory := path.Join(projectArtifacts, recipe.Label)
 
 	artifactsRecipePath, err := o.ArtifactsRecipeHost(recipe)
 
@@ -453,7 +456,7 @@ func (o Distillery) MergeArtifacts(recipe Recipe) error {
 
 // RemoveData removes the TonixxxData host directory.
 func (o Distillery) RemoveData() error {
-	tonixxxHome, err := TonixxxHome()
+	tonixxxHome, err := DataHome()
 
 	if err != nil {
 		return err
@@ -462,7 +465,7 @@ func (o Distillery) RemoveData() error {
 	return os.RemoveAll(tonixxxHome)
 }
 
-// Clean halts a Vagrant box and removes the files from disk.
+// CleanRecipe halts a Vagrant box and removes the files from disk.
 func (o Distillery) CleanRecipe(recipe Recipe) error {
 	if err := o.SpinDownRecipe(recipe); err != nil {
 		log.Print(err)
