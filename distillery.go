@@ -343,6 +343,22 @@ func (o Distillery) VagrantRunRecipe(recipe Recipe, step string) error {
 	return cmd.Run()
 }
 
+// RsyncBack copies any artifacts produced during pouring from a Vagrant box back to the host.
+func (o Distillery) RsyncBack(recipe Recipe) error {
+	cloneHost, err := o.CloneHost(recipe)
+
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Command("vagrant", "rsync-back")
+	cmd.Dir = cloneHost
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
 // PourRecipe executes a build recipe.
 func (o Distillery) PourRecipe(recipe Recipe) error {
 	configureEnvironmentVariableStep := recipe.ConfigureEnvironmentVariable(TonixxxArtifactsKey, recipe.ArtifactsGuest())
@@ -353,7 +369,11 @@ func (o Distillery) PourRecipe(recipe Recipe) error {
 
 	stepsAggregated := recipe.AggregateSteps(stepsWithEnvironmentVariables)
 
-	return o.VagrantRunRecipe(recipe, stepsAggregated)
+	if err := o.VagrantRunRecipe(recipe, stepsAggregated); err != nil {
+		return err
+	}
+
+	return o.RsyncBack(recipe)
 }
 
 // BoilRecipe spins up a Vagrant box and executes a build recipe.
