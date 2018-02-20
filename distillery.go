@@ -335,7 +335,7 @@ func (o Distillery) VagrantRunRecipe(recipe Recipe, step string) error {
 
 	stepQuoteEscaped := fmt.Sprintf("%q", step)
 
-	cmd := exec.Command("vagrant", "ssh", "-c", stepQuoteEscaped)
+	cmd := exec.Command("vagrant", "ssh", "--no-tty", "-c", stepQuoteEscaped)
 	cmd.Dir = cloneHost
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
