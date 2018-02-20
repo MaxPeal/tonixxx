@@ -257,6 +257,7 @@ func (o Distillery) VagrantUp(recipe Recipe) error {
 	}
 
 	cmd := exec.Command("vagrant", "up")
+	cmd.Env = os.Environ()
 	cmd.Dir = cloneHost
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -275,6 +276,7 @@ func (o Distillery) VagrantStatus(recipe Recipe) (string, error) {
 	}
 
 	cmd := exec.Command("vagrant", "status")
+	cmd.Env = os.Environ()
 	cmd.Dir = cloneHost
 	cmd.Stdout = &outBuffer
 	cmd.Stderr = os.Stderr
@@ -333,9 +335,8 @@ func (o Distillery) VagrantRunRecipe(recipe Recipe, step string) error {
 		return err
 	}
 
-	stepQuoteEscaped := fmt.Sprintf("%q", step)
-
-	cmd := exec.Command("vagrant", "ssh", "--no-tty", "-c", stepQuoteEscaped)
+	cmd := exec.Command("vagrant", "ssh", "--no-tty", "-c", step)
+	cmd.Env = os.Environ()
 	cmd.Dir = cloneHost
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -352,6 +353,7 @@ func (o Distillery) RsyncBack(recipe Recipe) error {
 	}
 
 	cmd := exec.Command("vagrant", "rsync-back")
+	cmd.Env = os.Environ()
 	cmd.Dir = cloneHost
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -435,9 +437,35 @@ func (o Distillery) SpinDownRecipe(recipe Recipe) error {
 	}
 
 	cmd := exec.Command("vagrant", "halt")
+	cmd.Env = os.Environ()
 	cmd.Dir = cloneHost
 
 	return cmd.Run()
+}
+
+// DestroyRecipe deallocates a Vagrant box instance.
+func (o Distillery) DestroyRecipe(recipe Recipe) error {
+	if err := o.EnsureCloneRecipe(recipe); err != nil {
+		return err
+	}
+
+	cloneHost, err := o.CloneHost(recipe)
+
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Command("vagrant", "destroy", "-f")
+	cmd.Env = os.Environ()
+	cmd.Dir = cloneHost
+
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+
+	vagrantMetadataDir := path.Join(cloneHost, VagrantMetadataDirectory)
+
+	return os.RemoveAll(vagrantMetadataDir)
 }
 
 // Down pauses the configured Vagrant boxes.
@@ -488,6 +516,10 @@ func (o Distillery) RemoveData() error {
 // CleanRecipe halts a Vagrant box and removes the files from disk.
 func (o Distillery) CleanRecipe(recipe Recipe) error {
 	if err := o.SpinDownRecipe(recipe); err != nil {
+		log.Print(err)
+	}
+
+	if err := o.DestroyRecipe(recipe); err != nil {
 		log.Print(err)
 	}
 

@@ -13,6 +13,9 @@ const RecipeBinariesDirectoryBasename = "bin"
 // VagrantfileBasename refers to the standard configuration file basename for configuring Vagrant boxes.
 const VagrantfileBasename = "Vagrantfile"
 
+// VagrantMetadataDirectory refers to the standard directory for housing internal Vagrant files.
+const VagrantMetadataDirectory = ".vagrant"
+
 // VagrantStatusRunningPattern identifies when a Vagrant box is running.
 var VagrantStatusRunningPattern = regexp.MustCompile("running")
 
