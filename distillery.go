@@ -344,6 +344,23 @@ func (o Distillery) VagrantRunRecipe(recipe Recipe, step string) error {
 	return cmd.Run()
 }
 
+// Rsync copies any source code files from the host to a Vagrant box.
+func (o Distillery) Rsync(recipe Recipe) error {
+	cloneHost, err := o.CloneHost(recipe)
+
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Command("vagrant", "rsync")
+	cmd.Env = os.Environ()
+	cmd.Dir = cloneHost
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
 // RsyncBack copies any artifacts produced during pouring from a Vagrant box back to the host.
 func (o Distillery) RsyncBack(recipe Recipe) error {
 	cloneHost, err := o.CloneHost(recipe)
@@ -363,6 +380,10 @@ func (o Distillery) RsyncBack(recipe Recipe) error {
 
 // PourRecipe executes a build recipe.
 func (o Distillery) PourRecipe(recipe Recipe) error {
+	if err := o.Rsync(recipe); err != nil {
+		return err
+	}
+
 	configureEnvironmentVariableStep := recipe.ConfigureEnvironmentVariable(TonixxxArtifactsKey, recipe.ArtifactsGuest())
 
 	var stepsWithEnvironmentVariables []string
