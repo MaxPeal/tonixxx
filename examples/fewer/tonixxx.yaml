@@ -42,8 +42,13 @@ recipes:
   # - label: minix-i386
   #   box: mcandre/fewer-buildbot-minix
   #   version: 0.0.1
+  # Assume bash-oriented build workflow to work around
+  # hardcoded `bash -l` limitation in vagrant ssh -c.
+  - label: windows-bash-amd64
+    box: mcandre/fewer-buildbot-windows
+    version: 0.0.1
   # - label: windows-comspec-amd64
-  #   box: mcandre/fewer-buildbot-windows
+  #   box: mcandre/fewer-buildbot-windows-cmd
   #   version: 0.0.1
   #   type: COMSPEC
   #   steps:
