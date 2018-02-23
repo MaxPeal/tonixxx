@@ -42,10 +42,6 @@ func (o Recipe) Validate() error {
 		return errors.New("Recipe has empty Vagrant base box")
 	}
 
-	if o.Version == "" {
-		return errors.New("Recipe has empty Vagrant base box version")
-	}
-
 	return nil
 }
 
@@ -71,11 +67,16 @@ func (o Recipe) ArtifactsGuest() string {
 
 // GenerateVagrantfile supplies the text content of a Vagrantfile for instantiating a recipe.
 func (o Recipe) GenerateVagrantfile() string {
-	return fmt.Sprintf(
-		"Vagrant.configure('2') do |config|\n  config.vm.box = \"%s\"\n  config.vm.box_version = \"%s\"\nend\n",
+	vagrantfileContent := fmt.Sprintf(
+		"Vagrant.configure('2') do |config|\n  config.vm.box = \"%s\"",
 		o.Box,
-		o.Version,
 	)
+
+	if o.Version != "" {
+		vagrantfileContent += "\n  config.vm.box_version = \"%s\"\nend\n"
+	}
+
+	return vagrantfileContent
 }
 
 // ConfigureEnvironmentVariable generates a shell command for configuring an environment variable.
