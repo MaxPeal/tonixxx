@@ -22,6 +22,7 @@ tonixxx masters cross-platform builds by pouring your code through arrays of Vag
 * [vagrant-rsync-back](https://github.com/smerrill/vagrant-rsync-back) (`vagrant plugin install vagrant-rsync-back`)
 * Relevant hypervisors for your configured Vagrant boxes (e.g. VirtualBox, VMware, Hyper-V)
 * Your choice of Vagrant boxes for targeted compilation, with synced folders enabled using rsync.
+* Sufficient available RAM and disk space for your Vagrant boxes
 
 ## Optional
 
