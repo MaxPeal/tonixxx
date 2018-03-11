@@ -7,41 +7,28 @@ steps:
 recipes:
   - label: gnu-linux-amd64
     box: mcandre/fewer-buildbot-debian
-    # version: 0.0.1
   # - label: gnu-linux-i386
   #   box: mcandre/fewer-buildbot-debian-i386
-  #   version: 0.0.1
   # - label: musl-linux-amd64
   #   box: mcandre/fewer-buildbot-alpine
-  #   version: 0.0.1
   # - label: uclibc-linux-amd64
   #   box: mcandre/fewer-buildbot-busybox
-  #   version: 0.0.1
   # - label: darwin-amd64
   #   box: mcandre/fewer-buildbot-macos
-  #   version: 0.0.1
   # - label: freebsd-amd64
   #   box: mcandre/fewer-buildbot-freebsd
-  #   version: 0.0.1
   # - label: dragonflybsd-amd64
   #   box: mcandre/fewer-buildbot-dragonflybsd
-  #   version: 0.0.1
   # - label: solaris-i386
   #   box: mcandre/fewer-buildbot-dilos
-  #   version: 0.0.1
   # - label: solaris-sparc
   #   box: mcandre/fewer-buildbot-dilos-sparc
-  #   version: 0.0.1
   # - label: openbsd-amd64
   #   box: mcandre/fewer-buildbot-openbsd
-  #   version: 0.0.1
   # - label: netbsd-amd64
   #   box: mcandre/fewer-buidlbot-netbsd
-  #   version: 0.0.1
   # - label: minix-i386
   #   box: mcandre/fewer-buildbot-minix
-  #   version: 0.0.1
-  # - label: windows-bash-amd64
+  # - label: windows-amd64
   #   type: Cygwin
   #   box: mcandre/fewer-buildbot-windows
-  #   version: 0.0.1
