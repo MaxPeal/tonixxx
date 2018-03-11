@@ -4,10 +4,15 @@
 
 ```console
 $ cd examples/fewer
+
 $ tonixxx boil
 ...
+2018/03/11 12:53:50 All builds completed successfully. Select artifacts may appear in /Users/andrew/.tonixxx/fewer/bin
+
 $ tree ~/.tonixxx/fewer/bin
-...
+/Users/andrew/.tonixxx/fewer/bin
+└── gnu-linux-amd64
+    └── fewer
 ```
 
 See `tonixxx -help` for more information.
