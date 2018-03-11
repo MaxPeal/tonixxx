@@ -2,7 +2,7 @@
 
 The fewer command line tool navigates files one byte at a time, printing the `n`ext byte and the `n`ext as a hexadecimal pair, occasionally `r`eading hexadecimal pairs and printing the corresponding ASCII character, until you `q`uit. It's not particularly useful.
 
-# EXAMPLE
+# EXAMPLES
 
 ```console
 $ fewer README.md
@@ -17,11 +17,15 @@ $ fewer README.md
 #
 > q
 
-$
+$ fewer -h
+Usage: fewer -t|-h|<filename>
+-t	Run self-test
+-h	Show usage information
 ```
 
 # BUILD
 
 ```console
-$ cmake . && make
+$ cmake .
+$ make
 ```

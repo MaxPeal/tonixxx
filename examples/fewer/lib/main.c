@@ -3,21 +3,28 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include <limits.h>
 #include "fewer.h"
 #include "main.h"
 
 static const char* PROMPT = "> ";
 
 void usage(char* program) {
-  printf("Usage: %s <filename>\n", program);
-  exit(EXIT_FAILURE);
+  printf("Usage: %s -t|-h|<filename>\n", program);
+  printf("-t\tRun self-test\n");
+  printf("-h\tShow usage information\n");
 }
 
-void repl(FILE* file, char* instruction, char* buffer) {
+void repl(FILE* file, /*@out@*/ char* instruction, /*@out@*/ char* buffer) {
   size_t read_count;
   int item_count;
   unsigned char c;
-  char* hex_buf = malloc(3 * sizeof(char));
+  char* hex_buf;
+
+  hex_buf = malloc(3 * sizeof(char));
+  assert(hex_buf != NULL);
 
   while (true) {
     printf("%s", PROMPT);
@@ -59,28 +66,58 @@ void repl(FILE* file, char* instruction, char* buffer) {
 int main(int argc, char** argv) {
   FILE* file;
   char* filename;
-  char* buffer = malloc(1 * sizeof(char));
-  char* instruction = malloc(1024 * sizeof(char));
+  char* buffer;
+  char* instruction;
+
+  buffer = malloc(1 * sizeof(char));
+  assert(buffer != NULL);
+
+  instruction = malloc(1024 * sizeof(char));
+  assert(instruction != NULL);
 
   if (argc != 2) {
     usage(argv[0]);
+    return EXIT_FAILURE;
   }
 
-  filename = argv[1];
+  if (strcmp(argv[1], "-h") == 0) {
+    usage(argv[0]);
+    return EXIT_SUCCESS;
+  } else if (strcmp(argv[1], "-t") == 0) {
+    char* hex_buf;
 
-  file = fopen(filename, "rb");
+    hex_buf = malloc(3 * sizeof(char));
+    assert(hex_buf != NULL);
 
-  if (file == NULL) {
-    printf("Error reading %s\n", filename);
-    exit(EXIT_FAILURE);
+    char c;
+
+    for (int i = 0; i <= CHAR_MAX; i++) {
+      c = (char) i;
+
+      render_boi(c, hex_buf);
+
+      unsigned char d = parse_boi(hex_buf);
+
+      if (d != c) {
+        printf("Character %c corrupted to %c during hexadecimal translation\n", c, d);
+        return EXIT_FAILURE;
+      }
+    }
+  } else {
+    filename = argv[1];
+
+    file = fopen(filename, "rb");
+
+    if (file == NULL) {
+      printf("Error reading %s\n", filename);
+      return EXIT_FAILURE;
+    }
+
+    repl(file, instruction, buffer);
+
+    (void) fclose(file);
+    free(buffer);
   }
 
-  repl(file, instruction, buffer);
-
-  free(buffer);
-
-  if (fclose(file)) {
-    printf("Error closing %s\n", filename);
-    exit(EXIT_FAILURE);
-  }
+  return EXIT_SUCCESS;
 }

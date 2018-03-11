@@ -3,7 +3,7 @@
 #pragma once
 
 // Display command line syntax information.
-void usage(char* program) __attribute((noreturn));
+void usage(char* program);
 
 // Present an interactive command session.
-void repl(FILE* file, char* instruction, char* buffer);
+void repl(FILE* file, /*@out@*/ char* instruction, /*@out@*/ char* buffer);

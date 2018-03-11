@@ -5,7 +5,7 @@
 #include "fewer.h"
 
 // Format a byte as a hexadecimal string
-void render_boi(char b, char* s) {
+void render_boi(char b, /*@out@*/ char* s) {
   sprintf(s, "%02x", b);
 }
 

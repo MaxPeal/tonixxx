@@ -2,7 +2,10 @@ project: fewer
 
 steps:
   - cd "$TONIXXX_SYNC"
-  - cmake . && make
+  - cmake .
+  # - make lint
+  - make
+  - CTEST_OUTPUT_ON_FAILURE=1 make test
 
 recipes:
   - label: gnu-linux-amd64

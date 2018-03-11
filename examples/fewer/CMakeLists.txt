@@ -9,7 +9,7 @@ endif()
 add_executable(fewer lib/main.c lib/fewer.c lib/fewer.h)
 
 enable_testing()
-add_test(NAME fewertest COMMAND echo "q" | fewer README.md)
+add_test(NAME fewertest COMMAND fewer -t)
 
 add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg lib)
 add_custom_target(splint COMMAND splint lib/main.c lib/fewer.c lib/fewer.h)
