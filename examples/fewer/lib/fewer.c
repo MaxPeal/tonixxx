@@ -3,11 +3,11 @@
 #include "fewer.h"
 
 // Format a byte as a hexadecimal string
-void render_boi(byte b, char* s) {
+void render_boi(unsigned char b, char* s) {
   sprintf(s, "%02x", b);
 }
 
 // Parse a hexadecimal string to a byte
-byte parse_boi(char* s) {
-  return (byte) strtol(s);
+unsigned char parse_boi(char* s) {
+  return (unsigned char) strtol(s, NULL, 16);
 }

@@ -7,9 +7,6 @@ if (CMAKE_C_COMPILER_ID MATCHES "Clang")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wmost -Weverything")
 endif()
 add_executable(fewer lib/main.c lib/fewer.c lib/fewer.h)
-if (UNIX)
-  target_link_libraries(-lreadline)
-endif
 
 enable_testing()
 add_test(NAME fewertest COMMAND echo "q" | fewer README.md)

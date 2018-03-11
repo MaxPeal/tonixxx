@@ -28,7 +28,8 @@ type Recipe struct {
 	Label   string
 	Box     string
 	Version string
-	Type    string
+	GuestType    string
+	ArtifactsGuestPath string
 	Steps   []string
 }
 
@@ -45,54 +46,44 @@ func (o Recipe) Validate() error {
 	return nil
 }
 
-// IsCOMSPEC checks whether a recipe is configured as COMSPEC (Windows) type.
-func (o Recipe) IsCOMSPEC() bool {
-	return o.Type == "COMSPEC"
-}
-
-// IsPOSIX checks whether a recipe is configured as POSIX type.
-// Recipes default to POSIX type if unspecified.
-func (o Recipe) IsPOSIX() bool {
-	return o.Type == "POSIX" || o.Type == ""
-}
-
 // ArtifactsGuest names the guest path for artifacts to be copied during building.
-func (o Recipe) ArtifactsGuest() string {
-	if o.IsCOMSPEC() {
-		return fmt.Sprintf("%s\\%s", VagrantSyncedFolderCOMSPEC, o.Label)
+func (o Recipe) SyncedFolderGuestPath() string {
+	if o.ArtifactsGuestPath != "" {
+		return o.ArtifactsGuestPath
 	}
 
-	return fmt.Sprintf("%s/%s", VagrantSyncedFolder, o.Label)
+	switch o.GuestType {
+	case GuestTypeCygwin:
+		return VagrantSyncedFolderCygwin
+	case GuestTypeSmartOSGZ:
+		return VagrantSyncedFolderSmartOSGZ
+	default:
+		return VagrantSyncedFolderPOSIX
+	}
 }
 
 // GenerateVagrantfile supplies the text content of a Vagrantfile for instantiating a recipe.
 func (o Recipe) GenerateVagrantfile() string {
 	vagrantfileContent := fmt.Sprintf(
-		"Vagrant.configure('2') do |config|\n  config.vm.box = \"%s\"",
+		"Vagrant.configure('2') do |config|\n  config.vm.box = \"%s\"\n",
 		o.Box,
 	)
 
 	if o.Version != "" {
-		vagrantfileContent += "\n  config.vm.box_version = \"%s\"\nend\n"
+		vagrantfileContent += fmt.Sprintf("  config.vm.box_version = \"%s\"\n", o.Version)
 	}
+
+	vagrantfileContent += "\nend"
 
 	return vagrantfileContent
 }
 
 // ConfigureEnvironmentVariable generates a shell command for configuring an environment variable.
 func (o Recipe) ConfigureEnvironmentVariable(key string, value string) string {
-	if o.IsCOMSPEC() {
-		return fmt.Sprintf("set %s=\"%s\"", key, value)
-	}
-
 	return fmt.Sprintf("export %s=\"%s\"", key, value)
 }
 
 // AggregateSteps constructs a logical whole command out of subcommands.
 func (o Recipe) AggregateSteps(steps []string) string {
-	if o.IsCOMSPEC() {
-		return strings.Join(steps, " & ")
-	}
-
 	return strings.Join(steps, " && ")
 }

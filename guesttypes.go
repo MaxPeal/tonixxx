@@ -1,7 +1,12 @@
 package tonixxx
 
-// GuestTypePOSIX identifies a POSIXy Vagrant box.
-const GuestTypePOSIX = "POSIX"
+const (
+	// GuestTypePOSIX designates POSIXy environments.
+	GuestTypePOSIX = "POSIX"
 
-// GuestTypeCOMSPEC identifies a Windows Vagrant box.
-const GuestTypeCOMSPEC = "COMSPEC"
+	// GuestTypeCygwin designates cygwin-like environments.
+	GuestTypeCygwin = "Cygwin"
+
+	// GuestTypeGlobalZone designates SmartOS global zone environments.
+	GuestTypeSmartOSGZ = "SmartOSGZ"
+)

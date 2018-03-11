@@ -1,19 +1,13 @@
 project: fewer
 
 steps:
-  - cmake . && make test drmemory
-  - mkdir -p "$TONIXXX_ARTIFACTS"
-  - cp bin/* "$TONIXXX_ARTIFACTS"
+  - cd "$TONIXXX_SYNC"
+  - cmake . && make
 
 recipes:
-  - label: nop-test
-    box: mcandre/freebsd
-    version : 0.0.1
-    steps:
-      - ls /vagrant
-  # - label: gnu-linux-amd64
-  #   box: mcandre/fewer-buildbot-debian
-  #   version: 0.0.1
+  - label: gnu-linux-amd64
+    box: mcandre/fewer-buildbot-debian
+    # version: 0.0.1
   # - label: gnu-linux-i386
   #   box: mcandre/fewer-buildbot-debian-i386
   #   version: 0.0.1
@@ -47,16 +41,7 @@ recipes:
   # - label: minix-i386
   #   box: mcandre/fewer-buildbot-minix
   #   version: 0.0.1
-  # # Assume bash-oriented build workflow to work around
-  # # hardcoded `bash -l` limitation in vagrant ssh -c.
   # - label: windows-bash-amd64
+  #   type: Cygwin
   #   box: mcandre/fewer-buildbot-windows
   #   version: 0.0.1
-  # - label: windows-comspec-amd64
-  #   box: mcandre/fewer-buildbot-windows-cmd
-  #   version: 0.0.1
-  #   type: COMSPEC
-  #   steps:
-  #     - cmake . & nmake lint test drmemory
-  #     - md "%TONIXXX_ARTIFACTS%"
-  #     - copy bin\* "%TONIXXX_ARTIFACTS%"

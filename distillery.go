@@ -384,10 +384,10 @@ func (o Distillery) PourRecipe(recipe Recipe) error {
 		return err
 	}
 
-	configureEnvironmentVariableStep := recipe.ConfigureEnvironmentVariable(TonixxxArtifactsKey, recipe.ArtifactsGuest())
+	configureSyncedFolderEnvVarStep := recipe.ConfigureEnvironmentVariable(TonixxxSync, recipe.SyncedFolderGuestPath())
 
 	var stepsWithEnvironmentVariables []string
-	stepsWithEnvironmentVariables = append(stepsWithEnvironmentVariables, configureEnvironmentVariableStep)
+	stepsWithEnvironmentVariables = append(stepsWithEnvironmentVariables, configureSyncedFolderEnvVarStep)
 	stepsWithEnvironmentVariables = append(stepsWithEnvironmentVariables, recipe.Steps...)
 
 	stepsAggregated := recipe.AggregateSteps(stepsWithEnvironmentVariables)

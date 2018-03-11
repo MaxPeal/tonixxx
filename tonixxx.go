@@ -14,14 +14,17 @@ const TonixxxConfigBasename = "tonixxx.yaml"
 // TonixxxDataBasename describes the base path for housing tonixxx project metadata, including user build artifacts/ and Vagrant boxes during the build process.
 const TonixxxDataBasename = ".tonixxx"
 
-// TonixxxArtifactsKey names the guest environment variable for introspecting the tonixxx artifact output directory path.
-const TonixxxArtifactsKey = "TONIXXX_ARTIFACTS"
+// TonixxxSyncKey names the guest environment variable for introspecting a VM's synced folder guest path.
+const TonixxxSync = "TONIXXX_SYNC"
 
-// VagrantSyncedFolder names the guest folder synced to the host.
-const VagrantSyncedFolder = "/vagrant"
+// VagrantSyncedFolderPOSIX names the guest folder synced with the host for POSIXy VMs.
+const VagrantSyncedFolderPOSIX = "/vagrant"
 
-// VagrantSyncedFolderCOMSPEC names the guest folder synced to the host, with the guest folder in Windows-style backslash notation.
-const VagrantSyncedFolderCOMSPEC = "C:\\Users\\vagrant\\Documents\\Vagrant Shares\\"
+// VagrantSyncedFolderCygwin names the guest folder synced with the host, with the guest folder in UNIX-style forwardslash notation.
+const VagrantSyncedFolderCygwin = "/c/vagrant"
+
+// VagrantSyncedFolderSmartOSGZ names the guest folder synced with the host for SmartOS global zone VMs.
+const VagrantSyncedFolderSmartOSGZ = "/opt/vagrant"
 
 // DataHome provides the path to the per-user tonixxx data directory.
 func DataHome() (string, error) {

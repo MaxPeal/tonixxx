@@ -1,15 +1,17 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "fewer.h"
 
 const char* PROMPT = "> ";
 
 void usage(char* program) {
-  printf("Usage: %s <filename>\n");
+  printf("Usage: %s <filename>\n", program);
   exit(1);
 }
 
-int repl(FILE* file, char* instruction, byte buffer[]) {
+int repl(FILE* file, char* instruction, unsigned char buffer[]) {
+  char* hex_buf = malloc(3 * sizeof(char));
   size_t read_count;
 
   while (true) {
@@ -25,9 +27,13 @@ int repl(FILE* file, char* instruction, byte buffer[]) {
           return 1;
         }
 
-        printf("%s\n", render_boi(buffer[0]));
+        render_boi(buffer[0], hex_buf);
+        printf("%s\n", hex_buf);
+
         break;
       case 'q':
+        free(hex_buf);
+
         return 0;
     }
   }
@@ -36,7 +42,7 @@ int repl(FILE* file, char* instruction, byte buffer[]) {
 int main(int argc, char** argv) {
   int status;
   FILE* file;
-  byte buffer[1];
+  unsigned char buffer[1];
   char* filename;
   char* instruction;
   instruction = malloc(1024 * sizeof(instruction));
