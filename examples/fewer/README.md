@@ -6,6 +6,7 @@ The fewer command line tool navigates files one byte at a time, printing the `n`
 
 ```console
 $ fewer README.md
+> n
 23
 > n
 20
@@ -15,5 +16,12 @@ $ fewer README.md
 23
 #
 > q
+
 $
+```
+
+# BUILD
+
+```console
+$ cmake . && make
 ```

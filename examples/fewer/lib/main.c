@@ -13,25 +13,30 @@ void usage(char* program) {
   exit(EXIT_FAILURE);
 }
 
-int repl(FILE* file, char* instruction, unsigned char buffer[]) {
+void repl(FILE* file, char* instruction, char* buffer) {
   size_t read_count;
+  int item_count;
   unsigned char c;
   char* hex_buf = malloc(3 * sizeof(char));
 
   while (true) {
     printf("%s", PROMPT);
-    (void) scanf("%1023s", instruction);
+    item_count = scanf("%1023s", instruction);
+
+    if (item_count == EOF) {
+      free(hex_buf);
+      return;
+    }
 
     switch (instruction[0]) {
       case 'n':
-        read_count = fread(&buffer, 1, 1, file);
+        read_count = fread(buffer, 1, 1, file);
 
         if (read_count != 1) {
           printf("Error reading byte");
 
           free(hex_buf);
-
-          return 1;
+          return;
         }
 
         render_boi(buffer[0], hex_buf);
@@ -46,19 +51,16 @@ int repl(FILE* file, char* instruction, unsigned char buffer[]) {
         break;
       case 'q':
         free(hex_buf);
-
-        return 0;
+        return;
     }
   }
 }
 
 int main(int argc, char** argv) {
-  int status;
   FILE* file;
-  unsigned char buffer[1];
   char* filename;
-  char* instruction;
-  instruction = malloc(1024 * sizeof(char));
+  char* buffer = malloc(1 * sizeof(char));
+  char* instruction = malloc(1024 * sizeof(char));
 
   if (argc != 2) {
     usage(argv[0]);
@@ -70,17 +72,15 @@ int main(int argc, char** argv) {
 
   if (file == NULL) {
     printf("Error reading %s\n", filename);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
-  status = repl(file, instruction, buffer);
+  repl(file, instruction, buffer);
 
-  if (!fclose(file)) {
+  free(buffer);
+
+  if (fclose(file)) {
     printf("Error closing %s\n", filename);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
-
-  free(instruction);
-
-  exit(status);
 }

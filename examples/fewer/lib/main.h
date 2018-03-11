@@ -2,6 +2,8 @@
 
 #pragma once
 
+// Display command line syntax information.
 void usage(char* program) __attribute((noreturn));
 
-int repl(FILE* file, char* instruction, unsigned char buffer[]);
+// Present an interactive command session.
+void repl(FILE* file, char* instruction, char* buffer);

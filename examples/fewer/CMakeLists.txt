@@ -15,3 +15,5 @@ add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=
 add_custom_target(splint COMMAND splint lib/main.c lib/fewer.c lib/fewer.h)
 add_custom_target(vera++ COMMAND vera++ -s lib/main.c lib/fewer.c lib/fewer.h)
 add_custom_target(lint DEPENDS cppcheck splint vera++)
+
+add_custom_target(clean-cmake COMMAND find . -iwholename '*cmake*' -not -name CMakeLists.txt -delete)
