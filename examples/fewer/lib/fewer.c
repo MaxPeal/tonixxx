@@ -1,3 +1,5 @@
+// Copyright 2017 Andrew Pennebaker
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "fewer.h"

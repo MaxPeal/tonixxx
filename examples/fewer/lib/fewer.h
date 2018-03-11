@@ -1,3 +1,5 @@
+// Copyright 2017 Andrew Pennebaker
+
 #pragma once
 
 // Format a byte as a hexadecimal string
