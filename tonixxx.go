@@ -15,7 +15,7 @@ const TonixxxConfigBasename = "tonixxx.yaml"
 const TonixxxDataBasename = ".tonixxx"
 
 // TonixxxSyncKey names the guest environment variable for introspecting a VM's synced folder guest path.
-const TonixxxSync = "TONIXXX_SYNC"
+const TonixxxSyncKey = "TONIXXX_SYNC"
 
 // VagrantSyncedFolderPOSIX names the guest folder synced with the host for POSIXy VMs.
 const VagrantSyncedFolderPOSIX = "/vagrant"

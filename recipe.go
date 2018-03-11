@@ -25,12 +25,12 @@ var RecipeLabelPattern = regexp.MustCompile(`^[a-zA-Z0-9\.\-_]+$`)
 // Recipe describes the user's build workflow for some target environment.
 // By default, recipes assume "POSIX".
 type Recipe struct {
-	Label   string
-	Box     string
-	Version string
-	GuestType    string
+	Label              string
+	Box                string
+	Version            string
+	GuestType          string
 	ArtifactsGuestPath string
-	Steps   []string
+	Steps              []string
 }
 
 // Validate applies some semantic checks to a Recipe configuration.

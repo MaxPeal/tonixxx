@@ -384,7 +384,7 @@ func (o Distillery) PourRecipe(recipe Recipe) error {
 		return err
 	}
 
-	configureSyncedFolderEnvVarStep := recipe.ConfigureEnvironmentVariable(TonixxxSync, recipe.SyncedFolderGuestPath())
+	configureSyncedFolderEnvVarStep := recipe.ConfigureEnvironmentVariable(TonixxxSyncKey, recipe.SyncedFolderGuestPath())
 
 	var stepsWithEnvironmentVariables []string
 	stepsWithEnvironmentVariables = append(stepsWithEnvironmentVariables, configureSyncedFolderEnvVarStep)
