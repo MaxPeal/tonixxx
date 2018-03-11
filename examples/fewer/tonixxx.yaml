@@ -15,8 +15,8 @@ recipes:
   #   box: mcandre/fewer-buildbot-busybox
   # - label: darwin-amd64
   #   box: mcandre/fewer-buildbot-macos
-  # - label: freebsd-amd64
-  #   box: mcandre/fewer-buildbot-freebsd
+  - label: freebsd-amd64
+    box: mcandre/fewer-buildbot-freebsd
   # - label: dragonflybsd-amd64
   #   box: mcandre/fewer-buildbot-dragonflybsd
   # - label: solaris-i386

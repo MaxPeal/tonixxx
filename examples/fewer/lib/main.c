@@ -3,12 +3,16 @@
 #include <stdlib.h>
 #include "fewer.h"
 
-const char* PROMPT = "> ";
+static const char* PROMPT = "> ";
+
+void usage(char* program) __attribute((noreturn));
 
 void usage(char* program) {
   printf("Usage: %s <filename>\n", program);
   exit(1);
 }
+
+int repl(FILE* file, char* instruction, unsigned char buffer[]);
 
 int repl(FILE* file, char* instruction, unsigned char buffer[]) {
   char* hex_buf = malloc(3 * sizeof(char));

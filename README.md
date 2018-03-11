@@ -11,6 +11,8 @@ $ tonixxx boil
 
 $ tree ~/.tonixxx/fewer/bin
 /Users/andrew/.tonixxx/fewer/bin
+├── freebsd-amd64
+│   └── fewer
 └── gnu-linux-amd64
     └── fewer
 ```
