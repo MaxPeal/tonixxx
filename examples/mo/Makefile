@@ -1,0 +1,22 @@
+BIN=bin/mo
+
+FLAGS=-O2 -Wall -fwarn-tabs --make -fforce-recomp -o $(BIN)
+
+all: $(BIN)
+
+$(BIN): Mo.hs
+	mkdir -p bin
+	ghc $(FLAGS) Mo.hs
+
+test: $(BIN)
+	$(BIN) -t
+
+hlint:
+	hlint .
+
+lint: hlint
+
+clean:
+	-rm -rf bin
+	-rm *.o
+	-rm *.hi

@@ -1,6 +1,8 @@
 # tonixxx: a virtual distillery for cross-compiling binaries
 
-# EXAMPLE
+# EXAMPLES
+
+## fewer.c
 
 ```console
 $ cd examples/fewer
@@ -15,6 +17,23 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 └── gnu-linux-amd64
     └── fewer
+```
+
+## Mo.hs
+
+```console
+$ cd examples/mo
+
+$ tonixxx boil
+...
+2018/03/12 16:39:49 All builds completed successfully. Select artifacts may appear in /Users/andrew/.tonixxx/mo/bin
+
+$ tree ~/.tonixxx/mo/bin
+/Users/andrew/.tonixxx/mo/bin
+├── freebsd-amd64
+│   └── mo
+└── gnu-linux-amd64
+    └── mo
 ```
 
 See `tonixxx -help` for more information.

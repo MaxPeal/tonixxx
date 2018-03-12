@@ -1,0 +1,12 @@
+project: mo
+
+steps:
+  - cd "$TONIXXX_SYNC"
+  - make
+  - make test
+
+recipes:
+  - label: gnu-linux-amd64
+    box: mcandre/mo-buildbot-debian
+  - label: freebsd-amd64
+    box: mcandre/mo-buildbot-freebsd
