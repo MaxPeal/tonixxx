@@ -13,6 +13,13 @@ tonixxx assists developers in managing cross-platform software builds. No need f
 ```console
 $ cd examples/fewer
 
+$ tree lib
+lib
+├── fewer.c
+├── fewer.h
+├── main.c
+└── main.h
+
 $ tonixxx boil
 ...
 2018/03/11 12:53:50 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/fewer/bin
@@ -30,6 +37,13 @@ $ tree ~/.tonixxx/fewer/bin
 ```console
 $ cd examples/palindrome
 
+$ tree lib
+lib
+├── main.cpp
+├── main.h
+├── palindrome.cpp
+└── palindrome.h
+
 $ tonixxx boil
 ...
 2018/03/13 14:34:19 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/palindrome/bin
@@ -46,6 +60,9 @@ $ tree ~/.tonixxx/palindrome/bin
 
 ```console
 $ cd examples/mo
+
+$ ls Mo.hs
+Mo.hs
 
 $ tonixxx boil
 ...
