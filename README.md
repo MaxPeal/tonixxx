@@ -15,7 +15,7 @@ $ cd examples/fewer
 
 $ tonixxx boil
 ...
-2018/03/11 12:53:50 All builds completed successfully. Select artifacts may appear in /Users/andrew/.tonixxx/fewer/bin
+2018/03/11 12:53:50 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/fewer/bin
 
 $ tree ~/.tonixxx/fewer/bin
 /Users/andrew/.tonixxx/fewer/bin
@@ -32,7 +32,7 @@ $ cd examples/palindrome
 
 $ tonixxx boil
 ...
-2018/03/13 14:34:19 All builds completed successfully. Select artifacts may appear in /Users/andrew/.tonixxx/palindrome/bin
+2018/03/13 14:34:19 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/palindrome/bin
 
 $ tree ~/.tonixxx/palindrome/bin
 /Users/andrew/.tonixxx/palindrome/bin
@@ -49,7 +49,7 @@ $ cd examples/mo
 
 $ tonixxx boil
 ...
-2018/03/12 16:39:49 All builds completed successfully. Select artifacts may appear in /Users/andrew/.tonixxx/mo/bin
+2018/03/12 16:39:49 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/mo/bin
 
 $ tree ~/.tonixxx/mo/bin
 /Users/andrew/.tonixxx/mo/bin
