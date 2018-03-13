@@ -27,7 +27,7 @@ tonixxx assists developers in managing cross-platform software builds. No need f
 2. Label your build bots.
 3. Run `tonixxx boil`.
 
-See `examples` for more details on configuring tonixxx.yaml recipes and provisioning new build bot Vagrant boxes.
+See [examples/](https://github.com/mcandre/tonixxx/tree/master/examples) for more details on configuring tonixxx.yaml recipes and provisioning new build bot Vagrant boxes.
 
 See `tonixxx -help` for more information on tonixxx call syntax.
 
