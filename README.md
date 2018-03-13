@@ -21,6 +21,12 @@ examples/fewer$ tree ~/.tonixxx/fewer/bin
 
 tonixxx assists developers in managing cross-platform software builds. No need for dedicated hardware for each platform, no need for dual booting. tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries for different operating system kernels. It's great for managing software ports from your laptop or CI server!
 
+# INSTALL
+
+```console
+$ go get github.com/mcandre/tonixxx/...
+```
+
 ## How to cross-compile your project with tonixxx
 
 1. List your build steps in a `tonixxx.yaml` file.
@@ -60,10 +66,21 @@ See `tonixxx -help` for more information on tonixxx call syntax.
 * [megacheck](https://github.com/dominikh/go-tools/tree/master/cmd/megacheck)
 * [gox](https://github.com/mitchellh/gox), a tool so cool that it inspired tonixxx!
 
-## CHECKOUT DEPENDENCIES
+## INSTALL FROM LOCAL GIT REPOSITORY
 
 ```console
+$ mkdir -p "$GOPATH/src/github.com/mcandre"
+$ git clone https://github.com/mcandre/tonixxx.git "$GOPATH/src/github.com/mcandre/tonixxx"
+$ cd "$GOPATH/src/github.com/mcandre/tonixxx"
 $ git submodule update --init
+$ cd cmd/tonixxx
+$ go install
+```
+
+## UNINSTALL
+
+```console
+$ make uninstall
 ```
 
 ## LINT
@@ -72,22 +89,10 @@ $ git submodule update --init
 $ make lint
 ```
 
-## BUILD AND INSTALL
-
-```console
-$ make install
-```
-
 ## PORT
 
 ```console
 $ make port
-```
-
-## UNINSTALL
-
-```console
-$ make uninstall
 ```
 
 # HONORABLE MENTIONS
