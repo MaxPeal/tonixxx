@@ -1,5 +1,7 @@
 # tonixxx: a virtual distillery for cross-compiling binaries
 
+![tonixxx-logo](https://raw.githubusercontent.com/mcandre/tonixxx/master/tonixxx.png)
+
 # ABOUT
 
 tonixxx assists developers in managing cross-platform software builds. No need for dedicated hardware for each platform, no need for dual booting. tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries for different operating system kernels. It's great for managing software ports from your laptop or CI server!
