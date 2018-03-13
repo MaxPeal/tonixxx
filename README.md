@@ -21,9 +21,11 @@ examples/fewer$ tree ~/.tonixxx/fewer/bin
 
 tonixxx assists developers in managing cross-platform software builds. No need for dedicated hardware for each platform, no need for dual booting. tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries for different operating system kernels. It's great for managing software ports from your laptop or CI server!
 
-Step 1. List your build steps in a `tonixxx.yaml` file.
-Step 2. Label your build bots.
-Step 3. Run `tonixxx boil`.
+## How to cross-compile your project with tonixxx
+
+1. List your build steps in a `tonixxx.yaml` file.
+2. Label your build bots.
+3. Run `tonixxx boil`.
 
 See `examples` for more details on configuring tonixxx.yaml recipes and provisioning new build bot Vagrant boxes.
 
