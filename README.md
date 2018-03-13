@@ -2,29 +2,14 @@
 
 ![tonixxx-logo](https://raw.githubusercontent.com/mcandre/tonixxx/master/tonixxx.png)
 
-# ABOUT
-
-tonixxx assists developers in managing cross-platform software builds. No need for dedicated hardware for each platform, no need for dual booting. tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries for different operating system kernels. It's great for managing software ports from your laptop or CI server!
-
-# EXAMPLES
-
-## C
+# EXAMPLE
 
 ```console
-$ cd examples/fewer
-
-$ tree lib
-lib
-├── fewer.c
-├── fewer.h
-├── main.c
-└── main.h
-
-$ tonixxx boil
+examples/fewer$ tonixxx boil
 ...
 2018/03/11 12:53:50 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/fewer/bin
 
-$ tree ~/.tonixxx/fewer/bin
+examples/fewer$ tree ~/.tonixxx/fewer/bin
 /Users/andrew/.tonixxx/fewer/bin
 ├── freebsd-amd64
 │   └── fewer
@@ -32,51 +17,17 @@ $ tree ~/.tonixxx/fewer/bin
     └── fewer
 ```
 
-## C++
+# ABOUT
 
-```console
-$ cd examples/palindrome
+tonixxx assists developers in managing cross-platform software builds. No need for dedicated hardware for each platform, no need for dual booting. tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries for different operating system kernels. It's great for managing software ports from your laptop or CI server!
 
-$ tree lib
-lib
-├── main.cpp
-├── main.h
-├── palindrome.cpp
-└── palindrome.h
+Step 1. List your build steps in a `tonixxx.yaml` file.
+Step 2. Label your build bots.
+Step 3. Run `tonixxx boil`.
 
-$ tonixxx boil
-...
-2018/03/13 14:34:19 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/palindrome/bin
+See `examples` for more details on configuring tonixxx.yaml recipes and provisioning new build bot Vagrant boxes.
 
-$ tree ~/.tonixxx/palindrome/bin
-/Users/andrew/.tonixxx/palindrome/bin
-├── freebsd-amd64
-│   └── palindrome
-└── gnu-linux-amd64
-    └── palindrome
-```
-
-## Haskell
-
-```console
-$ cd examples/mo
-
-$ ls Mo.hs
-Mo.hs
-
-$ tonixxx boil
-...
-2018/03/12 16:39:49 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/mo/bin
-
-$ tree ~/.tonixxx/mo/bin
-/Users/andrew/.tonixxx/mo/bin
-├── freebsd-amd64
-│   └── mo
-└── gnu-linux-amd64
-    └── mo
-```
-
-See `tonixxx -help` for more information.
+See `tonixxx -help` for more information on tonixxx call syntax.
 
 # RUNTIME REQUIREMENTS
 
