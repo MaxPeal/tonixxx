@@ -21,11 +21,13 @@ examples/bronze$ tree ~/.tonixxx/bronze/bin
 
 tonixxx assists developers in cross-compiling software projects. No need for dedicated hardware, nor dual booting, nor configuring obscure toolchains. Instead, tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries targeting assorted operating system kernel environments. tonixxx is language and platform agnostic, so you can build to and from a multitude of operating systems, and build projects written in a multitude of programming languages. It's great for automating software ports from your laptop or CI server!
 
-# INSTALL
+# DOWNLOAD
 
-```console
-$ go get github.com/mcandre/tonixxx/...
-```
+https://github.com/mcandre/tonixxx/releases
+
+# API DOCUMENTATION
+
+https://godoc.org/github.com/mcandre/tonixxx
 
 ## How to cross-compile your project with tonixxx
 
@@ -65,6 +67,14 @@ See `tonixxx -help` for more information on tonixxx invocation syntax.
 * [opennota/check](https://github.com/opennota/check)
 * [megacheck](https://github.com/dominikh/go-tools/tree/master/cmd/megacheck)
 * [gox](https://github.com/mitchellh/gox), a tool so cool that it inspired tonixxx!
+
+## INSTALL FROM REMOTE GIT REPOSITORY
+
+```console
+$ go get github.com/mcandre/tonixxx/...
+```
+
+(Yes, include the ellipsis as well, it's the magic Go syntax for downloading, building, and installing all components of a package, including any libraries and command line tools.)
 
 ## INSTALL FROM LOCAL GIT REPOSITORY
 
