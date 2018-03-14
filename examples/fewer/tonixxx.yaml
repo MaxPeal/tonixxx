@@ -4,34 +4,14 @@ steps:
   - cd "$TONIXXX_SYNC"
   - cmake .
   # - make lint
-  - make
-  - CTEST_OUTPUT_ON_FAILURE=1 make test
+  - cmake --build . --config Release
+  - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
 
 recipes:
-  - label: gnu-linux-amd64
-    box: mcandre/fewer-buildbot-debian
-  # - label: gnu-linux-i386
-  #   box: mcandre/fewer-buildbot-debian-i386
-  # - label: musl-linux-amd64
-  #   box: mcandre/fewer-buildbot-alpine
-  # - label: uclibc-linux-amd64
-  #   box: mcandre/fewer-buildbot-busybox
-  # - label: darwin-amd64
-  #   box: mcandre/fewer-buildbot-macos
-  - label: freebsd-amd64
-    box: mcandre/fewer-buildbot-freebsd
-  # - label: dragonflybsd-amd64
-  #   box: mcandre/fewer-buildbot-dragonflybsd
-  # - label: solaris-i386
-  #   box: mcandre/fewer-buildbot-dilos
-  # - label: solaris-sparc
-  #   box: mcandre/fewer-buildbot-dilos-sparc
-  # - label: openbsd-amd64
-  #   box: mcandre/fewer-buildbot-openbsd
-  # - label: netbsd-amd64
-  #   box: mcandre/fewer-buidlbot-netbsd
-  # - label: minix-i386
-  #   box: mcandre/fewer-buildbot-minix
-  # - label: windows-amd64
-  #   type: Cygwin
-  #   box: mcandre/fewer-buildbot-windows
+  # - label: gnu-linux-amd64
+  #   box: mcandre/fewer-buildbot-debian
+  # - label: freebsd-amd64
+  #   box: mcandre/fewer-buildbot-freebsd
+  - label: windows-amd64
+    guesttype: Cygwin
+    box: mcandre/fewer-buildbot-windows

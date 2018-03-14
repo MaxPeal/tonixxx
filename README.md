@@ -13,8 +13,10 @@ examples/bronze$ tree ~/.tonixxx/bronze/bin
 /Users/andrew/.tonixxx/bronze/bin
 ├── freebsd-amd64
 │   └── bronze
-└── gnu-linux-amd64
-    └── bronze
+├── gnu-linux-amd64
+│   └── bronze
+└── windows-amd64
+    └── fewer.exe
 ```
 
 # ABOUT
