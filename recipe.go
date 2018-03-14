@@ -46,7 +46,7 @@ func (o Recipe) Validate() error {
 	return nil
 }
 
-// ArtifactsGuest names the guest path for artifacts to be copied during building.
+// SyncedFolderGuestPath names the guest path for artifacts to be copied during building.
 func (o Recipe) SyncedFolderGuestPath() string {
 	if o.ArtifactsGuestPath != "" {
 		return o.ArtifactsGuestPath
