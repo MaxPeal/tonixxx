@@ -1,0 +1,13 @@
+project: bronze
+
+steps:
+  - cd "$TONIXXX_SYNC"
+  - make lint
+  - make
+  - make test
+
+recipes:
+  - label: gnu-linux-amd64
+    box: mcandre/bronze-buildbot-debian
+  - label: freebsd-amd64
+    box: mcandre/bronze-buildbot-freebsd

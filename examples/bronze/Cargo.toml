@@ -1,0 +1,18 @@
+[package]
+
+name = "bronze"
+description = "a quick math gag"
+version = "0.0.1"
+authors = ["Andrew Pennebaker <andrew.pennebaker@gmail.com>"]
+license = "BSD-2-Clause"
+
+[dependencies]
+clippy = { version = "*", optional = true }
+
+[lib]
+name = "bronze"
+path = "src/lib/bronze.rs"
+
+[[bin]]
+name = "bronze"
+path = "src/bin/bronze.rs"

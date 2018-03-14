@@ -19,7 +19,7 @@ examples/fewer$ tree ~/.tonixxx/fewer/bin
 
 # ABOUT
 
-tonixxx assists developers in managing cross-platform software builds. No need for dedicated hardware for each platform, no need for dual booting. tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries for different operating system kernels. It's great for managing software ports from your laptop or CI server!
+tonixxx assists developers in cross-compiling software projects. No need for dedicated hardware, nor dual booting, nor configuring obscure toolchains. Instead, tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries targeting assorted operating system kernel environments. tonixxx is language and platform agnostic, so you can build to and from a multitude of operating systems, and build projects written in a multitude of programming languages. It's great for automating software ports from your laptop or CI server!
 
 # INSTALL
 
@@ -33,9 +33,9 @@ $ go get github.com/mcandre/tonixxx/...
 2. Label your build bots.
 3. Run `tonixxx boil`.
 
-See [examples/](https://github.com/mcandre/tonixxx/tree/master/examples) for more details on configuring tonixxx.yaml recipes and provisioning new build bot Vagrant boxes.
+See [examples/](https://github.com/mcandre/tonixxx/tree/master/examples) for more details on configuring tonixxx.yaml recipes and provisioning build bots for a variety of programming languages.
 
-See `tonixxx -help` for more information on tonixxx call syntax.
+See `tonixxx -help` for more information on tonixxx invocation syntax.
 
 # RUNTIME REQUIREMENTS
 
@@ -98,7 +98,7 @@ $ make port
 # HONORABLE MENTIONS
 
 * Cross-platform [toolchains](https://elinux.org/Toolchains) can be configured, though the process is fairly masochistic.
-* [Docker](https://www.docker.com/) is a fantastic resource for projects targeting the Linux kernel from different operating systems.
+* [Docker](https://www.docker.com/) is a fantastic resource for projects targeting the Linux kernel (from different host operating systems!)
 * [Go](https://golang.org/) provides superb out-of-the-box cross-compilation features. As a matter of fact, tonixxx was inspired as a workaround in order to support cross-compilation for non-Go projects, including Rust, C, and C++.
 
 # LICENSE
