@@ -34,7 +34,7 @@ install:
 	sh -c "cd cmd/tonixxx && go install"
 
 bin:
-	gox -output="bin/tonixxx-$(VERSION)/{{.OS}}/{{.Arch}}/{{.Dir}}" cmd/...
+	gox -output="bin/tonixxx-$(VERSION)/{{.OS}}/{{.Arch}}/{{.Dir}}" ./cmd/...
 
 archive-ports: bin
 	zipc -chdir bin "tonixxx-$(VERSION).zip" "tonixxx-$(VERSION)"
