@@ -5,12 +5,13 @@
 # EXAMPLE
 
 ```console
-examples/fewer$ tonixxx boil
-...
+$ cd examples/fewer
+
+$ tonixxx boil
 2018/03/11 12:53:50 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/fewer/bin
 
-examples/fewer$ tree ~/.tonixxx/fewer/bin
-/Users/andrew/.tonixxx/fewer/bin
+$ tree ~/.tonixxx/fewer/bin
+~/.tonixxx/fewer/bin
 ├── dragonflybsd-amd64
 │   └── fewer
 ├── freebsd-amd64
