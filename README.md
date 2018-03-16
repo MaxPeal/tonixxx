@@ -17,7 +17,9 @@ examples/fewer$ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── minix-i386
 │   └── fewer
-└── musl-linux-amd64
+├── musl-linux-amd64
+│   └── fewer
+└── openbsd-amd64
     └── fewer
 ```
 
