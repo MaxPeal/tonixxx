@@ -9,12 +9,14 @@ examples/bronze$ tonixxx boil
 ...
 2018/03/11 12:53:50 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/bronze/bin
 
-examples/bronze$ tree ~/.tonixxx/bronze/bin
-/Users/andrew/.tonixxx/bronze/bin
+examples/fewer$ tree ~/.tonixxx/fewer/bin
+/Users/andrew/.tonixxx/fewer/bin
 ├── freebsd-amd64
-│   └── bronze
-└── gnu-linux-amd64
-    └── bronze
+│   └── fewer
+├── gnu-linux-amd64
+│   └── fewer
+└── musl-linux-amd64
+    └── fewer
 ```
 
 # ABOUT

@@ -14,6 +14,11 @@ add_test(NAME fewertest COMMAND fewer -t)
 add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg lib)
 add_custom_target(splint COMMAND splint lib/main.c lib/fewer.c lib/fewer.h)
 add_custom_target(vera++ COMMAND vera++ -s lib/main.c lib/fewer.c lib/fewer.h)
-add_custom_target(lint DEPENDS cppcheck splint vera++)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Void")
+  add_custom_target(lint DEPENDS cppcheck splint)
+else()
+  add_custom_target(lint DEPENDS cppcheck splint vera++)
+endif()
 
 add_custom_target(clean-cmake COMMAND find . -iwholename '*cmake*' -not -name CMakeLists.txt -delete)
