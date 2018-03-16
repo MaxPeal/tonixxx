@@ -15,11 +15,11 @@ examples/fewer$ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── freebsd-amd64
 │   └── fewer
-├── gnu-linux-amd64
+├── linux-gnu-amd64
+│   └── fewer
+├── linux-musl-amd64
 │   └── fewer
 ├── minix-i386
-│   └── fewer
-├── musl-linux-amd64
 │   └── fewer
 ├── openbsd-amd64
 │   └── fewer
