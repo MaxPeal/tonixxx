@@ -120,3 +120,7 @@ $ make port
 # LICENSE
 
 FreeBSD
+
+# DISCLAIMER
+
+tonixxx is not magic, but simply a wrapper for virtual machines and other Vagrant hypervisors. To truly port an application of practical value, you will likely need to work on the portions of your app that are platform-specific. This may mean, for example, omitting readline when targeting Windows; or rewriting build scripts from Windows-centric .BAT files in terms of a more cross-platform build system. tonixxx will not write the code for you, but it will help you to more quickly test how your source code behaves with different environments. As you port your app to more platforms, you may realize some subroutines failing to compile, or crashing, or even performing faster compared to builds for other platforms. Good luck and keep coding!
