@@ -11,6 +11,8 @@ examples/bronze$ tonixxx boil
 
 examples/fewer$ tree ~/.tonixxx/fewer/bin
 /Users/andrew/.tonixxx/fewer/bin
+├── dragonflybsd-amd64
+│   └── fewer
 ├── freebsd-amd64
 │   └── fewer
 ├── gnu-linux-amd64

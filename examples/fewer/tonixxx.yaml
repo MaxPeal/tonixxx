@@ -16,5 +16,9 @@ recipes:
     box: mcandre/fewer-buildbot-freebsd
   - label: openbsd-amd64
     box: mcandre/fewer-buildbot-openbsd
+  - label: dragonflybsd-amd64
+    box: mcandre/fewer-buildbot-dragonfly
+  # - label: netbsd-amd64
+  #   box: mcandre/fewer-buildbot-netbsd
   - label: minix-i386
     box: mcandre/fewer-buildbot-minix
