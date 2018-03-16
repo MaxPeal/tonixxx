@@ -8,20 +8,20 @@ steps:
   - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
 
 recipes:
-  - label: dragonflybsd-amd64
-    box: mcandre/fewer-buildbot-dragonfly
-  - label: freebsd-amd64
-    box: mcandre/fewer-buildbot-freebsd
-  - label: linux-gnu-amd64
-    box: mcandre/fewer-buildbot-debian
-  - label: linux-musl-amd64
-    box: mcandre/fewer-buildbot-void
-  - label: minix-i386
-    box: mcandre/fewer-buildbot-minix
-  # - label: netbsd-amd64
-  #   box: mcandre/fewer-buildbot-netbsd
-  - label: openbsd-amd64
-    box: mcandre/fewer-buildbot-openbsd
-  - label: windows-amd64
-    guesttype: Cygwin
-    box: mcandre/fewer-buildbot-windows
+  # - label: dragonflybsd-amd64
+  #   box: mcandre/fewer-buildbot-dragonfly
+  # - label: freebsd-amd64
+  #   box: mcandre/fewer-buildbot-freebsd
+  # - label: linux-gnu-amd64
+  #   box: mcandre/fewer-buildbot-debian
+  # - label: linux-musl-amd64
+  #   box: mcandre/fewer-buildbot-void
+  # - label: minix-i386
+  #   box: mcandre/fewer-buildbot-minix
+  - label: netbsd-amd64
+    box: mcandre/fewer-buildbot-netbsd
+  # - label: openbsd-amd64
+  #   box: mcandre/fewer-buildbot-openbsd
+  # - label: windows-amd64
+  #   guesttype: Cygwin
+  #   box: mcandre/fewer-buildbot-windows
