@@ -288,7 +288,8 @@ func (o Distillery) VagrantStatus(recipe Recipe) (string, error) {
 	return outBuffer.String(), nil
 }
 
-// EnsureBootedRecipe checks that a Vagrant box is booted.
+// EnsureBootedRecipe checks that a Vagrant box is booted and that
+// host source code is synced into the box.
 func (o Distillery) EnsureBootedRecipe(recipe Recipe) error {
 	status, err := o.VagrantStatus(recipe)
 
@@ -298,6 +299,8 @@ func (o Distillery) EnsureBootedRecipe(recipe Recipe) error {
 
 	if !VagrantStatusRunningPattern.MatchString(status) {
 		return o.VagrantUp(recipe)
+	} else {
+		return o.Rsync(recipe)
 	}
 
 	return nil
@@ -378,12 +381,14 @@ func (o Distillery) RsyncBack(recipe Recipe) error {
 	return cmd.Run()
 }
 
-// PourRecipe executes a build recipe.
-func (o Distillery) PourRecipe(recipe Recipe) error {
-	if err := o.Rsync(recipe); err != nil {
-		return err
-	}
-
+// BoilRecipe executes a build recipe.
+// The build steps may include instructions to copy select build artifacts
+// to the TonixxxSyncKey path. After a successful run of the build steps,
+// any files in the TonixxxSyncKey path are copied back to the host.
+//
+// If the recipe fails, Boil returns an error.
+// Otherwise, Boil returns nil.
+func (o Distillery) BoilRecipe(recipe Recipe) error {
 	configureSyncedFolderEnvVarStep := recipe.ConfigureEnvironmentVariable(TonixxxSyncKey, recipe.SyncedFolderGuestPath())
 
 	var stepsWithEnvironmentVariables []string
@@ -397,20 +402,6 @@ func (o Distillery) PourRecipe(recipe Recipe) error {
 	}
 
 	return o.RsyncBack(recipe)
-}
-
-// BoilRecipe spins up a Vagrant box and executes a build recipe.
-//
-// Select artifacts may be copied by user steps to ProjectArtifacts path.
-//
-// If the recipe fails, Boil returns an error.
-// Otherwise, Boil returns nil.
-func (o Distillery) BoilRecipe(recipe Recipe) error {
-	if err := o.SpinUpRecipe(recipe); err != nil {
-		return err
-	}
-
-	return o.PourRecipe(recipe)
 }
 
 // Boil executes configured recipes for a distillery.
