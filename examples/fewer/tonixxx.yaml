@@ -4,8 +4,8 @@ steps:
   - cd "$TONIXXX_SYNC"
   - cmake .
   # - make lint
-  - make
-  - CTEST_OUTPUT_ON_FAILURE=1 make test
+  - cmake --build . --config Release
+  - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
 
 recipes:
   - label: gnu-linux-amd64
@@ -22,3 +22,5 @@ recipes:
   #   box: mcandre/fewer-buildbot-netbsd
   - label: minix-i386
     box: mcandre/fewer-buildbot-minix
+  - label: windows-amd64
+    box: mcandre/fewer-buildbot-windows

@@ -21,8 +21,10 @@ examples/fewer$ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── musl-linux-amd64
 │   └── fewer
-└── openbsd-amd64
-    └── fewer
+├── openbsd-amd64
+│   └── fewer
+└── windows-amd64
+    └── fewer.exe
 ```
 
 # ABOUT
