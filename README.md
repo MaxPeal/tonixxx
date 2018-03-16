@@ -5,9 +5,9 @@
 # EXAMPLE
 
 ```console
-examples/bronze$ tonixxx boil
+examples/fewer$ tonixxx boil
 ...
-2018/03/11 12:53:50 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/bronze/bin
+2018/03/11 12:53:50 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/fewer/bin
 
 examples/fewer$ tree ~/.tonixxx/fewer/bin
 /Users/andrew/.tonixxx/fewer/bin
