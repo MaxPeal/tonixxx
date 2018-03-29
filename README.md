@@ -22,6 +22,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-musl-amd64
 │   └── fewer
+├── macos-amd64
+│   └── fewer
 ├── minix-i386
 │   └── fewer
 ├── openbsd-amd64

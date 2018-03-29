@@ -19,6 +19,8 @@ recipes:
     box: mcandre/fewer-buildbot-debian
   - label: linux-musl-amd64
     box: mcandre/fewer-buildbot-void
+  - label: macos-amd64
+    box: mcandre/fewer-buildbot-macos
   - label: minix-i386
     box: mcandre/fewer-buildbot-minix
   - label: openbsd-amd64
