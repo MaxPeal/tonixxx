@@ -3,6 +3,7 @@ project: mo
 steps:
   - cd "$TONIXXX_SYNC"
   - make
+  - make lint
   - make test
 
 recipes:
@@ -12,3 +13,7 @@ recipes:
     box: mcandre/mo-buildbot-freebsd
   - label: hardenedbsd-amd64
     box: mcandre/mo-buildbot-hardenedbsd
+    steps:
+      - cd "$TONIXXX_SYNC"
+      - make
+      - make test
