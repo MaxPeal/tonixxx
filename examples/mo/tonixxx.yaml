@@ -10,3 +10,5 @@ recipes:
     box: mcandre/mo-buildbot-debian
   - label: freebsd-amd64
     box: mcandre/mo-buildbot-freebsd
+  - label: hardenedbsd-amd64
+    box: mcandre/mo-buildbot-hardenedbsd
