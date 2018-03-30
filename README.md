@@ -16,6 +16,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── freebsd-amd64
 │   └── fewer
+├── hardenedbsd-amd64
+│   └── fewer
 ├── illumos-amd64
 │   └── fewer
 ├── linux-gnu-amd64

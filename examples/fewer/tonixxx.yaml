@@ -12,6 +12,8 @@ recipes:
     box: mcandre/fewer-buildbot-dragonfly
   - label: freebsd-amd64
     box: mcandre/fewer-buildbot-freebsd
+  - label: hardenedbsd-amd64
+    box: mcandre/fewer-buildbot-hardenedbsd
   - label: illumos-amd64
     guesttype: SmartOSGZ
     box: mcandre/fewer-buildbot-smartos
