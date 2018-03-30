@@ -12,3 +12,5 @@ recipes:
     box: mcandre/palindrome-buildbot-debian
   - label: freebsd-amd64
     box: mcandre/palindrome-buildbot-freebsd
+  - label: hardenedbsd-amd64
+    box: mcandre/palindrome-buildbot-hardenedbsd
