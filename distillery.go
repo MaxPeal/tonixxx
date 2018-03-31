@@ -11,6 +11,7 @@ import (
 	"path"
 	"regexp"
 
+	"github.com/mcandre/go-mkdir"
 	"github.com/otiai10/copy"
 	"gopkg.in/yaml.v2"
 )
@@ -58,7 +59,7 @@ func (o Distillery) EnsureProjectDirectory() error {
 		return err
 	}
 
-	return EnsureDirectory(projectData)
+	return mkdir.EnsureDirectory(projectData)
 }
 
 // ProjectArtifacts supplies the host path to the aggregated artifacts produced for a project after any Vagrant builds.
@@ -124,7 +125,7 @@ func (o Distillery) CheckData() error {
 		return err
 	}
 
-	return EnsureDirectory(tonixxxHome)
+	return mkdir.EnsureDirectory(tonixxxHome)
 }
 
 // CloneHost supplies the directory path inside ~/.tonixxx in which a particular recipe's Vagrant clone resides.
@@ -150,7 +151,7 @@ func (o Distillery) EnsureCloneRecipePath(recipe Recipe) error {
 		return err
 	}
 
-	return EnsureDirectory(pth)
+	return mkdir.EnsureDirectory(pth)
 }
 
 // VagrantHostRecipeDirectory provides the path to a recipe's Vagrant directory.
@@ -245,7 +246,7 @@ func (o Distillery) EnsureArtifactsRecipeHost(recipe Recipe) error {
 		return err
 	}
 
-	return EnsureDirectory(artifactsHost)
+	return mkdir.EnsureDirectory(artifactsHost)
 }
 
 // VagrantUp boots a Vagrant box.

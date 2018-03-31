@@ -4,3 +4,6 @@
 [submodule "vendor/github.com/otiai10/copy"]
 	path = vendor/github.com/otiai10/copy
 	url = https://github.com/otiai10/copy.git
+[submodule "vendor/github.com/mcandre/go-mkdir"]
+	path = vendor/github.com/mcandre/go-mkdir
+	url = https://github.com/mcandre/go-mkdir.git
