@@ -105,11 +105,11 @@ func (o *Distillery) Load(pth string) error {
 // Validate applies some semantic checks to a Distillery configuration.
 func (o Distillery) Validate() error {
 	if !ProjectNamePattern.MatchString(o.Project) {
-		return fmt.Errorf("Distillery must have a non-empty project name matching %s", ProjectNamePattern)
+		return fmt.Errorf("distillery must have a non-empty project name matching %s", ProjectNamePattern)
 	}
 
 	if len(o.Recipes) < 1 {
-		return errors.New("Distillery configuration missing at least one recipe.")
+		return errors.New("distillery configuration missing at least one recipe")
 	}
 
 	return nil
@@ -299,11 +299,9 @@ func (o Distillery) EnsureBootedRecipe(recipe Recipe) error {
 
 	if !VagrantStatusRunningPattern.MatchString(status) {
 		return o.VagrantUp(recipe)
-	} else {
-		return o.Rsync(recipe)
 	}
 
-	return nil
+	return o.Rsync(recipe)
 }
 
 // SpinUpRecipe checks that a Vagrant box is imported and booted.

@@ -4,3 +4,6 @@
 [submodule "vendor/github.com/otiai10/copy"]
 	path = vendor/github.com/otiai10/copy
 	url = https://github.com/otiai10/copy.git
+[submodule "vendor/github.com/mcandre/mage-extras"]
+	path = vendor/github.com/mcandre/mage-extras
+	url = https://github.com/mcandre/mage-extras

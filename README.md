@@ -71,19 +71,14 @@ See `tonixxx -help` for more information on tonixxx invocation syntax.
 # BUILDTIME REQUIREMENTS
 
 * [Go](https://golang.org/) 1.9+
-
-## Recommended
-
-* sh (e.g. bash)
-* [make](https://www.gnu.org/software/make/)
-* [zipc](https://github.com/mcandre/zipc)
-* [golint](https://github.com/golang/lint)
-* [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports)
-* [errcheck](https://github.com/kisielk/errcheck)
-* [nakedret](https://github.com/alexkohler/nakedret)
-* [opennota/check](https://github.com/opennota/check)
-* [megacheck](https://github.com/dominikh/go-tools/tree/master/cmd/megacheck)
-* [gox](https://github.com/mitchellh/gox), a tool so cool that it inspired tonixxx!
+* [Docker](https://www.docker.com/)
+* [Mage](https://magefile.org/) (e.g., `go get github.com/magefile/mage`)
+* [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports) (e.g. `go get golang.org/x/tools/cmd/goimports`)
+* [golint](https://github.com/golang/lint) (e.g. `go get github.com/golang/lint/golint`)
+* [errcheck](https://github.com/kisielk/errcheck) (e.g. `go get github.com/kisielk/errcheck`)
+* [nakedret](https://github.com/alexkohler/nakedret) (e.g. `go get github.com/alexkohler/nakedret`)
+* [goxcart](https://github.com/mcandre/goxcart) (e.g., `github.com/mcandre/goxcart/...`)
+* [zipc](https://github.com/mcandre/zipc) (e.g. `go get github.com/mcandre/zipc/...`)
 
 ## INSTALL FROM REMOTE GIT REPOSITORY
 
@@ -100,26 +95,25 @@ $ mkdir -p "$GOPATH/src/github.com/mcandre"
 $ git clone https://github.com/mcandre/tonixxx.git "$GOPATH/src/github.com/mcandre/tonixxx"
 $ cd "$GOPATH/src/github.com/mcandre/tonixxx"
 $ git submodule update --init
-$ cd cmd/tonixxx
-$ go install
+$ go install ./...
 ```
 
 ## UNINSTALL
 
 ```console
-$ make uninstall
+$ mage uninstall
 ```
 
 ## LINT
 
 ```console
-$ make lint
+$ mage lint
 ```
 
 ## PORT
 
 ```console
-$ make port
+$ mage port
 ```
 
 # HONORABLE MENTIONS
