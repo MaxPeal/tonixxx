@@ -64,13 +64,16 @@ See `tonixxx -help` for more information on tonixxx invocation syntax.
 * Your choice of Vagrant boxes for targeted compilation, with synced folders enabled using rsync.
 * Sufficient available RAM and disk space for your Vagrant boxes
 
-## Optional
+## Recommended
 
 * [tree](https://linux.die.net/man/1/tree)
 
 # BUILDTIME REQUIREMENTS
 
 * [Go](https://golang.org/) 1.9+
+
+## Recommended
+
 * [Docker](https://www.docker.com/)
 * [Mage](https://magefile.org/) (e.g., `go get github.com/magefile/mage`)
 * [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports) (e.g. `go get golang.org/x/tools/cmd/goimports`)
