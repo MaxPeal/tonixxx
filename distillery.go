@@ -15,18 +15,11 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// ProjectBinariesDirectoryBasename locates project-wide binary aggregation at the end of a build, relative to the tonixxx per-project metadata directory.
-const ProjectBinariesDirectoryBasename = "bin"
+// DefaultOutputDirectory locates project-wide binary aggregation at the end of a build, relative to the tonixxx per-project metadata directory.
+const DefaultOutputDirectory = "bin"
 
 // ProjectNamePattern constrains names in order to use names as-is for file paths while building a project.
 var ProjectNamePattern = regexp.MustCompile(`^[a-zA-Z0-9\.\-_]+$`)
-
-// Distillery describes a multi-platform build configuration.
-type Distillery struct {
-	Project string
-	Steps   []string
-	Recipes []Recipe
-}
 
 // ConfigFile names the host path to the tonixxx default configuration file.
 func ConfigFile() (string, error) {
@@ -37,6 +30,39 @@ func ConfigFile() (string, error) {
 	}
 
 	return path.Join(dir, TonixxxConfigBasename), nil
+}
+
+// Distillery describes a multi-platform build configuration.
+type Distillery struct {
+	// Project distinguishes this build from other potential projects on the same host.
+	//
+	// Example: hello
+	Project string
+
+	// OutputDirectory specifices where build artifacts are placed.
+	// Default is DefaultOutputDirectory.
+	//
+	// Example: bin
+	OutputDirectory string
+
+	// Steps enumerates build steps.
+	//
+	// Example: []string{"./configure", "make"}
+	Steps []string
+
+	// Recipes enumerates build bots.
+	//
+	// Example: []Recipe{Recipe{Label: "linux", Box: "ubuntu/xenial64"}}
+	Recipes []Recipe
+}
+
+// EffectiveOutputDirectory determines the search path for copying artifacts back to the host.
+func (o Distillery) EffectiveOutputDirectory() string {
+	if o.OutputDirectory == "" {
+		return DefaultOutputDirectory
+	}
+
+	return o.OutputDirectory
 }
 
 // ProjectData calculates the per-project tonixxx data directory based on a hash of the project directory absolute path.
@@ -69,7 +95,13 @@ func (o Distillery) ProjectArtifacts() (string, error) {
 		return "", err
 	}
 
-	return path.Join(projectData, ProjectBinariesDirectoryBasename), nil
+	outputDirectory := o.OutputDirectory
+
+	if outputDirectory == "" {
+		outputDirectory = DefaultOutputDirectory
+	}
+
+	return path.Join(projectData, o.EffectiveOutputDirectory()), nil
 }
 
 // Parse transforms a byte sequence into a Distillery struct.
@@ -234,7 +266,7 @@ func (o Distillery) ArtifactsRecipeHost(recipe Recipe) (string, error) {
 		return "", err
 	}
 
-	return path.Join(vagrantHostDir, RecipeBinariesDirectoryBasename), nil
+	return path.Join(vagrantHostDir, o.EffectiveOutputDirectory()), nil
 }
 
 // EnsureArtifactsRecipeHost checks that a recipe's artifacts output directory is allocated.

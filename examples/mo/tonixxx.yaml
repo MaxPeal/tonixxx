@@ -1,19 +1,16 @@
 project: mo
 
+outputdirectory: dist/bin
+
 steps:
   - cd "$TONIXXX_SYNC"
-  - make
-  - make lint
-  - make test
+  - cabal install --only-dependencies
+  - shake
+  - shake lint
+  - shake test
 
 recipes:
   - label: gnu-linux-amd64
     box: mcandre/mo-buildbot-debian
   - label: freebsd-amd64
     box: mcandre/mo-buildbot-freebsd
-  - label: hardenedbsd-amd64
-    box: mcandre/mo-buildbot-hardenedbsd
-    steps:
-      - cd "$TONIXXX_SYNC"
-      - make
-      - make test

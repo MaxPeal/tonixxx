@@ -30,6 +30,5 @@ $ mo -t
 # BUILD
 
 ```console
-$ cmake .
-$ make
+$ shake
 ```

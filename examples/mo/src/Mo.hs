@@ -5,14 +5,14 @@ import qualified Data.Int as DI
 import qualified Test.QuickCheck as QC
 import qualified System.Environment as SE
 
-data Unary = Unary NN.Natural deriving (Eq, Ord)
+newtype Unary = Unary NN.Natural deriving (Eq, Ord)
 
 nat :: Unary -> NN.Natural
 nat (Unary x) = x
 
 instance Show Unary where
   show (Unary 0) = ""
-  show (Unary v) = "1" ++ show (Unary (v - 1))
+  show (Unary v) = '1' : show (Unary (v - 1))
 
 instance Read Unary where
   readsPrec _ "" = [(Unary 0, "")]
@@ -39,7 +39,6 @@ main :: IO ()
 main = do
   args <- SE.getArgs
 
-  if args == ["-t"] then
-    QC.quickCheck propReversible
-  else
-    interact (unlines . map (show . Unary . readNatural) . lines)
+  if args == ["-t"]
+    then QC.quickCheck propReversible
+    else interact (unlines . map (show . Unary . readNatural) . lines)

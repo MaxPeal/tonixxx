@@ -7,9 +7,6 @@ import (
 	"strings"
 )
 
-// RecipeBinariesDirectoryBasename provides a location for Vagrant synced folders to emit any artifacts produced during a build. This directory is relative to the recipe's project directory.
-const RecipeBinariesDirectoryBasename = "bin"
-
 // VagrantfileBasename refers to the standard configuration file basename for configuring Vagrant boxes.
 const VagrantfileBasename = "Vagrantfile"
 
