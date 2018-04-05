@@ -47,3 +47,21 @@ $ cabal install --only-dependencies --enable-documentation
 $ cabal install --only-dependencies --enable-tests
 $ shake
 ```
+
+# LINT
+
+```console
+$ shake lint
+```
+
+# TEST
+
+```console
+$ shake test
+```
+
+# PUBLISH
+
+```console
+$ shake publish
+```
