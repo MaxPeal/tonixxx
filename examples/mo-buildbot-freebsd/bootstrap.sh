@@ -1,5 +1,5 @@
 #!/bin/sh
 cabal update &&
     cabal install happy &&
-    cabal install HLint &&
+    cabal install hlint &&
     cabal install shake
