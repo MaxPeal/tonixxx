@@ -14,12 +14,39 @@ source-repository head
   type:     git
   location: git://github.com/mcandre/tonixxx.git
 
+library
+  build-depends:
+    base >= 4.3.1.0 && < 5
+
+  exposed-modules: Mo
+
+  ghc-options: -Wall -fwarn-tabs
+  hs-source-dirs: src
+
 executable mo
   build-depends:
     base >= 4.3.1.0 && < 5,
     directory >= 1.3.2.1 && < 2,
     QuickCheck >= 2.11.3 && < 3
 
-  main-is: Mo.hs
+  other-modules: Mo
+
+  main-is: CLI.hs
   hs-source-dirs: src
-  ghc-options: -O2 -Wall -fwarn-tabs
+  ghc-options: -Wall -fwarn-tabs
+
+test-suite reference
+  build-depends:
+    base              >= 4.3.1.0 && < 5,
+    QuickCheck        >= 2.11.3 && < 3,
+    test-framework,
+    test-framework-hunit,
+    test-framework-quickcheck2,
+    HUnit
+
+  other-modules: Mo, MoTest
+
+  ghc-options:        -Wall -fwarn-tabs
+  hs-source-dirs:     testsuite/tests, testsuite, src, .
+  main-is:            testsuite/TestRunner.hs
+  type:               exitcode-stdio-1.0

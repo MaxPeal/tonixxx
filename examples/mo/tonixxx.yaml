@@ -4,6 +4,7 @@ outputdirectory: dist/bin
 
 steps:
   - cd "$TONIXXX_SYNC"
+  - cabal install --only-dependencies --enable-documentation
   - cabal install --only-dependencies --enable-tests
   - shake
   - shake lint

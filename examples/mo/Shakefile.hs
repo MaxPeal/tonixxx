@@ -4,6 +4,7 @@ import System.Directory as Dir
 
 main :: IO ()
 main = do
+  let tarball = "dist/mo-0.0.1.tar.gz"
   homeDir <- Dir.getHomeDirectory
 
   shakeArgs shakeOptions{ shakeFiles="dist" } $ do
@@ -18,15 +19,39 @@ main = do
     phony "lint" $
       need ["hlint"]
 
-    phony "test" $ do
+    phony "unitTest" $
+      cmd_ "cabal" "test"
+
+    phony "integrationTest" $ do
       need ["dist/bin/mo" <.> exe]
       cmd_ ("dist/bin/mo" <.> exe) "-t"
+
+    phony "test" $
+      need ["unitTest", "integrationTest"]
 
     phony "install" $
       cmd_ "cabal" "install"
 
-    phony "uninstall" $
+    phony "uninstall" $ do
+      cmd_ "ghc-pkg" "unregister" "--force" "mo"
       removeFilesAfter homeDir ["/.cabal/bin/mo" <.> exe]
 
+    phony "build" $
+      cmd_ "cabal" "build"
+
+    phony "haddock" $
+      cmd_ "cabal" "haddock"
+
+    tarball %> \_ -> do
+      need ["build", "haddock"]
+      cmd_ "cabal" "sdist"
+
+    phony "sdist" $
+      need [tarball]
+
+    phony "publish" $ do
+      need ["sdist"]
+      cmd_ "cabal" "upload" tarball
+
     phony "clean" $
-      removeFilesAfter "dist" ["//*"]
+      cmd_ "cabal" "clean"
