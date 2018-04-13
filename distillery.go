@@ -54,6 +54,11 @@ type Distillery struct {
 	//
 	// Example: []Recipe{Recipe{Label: "linux", Box: "ubuntu/xenial64"}}
 	Recipes []Recipe
+
+	// Debug enables more logging.
+	//
+	// Example: true
+	Debug bool
 }
 
 // EffectiveOutputDirectory determines the search path for copying artifacts back to the host.
@@ -373,6 +378,10 @@ func (o Distillery) VagrantRunRecipe(recipe Recipe, step string) error {
 	cmd.Dir = cloneHost
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+
+	if o.Debug {
+		log.Printf("Executing command: %v", cmd)
+	}
 
 	return cmd.Run()
 }

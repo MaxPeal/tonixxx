@@ -24,6 +24,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-musl-amd64
 │   └── fewer
+├── linux-uclibc-amd64
+│   └── fewer
 ├── macos-amd64
 │   └── fewer
 ├── minix-i386
@@ -131,4 +133,14 @@ FreeBSD
 
 # DISCLAIMER
 
-tonixxx is not magic, but simply a wrapper for virtual machines and other Vagrant hypervisors. To truly port an application of practical value, you will likely need to work on the portions of your app that are platform-specific. This may mean, for example, omitting readline when targeting Windows; or rewriting build scripts from Windows-centric .BAT files in terms of a more cross-platform build system. tonixxx will not write the code for you, but it will help you to more quickly test how your source code behaves with different environments. As you port your app to more platforms, you may realize some subroutines failing to compile, or crashing, or even performing faster compared to builds for other platforms. Good luck and keep coding!
+tonixxx is not magic, but simply a Go wrapper for Vagrant. It won't do the hard work of rewriting your application to support more platforms, but it will lower some barriers to cross-platform development.
+
+* Doesn't rely on soft links
+* Doesn't rely on sh/bat scripts
+* Doesn't erase your code when `vagrant rsync-back`ing
+* Doesn't force you to use any particular build tools or build workflows
+* Does accelerate development and testing
+* Does support UNIX and Windows hosts, as well as UNIX and windows targets
+* Does support configuration commenting
+
+Good luck and keep coding!

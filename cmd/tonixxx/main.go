@@ -60,6 +60,8 @@ func main() {
 	}
 
 	if *flagDebug {
+		distillery.Debug = *flagDebug
+
 		log.Printf("Loaded distillery: %v", distillery)
 	}
 
