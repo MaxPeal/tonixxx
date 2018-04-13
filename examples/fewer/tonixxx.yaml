@@ -21,6 +21,15 @@ recipes:
     box: mcandre/fewer-buildbot-debian
   - label: linux-musl-amd64
     box: mcandre/fewer-buildbot-void
+  - label: linux-uclibc-amd64
+    box: mcandre/fewer-buildbot-openwrt
+    steps:
+      - sudo find /vagrant -exec chown vagrant:vagrant {} +
+      - cd "$TONIXXX_SYNC"
+      - cmake .
+      # - make lint
+      - cmake --build . --config Release
+      - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
   - label: macos-amd64
     box: mcandre/fewer-buildbot-macos
   - label: minix-i386
