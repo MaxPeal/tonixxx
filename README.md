@@ -127,6 +127,10 @@ $ mage port
 * [Docker](https://www.docker.com/) is a fantastic resource for projects targeting the Linux kernel (from different host operating systems!)
 * [Go](https://golang.org/) provides superb out-of-the-box cross-compilation features. As a matter of fact, tonixxx was inspired as a workaround in order to support cross-compilation for non-Go projects, including Rust, C, and C++.
 
+# SEE ALSO
+
+[goxcart](https://github.com/mcandre/goxcart) is a lean option for porting Go projects
+
 # LICENSE
 
 FreeBSD
