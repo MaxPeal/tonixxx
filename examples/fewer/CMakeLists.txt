@@ -34,7 +34,9 @@ add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=
 add_custom_target(splint COMMAND splint lib/main.c lib/fewer.c lib/fewer.h)
 add_custom_target(vera++ COMMAND vera++ -s lib/main.c lib/fewer.c lib/fewer.h)
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "SmartOS" OR ${CMAKE_GNU_C_MACHINE} MATCHES "uclibc")
+if (${CMAKE_SYSTEM_NAME} MATCHES "SmartOS")
+  add_custom_target(lint)
+elseif (${CMAKE_GNU_C_MACHINE} AND ${CMAKE_GNU_C_MACHINE} MATCHES "uclibc")
   add_custom_target(lint)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "MINIX")
   add_custom_target(lint DEPENDS splint)

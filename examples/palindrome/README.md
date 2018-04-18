@@ -29,5 +29,5 @@ $ echo "$?"
 
 ```console
 $ cmake .
-$ make
+$ cmake --build . --config Release
 ```

@@ -3,9 +3,9 @@ project: palindrome
 steps:
   - cd "$TONIXXX_SYNC"
   - cmake .
-  - make
-  - make lint
-  - make test
+  - cmake --build . --target lint
+  - cmake --build . --config Release
+  - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
 
 recipes:
   - label: gnu-linux-amd64

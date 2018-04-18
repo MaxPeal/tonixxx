@@ -3,7 +3,7 @@ project: fewer
 steps:
   - cd "$TONIXXX_SYNC"
   - cmake .
-  # - make lint
+  # - cmake --build . --target lint
   - cmake --build . --config Release
   - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
 
@@ -27,7 +27,7 @@ recipes:
       - sudo find /vagrant -exec chown vagrant:vagrant {} +
       - cd "$TONIXXX_SYNC"
       - cmake .
-      # - make lint
+      # - cmake --build . --target lint
       - cmake --build . --config Release
       - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
   - label: macos-amd64

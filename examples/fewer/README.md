@@ -27,5 +27,5 @@ Usage: fewer -t|-h|<filename>
 
 ```console
 $ cmake .
-$ make
+$ cmake --build . --config Release
 ```
