@@ -49,4 +49,7 @@ recipes:
     box: mcandre/fewer-buildbot-openbsd
   - label: windows-amd64
     guesttype: Cygwin
-    box: mcandre/fewer-buildbot-windows
+    box: mcandre/fewer-buildbot-windows-amd64
+  - label: windows-i386
+    guesttype: Cygwin
+    box: mcandre/fewer-buildbot-windows-i386
