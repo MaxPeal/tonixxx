@@ -18,7 +18,9 @@ recipes:
     guesttype: SmartOSGZ
     box: mcandre/fewer-buildbot-smartos
   - label: linux-gnu-amd64
-    box: mcandre/fewer-buildbot-debian
+    box: mcandre/fewer-buildbot-debian-amd64
+  - label: linux-gnu-i386
+    box: mcandre/fewer-buildbot-debian-i386
   - label: linux-musl-amd64
     box: mcandre/fewer-buildbot-void
   - label: linux-uclibc-amd64
