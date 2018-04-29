@@ -18,11 +18,22 @@ recipes:
     guesttype: SmartOSGZ
     box: mcandre/fewer-buildbot-smartos
   - label: linux-gnu-amd64
-    box: mcandre/fewer-buildbot-debian
+    box: mcandre/fewer-buildbot-debian-amd64
+  - label: linux-gnu-i386
+    box: mcandre/fewer-buildbot-debian-i386
   - label: linux-musl-amd64
     box: mcandre/fewer-buildbot-void
   - label: linux-uclibc-amd64
-    box: mcandre/fewer-buildbot-openwrt
+    box: mcandre/fewer-buildbot-openwrt-amd64
+    steps:
+      - sudo find /vagrant -exec chown vagrant:vagrant {} +
+      - cd "$TONIXXX_SYNC"
+      - cmake .
+      # - cmake --build . --target lint
+      - cmake --build . --config Release
+      - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
+  - label: linux-uclibc-i386
+    box: mcandre/fewer-buildbot-openwrt-i386
     steps:
       - sudo find /vagrant -exec chown vagrant:vagrant {} +
       - cd "$TONIXXX_SYNC"
@@ -40,4 +51,7 @@ recipes:
     box: mcandre/fewer-buildbot-openbsd-i386
   - label: windows-amd64
     guesttype: Cygwin
-    box: mcandre/fewer-buildbot-windows
+    box: mcandre/fewer-buildbot-windows-amd64
+  - label: windows-i386
+    guesttype: Cygwin
+    box: mcandre/fewer-buildbot-windows-i386

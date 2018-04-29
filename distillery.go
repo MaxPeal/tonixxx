@@ -553,15 +553,15 @@ func (o Distillery) MergeArtifacts(recipe Recipe) error {
 	return copy.Copy(artifactsRecipePath, topLevelRecipeArtifactsDirectory)
 }
 
-// RemoveData removes the TonixxxData host directory.
-func (o Distillery) RemoveData() error {
-	tonixxxHome, err := DataHome()
+// RemoveProjectData removes the TonixxxData project directory.
+func (o Distillery) RemoveProjectData() error {
+	projectData, err := o.ProjectData()
 
 	if err != nil {
 		return err
 	}
 
-	return os.RemoveAll(tonixxxHome)
+	return os.RemoveAll(projectData)
 }
 
 // CleanRecipe halts a Vagrant box and removes the files from disk.
@@ -595,5 +595,5 @@ func (o Distillery) Clean() error {
 		}
 	}
 
-	return o.RemoveData()
+	return o.RemoveProjectData()
 }

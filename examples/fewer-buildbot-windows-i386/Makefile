@@ -1,15 +1,17 @@
-BOX=fewer-buildbot-openwrt.box
+BOX_NAMESPACE=mcandre
+BOX_BASENAME=fewer-buildbot-windows-i386
+BOX=$(BOX_BASENAME).box
 
 .PHONY: launch-vm clean-vm clean-boxes clean-vagrant-metadata
 
-launch-vm: Vagrantfile
+launch-vm: Vagrantfile bootstrap.ps1
 	vagrant up
 
 clean-vm:
 	-vagrant destroy -f
 
 clean-boxes:
-	-rm -rf *.box
+	-rm *.box
 
 clean-vagrant-metadata:
 	-rm -rf .vagrant
@@ -20,4 +22,4 @@ $(BOX): clean-boxes clean-vm launch-vm export.Vagrantfile
 	vagrant package --output $(BOX) --vagrantfile export.Vagrantfile
 
 import: $(BOX)
-	vagrant box add --force --name mcandre/fewer-buildbot-openwrt $(BOX)
+	vagrant box add --force --name $(BOX_NAMESPACE)/$(BOX_BASENAME) $(BOX)
