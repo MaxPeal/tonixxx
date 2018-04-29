@@ -24,7 +24,16 @@ recipes:
   - label: linux-musl-amd64
     box: mcandre/fewer-buildbot-void
   - label: linux-uclibc-amd64
-    box: mcandre/fewer-buildbot-openwrt
+    box: mcandre/fewer-buildbot-openwrt-amd64
+    steps:
+      - sudo find /vagrant -exec chown vagrant:vagrant {} +
+      - cd "$TONIXXX_SYNC"
+      - cmake .
+      # - cmake --build . --target lint
+      - cmake --build . --config Release
+      - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
+  - label: linux-uclibc-i386
+    box: mcandre/fewer-buildbot-openwrt-i386
     steps:
       - sudo find /vagrant -exec chown vagrant:vagrant {} +
       - cd "$TONIXXX_SYNC"

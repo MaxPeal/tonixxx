@@ -28,6 +28,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-uclibc-amd64
 │   └── fewer
+├── linux-uclibc-i386
+│   └── fewer
 ├── macos-amd64
 │   └── fewer
 ├── minix-i386
