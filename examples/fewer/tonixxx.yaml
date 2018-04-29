@@ -35,7 +35,9 @@ recipes:
   - label: minix-i386
     box: mcandre/fewer-buildbot-minix
   - label: openbsd-amd64
-    box: mcandre/fewer-buildbot-openbsd
+    box: mcandre/fewer-buildbot-openbsd-amd64
+  - label: openbsd-i386
+    box: mcandre/fewer-buildbot-openbsd-i386
   - label: windows-amd64
     guesttype: Cygwin
     box: mcandre/fewer-buildbot-windows
