@@ -26,8 +26,6 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-musl-amd64
 │   └── fewer
-├── linux-musl-i386
-│   └── fewer
 ├── linux-uclibc-amd64
 │   └── fewer
 ├── linux-uclibc-i386
@@ -40,7 +38,9 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── openbsd-i386
 │   └── fewer
-└── windows-amd64
+├── windows-amd64
+│   └── fewer.exe
+└── windows-i386
     └── fewer.exe
 ```
 
