@@ -22,7 +22,9 @@ recipes:
   - label: linux-gnu-i386
     box: mcandre/fewer-buildbot-debian-i386
   - label: linux-musl-amd64
-    box: mcandre/fewer-buildbot-void
+    box: mcandre/fewer-buildbot-void-amd64
+  - label: linux-musl-i386
+    box: mcandre/fewer-buildbot-void-i386
   - label: linux-uclibc-amd64
     box: mcandre/fewer-buildbot-openwrt-amd64
     steps:
