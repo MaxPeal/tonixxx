@@ -36,6 +36,10 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── minix-i386
 │   └── fewer
+├── netbsd-amd64
+│   └── fewer
+├── netbsd-i386
+│   └── fewer
 ├── openbsd-amd64
 │   └── fewer
 ├── openbsd-i386
