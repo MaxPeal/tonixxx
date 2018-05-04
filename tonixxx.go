@@ -26,6 +26,9 @@ const VagrantSyncedFolderCygwin = "/c/vagrant"
 // VagrantSyncedFolderSmartOSGZ names the guest folder synced with the host for SmartOS global zone VMs.
 const VagrantSyncedFolderSmartOSGZ = "/opt/vagrant"
 
+// VagrantSyncedFolderHaiku names the guest folder synced with the host for Haiku OS VMs.
+const VagrantSyncedFolderHaiku = "/boot/vagrant-src"
+
 // DataHome provides the path to the per-user tonixxx data directory.
 func DataHome() (string, error) {
 	user, err := user.Current()

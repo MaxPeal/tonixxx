@@ -12,6 +12,9 @@ recipes:
     box: mcandre/fewer-buildbot-dragonfly
   - label: freebsd-amd64
     box: mcandre/fewer-buildbot-freebsd
+  - label: haiku-amd64
+    box: mcandre/fewer-buildbot-haiku-amd64
+    guesttype: Haiku
   - label: hardenedbsd-amd64
     box: mcandre/fewer-buildbot-hardenedbsd
   - label: illumos-amd64

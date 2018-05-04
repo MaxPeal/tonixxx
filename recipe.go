@@ -54,6 +54,8 @@ func (o Recipe) SyncedFolderGuestPath() string {
 		return VagrantSyncedFolderCygwin
 	case GuestTypeSmartOSGZ:
 		return VagrantSyncedFolderSmartOSGZ
+	case GuestTypeHaiku:
+		return VagrantSyncedFolderHaiku
 	default:
 		return VagrantSyncedFolderPOSIX
 	}

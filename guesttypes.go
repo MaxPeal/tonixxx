@@ -9,4 +9,7 @@ const (
 
 	// GuestTypeSmartOSGZ designates SmartOS global zone environments.
 	GuestTypeSmartOSGZ = "SmartOSGZ"
+
+	// GuestTypeHaiku designates Haiku environments.
+	GuestTypeHaiku = "Haiku"
 )
