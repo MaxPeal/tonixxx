@@ -2,5 +2,4 @@
 sudo pkg_add \
     cmake \
     cppcheck \
-    splint \
-    vera++
+    splint

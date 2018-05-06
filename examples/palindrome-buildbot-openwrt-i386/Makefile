@@ -1,10 +1,10 @@
 BOX_NAMESPACE=mcandre
-BOX_BASENAME=fewer-buildbot-minix
+BOX_BASENAME=palindrome-buildbot-openwrt-i386
 BOX=$(BOX_BASENAME).box
 
 .PHONY: launch-vm clean-vm clean-boxes clean-vagrant-metadata
 
-launch-vm: Vagrantfile bootstrap.sh
+launch-vm: Vagrantfile
 	vagrant up
 
 clean-vm:

@@ -1,5 +1,5 @@
 BOX_NAMESPACE=mcandre
-BOX_BASENAME=fewer-buildbot-minix
+BOX_BASENAME=palindrome-buildbot-netbsd-i386
 BOX=$(BOX_BASENAME).box
 
 .PHONY: launch-vm clean-vm clean-boxes clean-vagrant-metadata

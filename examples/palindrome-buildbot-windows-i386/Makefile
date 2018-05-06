@@ -1,17 +1,17 @@
 BOX_NAMESPACE=mcandre
-BOX_BASENAME=fewer-buildbot-minix
+BOX_BASENAME=palindrome-buildbot-windows-i386
 BOX=$(BOX_BASENAME).box
 
 .PHONY: launch-vm clean-vm clean-boxes clean-vagrant-metadata
 
-launch-vm: Vagrantfile bootstrap.sh
+launch-vm: Vagrantfile bootstrap.ps1
 	vagrant up
 
 clean-vm:
 	-vagrant destroy -f
 
 clean-boxes:
-	-rm -rf *.box
+	-rm *.box
 
 clean-vagrant-metadata:
 	-rm -rf .vagrant
