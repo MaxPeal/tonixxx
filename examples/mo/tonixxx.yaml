@@ -11,7 +11,20 @@ steps:
   - shake test
 
 recipes:
-  - label: gnu-linux-amd64
-    box: mcandre/mo-buildbot-debian
+  - label: dragonflybsd-amd64
+    box: mcandre/mo-buildbot-dragonfly
   - label: freebsd-amd64
     box: mcandre/mo-buildbot-freebsd
+  - label: linux-gnu-amd64
+    box: mcandre/mo-buildbot-debian-amd64
+  - label: linux-gnu-i386
+    box: mcandre/mo-buildbot-debian-i386
+  - label: linux-musl-amd64
+    box: mcandre/mo-buildbot-void-amd64
+  - label: linux-musl-i386
+    box: mcandre/mo-buildbot-void-i386
+  - label: macos-amd64
+    box: mcandre/mo-buildbot-macos
+  - label: windows-amd64
+    box: mcandre/mo-buildbot-windows-amd64
+    guesttype: Cygwin

@@ -1,4 +1,6 @@
-BOX=mo-buildbot-debian.box
+BOX_NAMESPACE=mcandre
+BOX_BASENAME=mo-buildbot-debian-i386
+BOX=$(BOX_BASENAME).box
 
 .PHONY: launch-vm clean-vm clean-boxes clean-vagrant-metadata
 
@@ -20,4 +22,4 @@ $(BOX): clean-boxes clean-vm launch-vm export.Vagrantfile
 	vagrant package --output $(BOX) --vagrantfile export.Vagrantfile
 
 import: $(BOX)
-	vagrant box add --force --name mcandre/mo-buildbot-debian $(BOX)
+	vagrant box add --force --name $(BOX_NAMESPACE)/$(BOX_BASENAME) $(BOX)
