@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "mcandre/vagrant-debian-rust"
+  config.vm.box = "mcandre/vagrant-macos-rust"
   config.vm.box_version = "0.0.1"
 
   # Prepare for vagrant package
