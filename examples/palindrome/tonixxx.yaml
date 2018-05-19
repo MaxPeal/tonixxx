@@ -12,6 +12,14 @@ recipes:
     box: mcandre/palindrome-buildbot-dragonfly
   - label: freebsd-amd64
     box: mcandre/palindrome-buildbot-freebsd
+  - label: haiku-amd64
+    box: mcandre/palindrome-buildbot-haiku-amd64
+    guesttype: Haiku
+  - label: hardenedbsd-amd64
+    box: mcandre/palindrome-buildbot-hardenedbsd
+  - label: illumos-amd64
+    guesttype: SmartOSGZ
+    box: mcandre/palindrome-buildbot-smartos
   - label: linux-gnu-amd64
     box: mcandre/palindrome-buildbot-debian-amd64
   - label: linux-gnu-i386
@@ -38,14 +46,6 @@ recipes:
       - cmake --build . --target lint
       - cmake --build . --config Release
       - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
-  - label: haiku-amd64
-    box: mcandre/palindrome-buildbot-haiku-amd64
-    guesttype: Haiku
-  - label: hardenedbsd-amd64
-    box: mcandre/palindrome-buildbot-hardenedbsd
-  - label: illumos-amd64
-    guesttype: SmartOSGZ
-    box: mcandre/palindrome-buildbot-smartos
   - label: macos-amd64
     box: mcandre/palindrome-buildbot-macos
   - label: minix-i386
