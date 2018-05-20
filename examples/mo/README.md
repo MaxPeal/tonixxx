@@ -71,3 +71,7 @@ $ shake test
 ```console
 $ shake publish
 ```
+
+# PROVISIONING
+
+See `buildbot-src` for more information about buildbot provisioning.

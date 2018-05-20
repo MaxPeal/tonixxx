@@ -25,3 +25,7 @@ $ make
 ```console
 $ tonixxx boil
 ```
+
+# PROVISIONING
+
+See `buildbot-src` for more information about buildbot provisioning.

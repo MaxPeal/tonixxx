@@ -52,10 +52,6 @@ $ tree ~/.tonixxx/fewer/bin
     └── fewer.exe
 ```
 
-# ABOUT
-
-tonixxx assists developers in cross-compiling software projects. No need for dedicated hardware, nor dual booting, nor configuring obscure toolchains. Instead, tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries targeting assorted operating system kernel environments. tonixxx is language and platform agnostic, so you can build to and from a multitude of operating systems, and build projects written in a multitude of programming languages. It's great for automating software ports from your laptop or CI server!
-
 # DOWNLOAD
 
 https://github.com/mcandre/tonixxx/releases
@@ -63,6 +59,17 @@ https://github.com/mcandre/tonixxx/releases
 # API DOCUMENTATION
 
 https://godoc.org/github.com/mcandre/tonixxx
+
+# ABOUT
+
+tonixxx assists developers in cross-compiling software projects. No need for dedicated hardware, nor dual booting, nor configuring obscure toolchains. Instead, tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries targeting assorted operating system kernel environments. tonixxx is language and platform agnostic, so you can build to and from a multitude of operating systems, and build projects written in a multitude of programming languages. It's great for automating software ports from your laptop or CI server!
+
+See the `examples` directory for more demonstrative templates for building application ports.
+
+* C: `fewer`
+* C++: `palindrome`
+* Haskell: `mo`
+* Rust: `bronze`
 
 ## How to cross-compile your project with tonixxx
 

@@ -14,6 +14,11 @@ const TonixxxConfigBasename = "tonixxx.yaml"
 // TonixxxDataBasename describes the base path for housing tonixxx project metadata, including user build artifacts/ and Vagrant boxes during the build process.
 const TonixxxDataBasename = ".tonixxx"
 
+// TonixxxBuildbotsBasename describes the base path for housing buildbot provisioning files,
+// which aids tonixxx in excluding these (potentially large files)
+// from recipe clones during project builds with tonixxx up and tonixxx boil.
+const TonixxxBuildbotsBasename = "buildbot-src"
+
 // TonixxxSyncKey names the guest environment variable for introspecting a VM's synced folder guest path.
 const TonixxxSyncKey = "TONIXXX_SYNC"
 

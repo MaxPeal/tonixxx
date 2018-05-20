@@ -11,7 +11,7 @@ import (
 	"path"
 	"regexp"
 
-	"github.com/otiai10/copy"
+	"github.com/mcandre/popcopy"
 	"gopkg.in/yaml.v2"
 )
 
@@ -227,7 +227,8 @@ func (o Distillery) EnsureVagrantfile(recipe Recipe) error {
 	return ioutil.WriteFile(vagrantfilePath, contentVagrantfileBytes, 0644)
 }
 
-// EnsureCloneRecipe allocates space for a Vagrant box to be cloned.
+// EnsureCloneRecipe allocates directory space for a labelled Vagrant box to be cloned,
+// and copies source files to that directory.
 func (o Distillery) EnsureCloneRecipe(recipe Recipe) error {
 	if err := o.EnsureCloneRecipePath(recipe); err != nil {
 		return err
@@ -245,8 +246,13 @@ func (o Distillery) EnsureCloneRecipe(recipe Recipe) error {
 		return err
 	}
 
-	// Copy source files into the right Vagrant clone directory.
-	if err := copy.Copy(cwd, cloneHost); err != nil {
+	// Copy source files to the labelled Vagrant clone directory,
+	// excluding buildbot provisioning files found in TonixxxBuildbotsBasename.
+	if err := popcopy.Copy(
+		cwd,
+		cloneHost,
+		[]*regexp.Regexp{regexp.MustCompile(TonixxxBuildbotsBasename)},
+		); err != nil {
 		return err
 	}
 
@@ -550,7 +556,7 @@ func (o Distillery) MergeArtifacts(recipe Recipe) error {
 		return err
 	}
 
-	return copy.Copy(artifactsRecipePath, topLevelRecipeArtifactsDirectory)
+	return popcopy.Copy(artifactsRecipePath, topLevelRecipeArtifactsDirectory, []*regexp.Regexp{})
 }
 
 // RemoveProjectData removes the TonixxxData project directory.

@@ -1,9 +1,9 @@
 [submodule "vendor/gopkg.in/yaml.v2"]
 	path = vendor/gopkg.in/yaml.v2
 	url = https://github.com/go-yaml/yaml.git
-[submodule "vendor/github.com/otiai10/copy"]
-	path = vendor/github.com/otiai10/copy
-	url = https://github.com/otiai10/copy.git
 [submodule "vendor/github.com/mcandre/mage-extras"]
 	path = vendor/github.com/mcandre/mage-extras
 	url = https://github.com/mcandre/mage-extras
+[submodule "vendor/github.com/mcandre/popcopy"]
+	path = vendor/github.com/mcandre/popcopy
+	url = https://github.com/mcandre/popcopy.git

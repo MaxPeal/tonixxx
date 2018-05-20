@@ -1,6 +1,7 @@
 project: bronze
 
 steps:
+  - rustup update nightly
   - cd "$TONIXXX_SYNC"
   - make lint
   - make
