@@ -8,7 +8,7 @@
 $ cd examples/fewer
 
 $ tonixxx boil
-2018/03/11 12:53:50 All builds completed successfully. Select artifacts may appear in ~/.tonixxx/fewer/bin
+2018/03/11 12:53:50 Artifacts merged to ~/.tonixxx/fewer/bin
 
 $ tree ~/.tonixxx/fewer/bin
 ~/.tonixxx/fewer/bin

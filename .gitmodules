@@ -7,3 +7,6 @@
 [submodule "vendor/github.com/mcandre/popcopy"]
 	path = vendor/github.com/mcandre/popcopy
 	url = https://github.com/mcandre/popcopy.git
+[submodule "vendor/github.com/oleiade/lane"]
+	path = vendor/github.com/oleiade/lane
+	url = https://github.com/oleiade/lane.git

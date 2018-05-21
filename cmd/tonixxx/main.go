@@ -15,12 +15,11 @@ var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagListTasks = flag.Bool("listTasks", false, "Show task information")
 
 const taskWander = "wander"
-const taskUp = "up"
 const taskBoil = "boil"
 const taskDown = "down"
 const taskClean = "clean"
 
-var taskNames = []string{taskWander, taskUp, taskBoil, taskDown, taskClean}
+var taskNames = []string{taskWander, taskBoil, taskDown, taskClean}
 
 func main() {
 	flag.Parse()
@@ -53,9 +52,9 @@ func main() {
 		log.Printf("Reading distillery configuration from %s", configFilename)
 	}
 
-	var distillery = tonixxx.Distillery{}
+	distillery, err := tonixxx.Load(configFilename)
 
-	if err := distillery.Load(configFilename); err != nil {
+	if err != nil {
 		log.Panic(err)
 	}
 
@@ -75,10 +74,6 @@ func main() {
 			}
 
 			fmt.Println(projectDir)
-		case taskUp:
-			if err := distillery.Up(); err != nil {
-				log.Panic(err)
-			}
 		case taskBoil:
 			if err := distillery.Boil(); err != nil {
 				log.Panic(err)
