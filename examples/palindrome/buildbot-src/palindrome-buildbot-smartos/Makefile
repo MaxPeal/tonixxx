@@ -1,11 +1,15 @@
 BOX_NAMESPACE=mcandre
 BOX_BASENAME=palindrome-buildbot-smartos
+BOX_DISCLESS=$(BOX_BASENAME)-discless.box
 BOX=$(BOX_BASENAME).box
 
-.PHONY: launch-vm clean-vm clean-boxes clean-vagrant-metadata
+.PHONY: launch-vm clean-isos clean-vm clean-boxes clean-vagrant-metadata clean-box-workspace
 
 launch-vm: Vagrantfile bootstrap.sh
 	vagrant up
+
+clean-isos:
+	-rm -rf *.iso
 
 clean-vm:
 	-vagrant destroy -f
@@ -16,10 +20,23 @@ clean-boxes:
 clean-vagrant-metadata:
 	-rm -rf .vagrant
 
-clean: clean-boxes clean-vm clean-vagrant-metadata
+clean-box-workspace:
+	-rm -rf box-discless
 
-$(BOX): clean-boxes clean-vm launch-vm export.Vagrantfile
-	vagrant package --output $(BOX) --vagrantfile export.Vagrantfile
+clean: clean-boxes clean-vm clean-isos clean-vagrant-metadata clean-box-workspace
 
-import: $(BOX)
+$(BOX_DISCLESS): clean-boxes clean-vm launch-vm export.Vagrantfile
+	vagrant package --output $(BOX_DISCLESS) --vagrantfile export.Vagrantfile
+
+smartos-20180203T031130Z.iso:
+	curl -LO "https://us-east.manta.joyent.com/Joyent_Dev/public/builds/smartos/release-20180201-20180203T031130Z/smartos/smartos-20180203T031130Z.iso"
+
+$(BOX): $(BOX_DISCLESS) box.ovf smartos-20180203T031130Z.iso
+	mkdir -p box-discless
+	tar xzvf $(BOX_DISCLESS) -C box-discless
+	cp box.ovf box-discless
+	cp smartos-20180203T031130Z.iso box-discless/box-disk002.iso
+	tar czvf $(BOX) -C box-discless box.ovf Vagrantfile include box-disk001.vmdk box-disk002.iso
+
+install-box-virtualbox: $(BOX)
 	vagrant box add --force --name $(BOX_NAMESPACE)/$(BOX_BASENAME) $(BOX)
