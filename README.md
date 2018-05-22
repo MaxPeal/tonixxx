@@ -23,31 +23,31 @@ $ tree ~/.tonixxx/fewer/bin
 ├── illumos-amd64
 │   └── fewer
 ├── linux-gnu-amd64
-│   └── fewer
+│   └── fewer
 ├── linux-gnu-i386
-│   └── fewer
+│   └── fewer
 ├── linux-musl-amd64
-│   └── fewer
+│   └── fewer
 ├── linux-musl-i386
-│   └── fewer
+│   └── fewer
 ├── linux-uclibc-amd64
-│   └── fewer
+│   └── fewer
 ├── linux-uclibc-i386
-│   └── fewer
+│   └── fewer
 ├── macos-amd64
-│   └── fewer
+│   └── fewer
 ├── minix-i386
-│   └── fewer
+│   └── fewer
 ├── netbsd-amd64
-│   └── fewer
+│   └── fewer
 ├── netbsd-i386
-│   └── fewer
+│   └── fewer
 ├── openbsd-amd64
-│   └── fewer
+│   └── fewer
 ├── openbsd-i386
-│   └── fewer
+│   └── fewer
 ├── windows-amd64
-│   └── fewer.exe
+│   └── fewer.exe
 └── windows-i386
     └── fewer.exe
 ```
