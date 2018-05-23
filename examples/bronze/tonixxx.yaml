@@ -1,7 +1,8 @@
 project: bronze
 
 steps:
-  - rustup update nightly
+  - rustup update nightly-2018-05-16
+  - rustup default nightly-2018-05-16
   - cd "$TONIXXX_SYNC"
   - make lint
   - make
@@ -12,9 +13,11 @@ recipes:
     box: mcandre/bronze-buildbot-freebsd
   - label: hardenedbsd-amd64
     box: mcandre/bronze-buildbot-hardenedbsd
-  - label: linux-gnu-amd64
+  - label: linux-glibc-2.17-amd64
+    box: mcandre/bronze-buildbot-centos
+  - label: linux-glibc-2.24-amd64
     box: mcandre/bronze-buildbot-debian-amd64
-  - label: linux-gnu-i386
+  - label: linux-glibc-2.24-i386
     box: mcandre/bronze-buildbot-debian-i386
   - label: macos-amd64
     box: mcandre/bronze-buildbot-macos

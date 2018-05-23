@@ -22,9 +22,11 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── illumos-amd64
 │   └── fewer
-├── linux-gnu-amd64
+├── linux-glibc-2.17-amd64
 │   └── fewer
-├── linux-gnu-i386
+├── linux-glibc-2.24-amd64
+│   └── fewer
+├── linux-glibc-2.24-i386
 │   └── fewer
 ├── linux-musl-amd64
 │   └── fewer

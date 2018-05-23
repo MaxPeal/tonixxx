@@ -20,9 +20,17 @@ recipes:
   - label: illumos-amd64
     guesttype: SmartOSGZ
     box: mcandre/palindrome-buildbot-smartos
-  - label: linux-gnu-amd64
+  - label: linux-glibc-2.17-amd64
+    box: mcandre/palindrome-buildbot-centos
+    steps:
+      - cd "$TONIXXX_SYNC"
+      - cmake3 .
+      - cmake3 --build . --target lint
+      - cmake3 --build . --config Release
+      - CTEST_OUTPUT_ON_FAILURE=1 ctest3 -C Release
+  - label: linux-glibc-2.24-amd64
     box: mcandre/palindrome-buildbot-debian-amd64
-  - label: linux-gnu-i386
+  - label: linux-glibc-2.24-i386
     box: mcandre/palindrome-buildbot-debian-i386
   - label: linux-musl-amd64
     box: mcandre/palindrome-buildbot-void-amd64

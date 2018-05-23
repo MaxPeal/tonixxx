@@ -4,8 +4,8 @@ outputdirectory: dist/bin
 
 steps:
   - cd "$TONIXXX_SYNC"
-  - cabal install --only-dependencies --enable-documentation
-  - cabal install --only-dependencies --enable-tests
+  - cabal install --force-reinstalls --only-dependencies --enable-documentation
+  - cabal install --force-reinstalls --only-dependencies --enable-tests
   - shake
   - shake lint
   - shake test
@@ -15,9 +15,11 @@ recipes:
     box: mcandre/mo-buildbot-dragonfly
   - label: freebsd-amd64
     box: mcandre/mo-buildbot-freebsd
-  - label: linux-gnu-amd64
+  - label: linux-glibc-2.17-amd64
+    box: mcandre/mo-buildbot-centos
+  - label: linux-glibc-2.24-amd64
     box: mcandre/mo-buildbot-debian-amd64
-  - label: linux-gnu-i386
+  - label: linux-glibc-2.24-i386
     box: mcandre/mo-buildbot-debian-i386
   - label: linux-musl-amd64
     box: mcandre/mo-buildbot-void-amd64

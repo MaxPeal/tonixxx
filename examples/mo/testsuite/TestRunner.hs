@@ -1,10 +1,12 @@
 module Main where
 
-import MoTest
+import Data.Monoid
 
 import Test.Framework.Runners.Console
 import Test.Framework.Providers.HUnit
 import Test.Framework.Providers.QuickCheck2
+
+import MoTest
 
 import qualified Mo
 

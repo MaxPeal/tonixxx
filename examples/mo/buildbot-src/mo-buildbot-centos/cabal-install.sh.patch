@@ -1,0 +1,11 @@
+--- /etc/profile.d/cabal-install.sh	2016-12-01 09:49:38.000000000 +0000
++++ /etc/profile.d/cabal-install.sh.new	2018-05-23 01:32:37.710480057 +0000
+@@ -2,7 +2,7 @@
+ 
+ if ! echo ${PATH} | /bin/grep -q ${CABALBIN} ; then
+     if [ -d ${CABALBIN} ]; then
+-	PATH=${PATH}:${CABALBIN}
++	PATH=${CABALBIN}:${PATH}
+     fi
+ fi
+ unset CABALBIN
