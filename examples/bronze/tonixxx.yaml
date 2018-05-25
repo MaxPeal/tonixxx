@@ -1,8 +1,8 @@
 project: bronze
 
 steps:
-  - rustup update nightly-2018-05-16
-  - rustup default nightly-2018-05-16
+  - rustup update nightly
+  - rustup default nightly
   - cd "$TONIXXX_SYNC"
   - make lint
   - make

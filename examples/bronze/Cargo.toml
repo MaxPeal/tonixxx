@@ -7,7 +7,7 @@ authors = ["Andrew Pennebaker <andrew.pennebaker@gmail.com>"]
 license = "BSD-2-Clause"
 
 [dependencies]
-clippy = { version = "0.0.200", optional = true }
+clippy = { version = "*", optional = true }
 
 [lib]
 name = "bronze"
