@@ -87,6 +87,23 @@ func (o Distillery) ProjectData() (string, error) {
 	return path.Join(tonixxxHome, o.Project), nil
 }
 
+// ProjectArtifacts supplies the host path to the aggregated artifacts produced for a project after any Vagrant builds.
+func (o Distillery) ProjectArtifacts() (string, error) {
+	projectData, err := o.ProjectData()
+
+	if err != nil {
+		return "", err
+	}
+
+	outputDirectory := o.OutputDirectory
+
+	if outputDirectory == "" {
+		outputDirectory = DefaultOutputDirectory
+	}
+
+	return path.Join(projectData, o.EffectiveOutputDirectory()), nil
+}
+
 // Validate applies some semantic checks to a Distillery configuration.
 func (o Distillery) Validate() error {
 	if !ProjectNamePattern.MatchString(o.Project) {
@@ -108,14 +125,8 @@ func (o Distillery) Validate() error {
 
 // UpdateRunningRecipes collects information about Vagrant instances.
 func (o Distillery) UpdateRunningRecipes() error {
-	projectData, err := o.ProjectData()
-
-	if err != nil {
-		return err
-	}
-
 	for _, recipe := range o.Recipes {
-		running, err := recipe.IsRunning(projectData)
+		running, err := recipe.IsRunning()
 
 		if err != nil {
 			return err
@@ -162,15 +173,33 @@ func Load(pth string) (*Distillery, error) {
 		distillery.MaxRunningRecipes = DefaultMaxRunningRecipes
 	}
 
-	if err := distillery.Validate(); err != nil {
+	projectData, err := distillery.ProjectData()
+
+	if err != nil {
 		return nil, err
 	}
 
-	// Default recipe steps to top-level distillery steps
+	projectArtifacts, err := distillery.ProjectArtifacts()
+
+	if err != nil {
+		return nil, err
+	}
+
 	for i := range distillery.Recipes {
+		// Inject ProjectData path into recipe
+		distillery.Recipes[i].projectData = projectData
+
+		// Inject ProjectArtifacts path into recipe
+		distillery.Recipes[i].projectArtifacts = projectArtifacts
+
+		// Default recipe steps to top-level distillery steps
 		if len(distillery.Recipes[i].Steps) == 0 {
 			distillery.Recipes[i].Steps = distillery.Steps
 		}
+	}
+
+	if err := distillery.Validate(); err != nil {
+		return nil, err
 	}
 
 	distillery.runningRecipes = lane.NewDeque()
@@ -182,66 +211,32 @@ func Load(pth string) (*Distillery, error) {
 	return distillery, nil
 }
 
-// ProjectArtifacts supplies the host path to the aggregated artifacts produced for a project after any Vagrant builds.
-func (o Distillery) ProjectArtifacts() (string, error) {
-	projectData, err := o.ProjectData()
-
-	if err != nil {
-		return "", err
-	}
-
-	outputDirectory := o.OutputDirectory
-
-	if outputDirectory == "" {
-		outputDirectory = DefaultOutputDirectory
-	}
-
-	return path.Join(projectData, o.EffectiveOutputDirectory()), nil
-}
-
-// BoilRecipe executes a build recipe.
-func (o Distillery) BoilRecipe(recipe Recipe) error {
-	projectData, err := o.ProjectData()
-
-	if err != nil {
-		return err
-	}
-
-	projectArtifacts, err := o.ProjectArtifacts()
-
-	if err != nil {
-		return err
-	}
-
-	if o.MaxRunningRecipes > 0 {
-		for o.runningRecipes.Size() > o.MaxRunningRecipes-1 {
-			if err := o.DownRecipe(o.runningRecipes.Pop().(Recipe)); err != nil {
-				return err
-			}
-		}
-
-		o.runningRecipes.Append(recipe)
-	}
-
-	return recipe.Boil(o.EffectiveOutputDirectory(), projectArtifacts, o.Debug, projectData)
-}
-
 // Boil executes configured recipes for a distillery.
 func (o Distillery) Boil() error {
 	for _, recipe := range o.Recipes {
-		if err := o.BoilRecipe(recipe); err != nil {
+		if o.MaxRunningRecipes > 0 {
+			for o.runningRecipes.Size() > o.MaxRunningRecipes-1 {
+				if err := o.runningRecipes.Pop().(Recipe).VagrantDown(); err != nil {
+					return err
+				}
+			}
+
+			o.runningRecipes.Append(recipe)
+		}
+
+		if err := recipe.Boil(o.EffectiveOutputDirectory(), o.Debug); err != nil {
 			return err
 		}
 	}
 
+	if err := o.Down(); err != nil {
+		return nil
+	}
+
 	projectArtifacts, err := o.ProjectArtifacts()
 
 	if err != nil {
 		return err
-	}
-
-	if err := o.Down(); err != nil {
-		return nil
 	}
 
 	log.Printf("Artifacts merged to %s", projectArtifacts)
@@ -249,21 +244,10 @@ func (o Distillery) Boil() error {
 	return nil
 }
 
-// DownRecipe halts a Vagrant box.
-func (o Distillery) DownRecipe(recipe Recipe) error {
-	projectData, err := o.ProjectData()
-
-	if err != nil {
-		return err
-	}
-
-	return recipe.VagrantDown(projectData)
-}
-
 // Down pauses the configured Vagrant boxes.
 func (o Distillery) Down() error {
 	for _, recipe := range o.Recipes {
-		if err := o.DownRecipe(recipe); err != nil {
+		if err := recipe.VagrantDown(); err != nil {
 			return err
 		}
 	}
@@ -271,22 +255,11 @@ func (o Distillery) Down() error {
 	return nil
 }
 
-// CleanRecipe halts a Vagrant box and removes the files from disk.
-func (o Distillery) CleanRecipe(recipe Recipe) error {
-	projectData, err := o.ProjectData()
-
-	if err != nil {
-		return err
-	}
-
-	return recipe.Clean(projectData)
-}
-
 // Clean destroys a project's Vagrant instances boxes and
 // removes the project directory from ~/.tonixxx
 func (o Distillery) Clean() error {
 	for _, recipe := range o.Recipes {
-		if err := o.CleanRecipe(recipe); err != nil {
+		if err := recipe.Clean(); err != nil {
 			log.Print(err)
 		}
 	}

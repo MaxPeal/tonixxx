@@ -30,12 +30,48 @@ var RecipeLabelPattern = regexp.MustCompile(`^[a-zA-Z0-9\.\-_]+$`)
 // Recipe describes the user's build workflow for some target environment.
 // By default, recipes assume "POSIX".
 type Recipe struct {
+	// Label (required) provides a descriptor for the artifact produced by this recipe,
+	// meaningful to a particular project to distinguish these artifacts
+	// from those artifacts produced by sister recipes.
+	//
+	// Example: "minix-i386"
 	Label              string
+
+	// Box (required) describes a Vagrant box name.
+	//
+	// Example: "mcandre/minix"
 	Box                string
+
+	// Version (optional) describes a Vagrant box version.
+	//
+	// Example: "0.0.1"
 	Version            string
+
+	// GuestType (optional) describes the kind of guest OS.
+	//
+	// Defaults to GuestTypePOSIX.
+	//
+	// Example: "Cygwin"
 	GuestType          string
+
+	// ArtifactsGuestPath (optional) names a directory path to place source files
+	// into the guest before building.
+	//
+	// Defaults to a Vagrant rsync path based on known GuestType's.
+	//
+	// Example: "/vagrant"
 	ArtifactsGuestPath string
+
+	// Steps (optional) lists the guest commands for building artifacts.
+	//
+	// Example: []string{"cd \"$TONIXXX_SYNC\"", "make"}
 	Steps              []string
+
+	// projectData (injected) caches a project's data directory.
+	projectData string
+
+	// projectArtifacts (injected) caches a project's unified artifact output directory.
+	projectArtifacts string
 }
 
 // Validate applies some semantic checks to a Recipe configuration.
@@ -46,6 +82,14 @@ func (o Recipe) Validate() error {
 
 	if o.Box == "" {
 		return errors.New("Recipe has empty Vagrant base box")
+	}
+
+	if o.projectData == "" {
+		return errors.New("Recipe missing projectData path")
+	}
+
+	if o.projectArtifacts == "" {
+		return errors.New("Recipe missing projectArtifacts path")
 	}
 
 	return nil
@@ -96,18 +140,18 @@ func (o Recipe) AggregateSteps(steps []string) string {
 }
 
 // CloneHost supplies the directory path inside ~/.tonixxx in which a recipe's Vagrant clone resides.
-func (o Recipe) CloneHost(projectData string) string {
-	return path.Join(projectData, o.Label)
+func (o Recipe) CloneHost() string {
+	return path.Join(o.projectData, o.Label)
 }
 
 // ArtifactHost supplies the directory where recipe-relative artifacts are
 // first copied upon builds.
-func (o Recipe) ArtifactHost(effectiveOutputDirectory string, projectData string) string {
-	return path.Join(o.CloneHost(projectData), effectiveOutputDirectory)
+func (o Recipe) ArtifactHost(effectiveOutputDirectory string) string {
+	return path.Join(o.CloneHost(), effectiveOutputDirectory)
 }
 
 // EnsureSourceCopy ensures that project source files are copied to the clone host.
-func (o Recipe) EnsureSourceCopy(projectData string) error {
+func (o Recipe) EnsureSourceCopy() error {
 	cwd, err := os.Getwd()
 
 	if err != nil {
@@ -116,32 +160,32 @@ func (o Recipe) EnsureSourceCopy(projectData string) error {
 
 	return popcopy.Copy(
 		cwd,
-		o.CloneHost(projectData),
+		o.CloneHost(),
 		[]*regexp.Regexp{regexp.MustCompile(BuildbotsBasename)},
 	)
 }
 
 // VagrantfilePath queries the path to this recipe's Vagrantfile.
-func (o Recipe) VagrantfilePath(projectData string) string {
-	return path.Join(o.CloneHost(projectData), VagrantfileBasename)
+func (o Recipe) VagrantfilePath() string {
+	return path.Join(o.CloneHost(), VagrantfileBasename)
 }
 
 // EnsureVagrantfile ensures that this recipe has a Vagrantfile generated.
-func (o Recipe) EnsureVagrantfile(projectData string) error {
-	if err := o.EnsureSourceCopy(projectData); err != nil {
+func (o Recipe) EnsureVagrantfile() error {
+	if err := o.EnsureSourceCopy(); err != nil {
 		return err
 	}
 
 	return ioutil.WriteFile(
-		o.VagrantfilePath(projectData),
+		o.VagrantfilePath(),
 		[]byte(o.GenerateVagrantfile()),
 		0644,
 	)
 }
 
 // VagrantStatus reports an instance description.
-func (o Recipe) VagrantStatus(projectData string) (string, error) {
-	if err := o.EnsureVagrantfile(projectData); err != nil {
+func (o Recipe) VagrantStatus() (string, error) {
+	if err := o.EnsureVagrantfile(); err != nil {
 		return "", err
 	}
 
@@ -149,7 +193,7 @@ func (o Recipe) VagrantStatus(projectData string) (string, error) {
 
 	cmd := exec.Command("vagrant", "status")
 	cmd.Env = os.Environ()
-	cmd.Dir = o.CloneHost(projectData)
+	cmd.Dir = o.CloneHost()
 	cmd.Stdout = &outBuffer
 	cmd.Stderr = os.Stderr
 
@@ -159,8 +203,8 @@ func (o Recipe) VagrantStatus(projectData string) (string, error) {
 }
 
 // IsRunning queries a Vagrant instance for running status.
-func (o Recipe) IsRunning(projectData string) (bool, error) {
-	status, err := o.VagrantStatus(projectData)
+func (o Recipe) IsRunning() (bool, error) {
+	status, err := o.VagrantStatus()
 
 	if err != nil {
 		return false, err
@@ -170,10 +214,10 @@ func (o Recipe) IsRunning(projectData string) (bool, error) {
 }
 
 // VagrantUp ensures a recipe is booted.
-func (o Recipe) VagrantUp(projectData string) error {
+func (o Recipe) VagrantUp() error {
 	cmd := exec.Command("vagrant", "up")
 	cmd.Env = os.Environ()
-	cmd.Dir = o.CloneHost(projectData)
+	cmd.Dir = o.CloneHost()
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -181,10 +225,10 @@ func (o Recipe) VagrantUp(projectData string) error {
 }
 
 // VagrantRsync copies host-clone source files into a guest in preparation for builds.
-func (o Recipe) VagrantRsync(projectData string) error {
+func (o Recipe) VagrantRsync() error {
 	cmd := exec.Command("vagrant", "rsync")
 	cmd.Env = os.Environ()
-	cmd.Dir = o.CloneHost(projectData)
+	cmd.Dir = o.CloneHost()
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -193,29 +237,29 @@ func (o Recipe) VagrantRsync(projectData string) error {
 
 // EnsureRsync ensures that a Vagrant instance is running and
 // that the host source is copied to the guest.
-func (o Recipe) EnsureRsync(projectData string) error {
-	if err := o.EnsureVagrantfile(projectData); err != nil {
+func (o Recipe) EnsureRsync() error {
+	if err := o.EnsureVagrantfile(); err != nil {
 		return err
 	}
 
-	running, err := o.IsRunning(projectData)
+	running, err := o.IsRunning()
 
 	if err != nil {
 		return err
 	}
 
 	if running {
-		return o.VagrantRsync(projectData)
+		return o.VagrantRsync()
 	}
 
-	return o.VagrantUp(projectData)
+	return o.VagrantUp()
 }
 
 // VagrantSSH executes a guest command.
-func (o Recipe) VagrantSSH(step string, debug bool, projectData string) error {
+func (o Recipe) VagrantSSH(step string, debug bool) error {
 	cmd := exec.Command("vagrant", "ssh", "--no-tty", "-c", step)
 	cmd.Env = os.Environ()
-	cmd.Dir = o.CloneHost(projectData)
+	cmd.Dir = o.CloneHost()
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -227,10 +271,10 @@ func (o Recipe) VagrantSSH(step string, debug bool, projectData string) error {
 }
 
 // VagrantRsyncBack copies guest artifacts back to a host-clone directory.
-func (o Recipe) VagrantRsyncBack(projectData string) error {
+func (o Recipe) VagrantRsyncBack() error {
 	cmd := exec.Command("vagrant", "rsync-back")
 	cmd.Env = os.Environ()
-	cmd.Dir = o.CloneHost(projectData)
+	cmd.Dir = o.CloneHost()
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -239,9 +283,9 @@ func (o Recipe) VagrantRsyncBack(projectData string) error {
 
 // MergeArtifacts copies recipe-relative build artifacts to a common,
 // project-relative file tree.
-func (o Recipe) MergeArtifacts(effectiveOutputDirectory string, projectArtifacts string, projectData string) error {
-	topLevelRecipeArtifactsDirectory := path.Join(projectArtifacts, o.Label)
-	artifactsRecipePath := o.ArtifactHost(effectiveOutputDirectory, projectData)
+func (o Recipe) MergeArtifacts(effectiveOutputDirectory string) error {
+	topLevelRecipeArtifactsDirectory := path.Join(o.projectArtifacts, o.Label)
+	artifactsRecipePath := o.ArtifactHost(effectiveOutputDirectory)
 	return popcopy.Copy(artifactsRecipePath, topLevelRecipeArtifactsDirectory, []*regexp.Regexp{})
 }
 
@@ -250,8 +294,8 @@ func (o Recipe) MergeArtifacts(effectiveOutputDirectory string, projectArtifacts
 // The build steps may include instructions to copy select build artifacts
 // to the SyncKey path. After a successful run of the build steps,
 // any files in the SyncKey path are copied back to the host.
-func (o Recipe) Boil(effectiveOutputDirectory string, projectArtifacts string, debug bool, projectData string) error {
-	if err := o.EnsureRsync(projectData); err != nil {
+func (o Recipe) Boil(effectiveOutputDirectory string, debug bool) error {
+	if err := o.EnsureRsync(); err != nil {
 		return err
 	}
 
@@ -263,37 +307,37 @@ func (o Recipe) Boil(effectiveOutputDirectory string, projectArtifacts string, d
 
 	stepsAggregated := o.AggregateSteps(stepsWithEnvironmentVariables)
 
-	if err := o.VagrantSSH(stepsAggregated, debug, projectData); err != nil {
+	if err := o.VagrantSSH(stepsAggregated, debug); err != nil {
 		return err
 	}
 
-	if err := o.VagrantRsyncBack(projectData); err != nil {
+	if err := o.VagrantRsyncBack(); err != nil {
 		return err
 	}
 
-	return o.MergeArtifacts(effectiveOutputDirectory, projectArtifacts, projectData)
+	return o.MergeArtifacts(effectiveOutputDirectory)
 }
 
 // VagrantDown ensures a recipe is halted.
-func (o Recipe) VagrantDown(projectData string) error {
-	if err := o.EnsureVagrantfile(projectData); err != nil {
+func (o Recipe) VagrantDown() error {
+	if err := o.EnsureVagrantfile(); err != nil {
 		return err
 	}
 
 	cmd := exec.Command("vagrant", "halt")
 	cmd.Env = os.Environ()
-	cmd.Dir = o.CloneHost(projectData)
+	cmd.Dir = o.CloneHost()
 
 	return cmd.Run()
 }
 
 // Destroy removes a recipe's Vagrant instance.
-func (o Recipe) Destroy(projectData string) error {
-	if err := o.EnsureVagrantfile(projectData); err != nil {
+func (o Recipe) Destroy() error {
+	if err := o.EnsureVagrantfile(); err != nil {
 		return err
 	}
 
-	cloneHost := o.CloneHost(projectData)
+	cloneHost := o.CloneHost()
 
 	cmd := exec.Command("vagrant", "destroy", "-f")
 	cmd.Env = os.Environ()
@@ -310,10 +354,10 @@ func (o Recipe) Destroy(projectData string) error {
 
 // Clean destroys a Vagrant instance and
 // removes the per-recipe host directory.
-func (o Recipe) Clean(projectData string) error {
-	if err := o.Destroy(projectData); err != nil {
+func (o Recipe) Clean() error {
+	if err := o.Destroy(); err != nil {
 		log.Print(err)
 	}
 
-	return os.RemoveAll(o.CloneHost(projectData))
+	return os.RemoveAll(o.CloneHost())
 }
