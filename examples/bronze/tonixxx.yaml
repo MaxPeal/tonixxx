@@ -14,7 +14,9 @@ recipes:
   - label: hardenedbsd-amd64
     box: mcandre/bronze-buildbot-hardenedbsd
   - label: linux-glibc-2.17-amd64
-    box: mcandre/bronze-buildbot-centos
+    box: mcandre/bronze-buildbot-centos-amd64
+  - label: linux-glibc-2.17-i386
+    box: mcandre/bronze-buildbot-centos-i386
   - label: linux-glibc-2.24-amd64
     box: mcandre/bronze-buildbot-debian-amd64
   - label: linux-glibc-2.24-i386

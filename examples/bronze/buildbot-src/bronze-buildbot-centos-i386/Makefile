@@ -1,5 +1,5 @@
 BOX_NAMESPACE=mcandre
-BOX_BASENAME=bronze-buildbot-centos
+BOX_BASENAME=bronze-buildbot-centos-i386
 BOX=$(BOX_BASENAME).box
 
 .PHONY: launch-vm clean-vm clean-boxes clean-vagrant-metadata
