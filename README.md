@@ -72,6 +72,7 @@ See the `examples` directory for more demonstrative templates for building appli
 * C++: `palindrome`
 * Haskell: `mo`
 * Rust: `bronze`
+* Swift: `levitate`
 
 ## How to cross-compile your project with tonixxx
 

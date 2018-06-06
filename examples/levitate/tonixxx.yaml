@@ -1,0 +1,13 @@
+project: levitate
+
+steps:
+  - cd "$TONIXXX_SYNC"
+  - make lint
+  - make
+  - make test
+
+recipes:
+  - label: linux-glibc-2.24-amd64
+    box: mcandre/levitate-buildbot-debian
+  # - label: macos-amd64
+  #   box: mcandre/levitate-buildbot-macos
