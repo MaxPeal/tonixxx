@@ -1,5 +1,7 @@
 project: levitate
 
+outputdirectory: .build/release
+
 steps:
   - cd "$TONIXXX_SYNC"
   - make lint
@@ -7,7 +9,7 @@ steps:
   - make test
 
 recipes:
-  - label: linux-glibc-2.24-amd64
-    box: mcandre/levitate-buildbot-debian
-  # - label: macos-amd64
-  #   box: mcandre/levitate-buildbot-macos
+  # - label: linux-glibc-2.27-amd64
+  #   box: mcandre/levitate-buildbot-ubuntu
+  - label: macos-amd64
+    box: mcandre/levitate-buildbot-macos
