@@ -9,7 +9,8 @@ steps:
   - make test
 
 recipes:
-  # - label: linux-glibc-2.27-amd64
-  #   box: mcandre/levitate-buildbot-ubuntu
-  - label: macos-amd64
-    box: mcandre/levitate-buildbot-macos
+  - label: linux-glibc-2.27-amd64
+    box: mcandre/levitate-buildbot-ubuntu
+  # Untested
+  # - label: macos-amd64
+  #   box: mcandre/levitate-buildbot-macos
