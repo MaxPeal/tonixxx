@@ -1,8 +1,8 @@
 #!/bin/sh
-sudo pkg update &&
+sudo hbsd-update &&
+    sudo pkg update &&
     sudo pkg install -y \
         cmake \
-        cppcheck \
         splint \
         vera++ \
         python3 \
