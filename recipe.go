@@ -35,24 +35,24 @@ type Recipe struct {
 	// from those artifacts produced by sister recipes.
 	//
 	// Example: "minix-i386"
-	Label              string
+	Label string
 
 	// Box (required) describes a Vagrant box name.
 	//
 	// Example: "mcandre/minix"
-	Box                string
+	Box string
 
 	// Version (optional) describes a Vagrant box version.
 	//
 	// Example: "0.0.1"
-	Version            string
+	Version string
 
 	// GuestType (optional) describes the kind of guest OS.
 	//
 	// Defaults to GuestTypePOSIX.
 	//
 	// Example: "Cygwin"
-	GuestType          string
+	GuestType string
 
 	// ArtifactsGuestPath (optional) names a directory path to place source files
 	// into the guest before building.
@@ -62,10 +62,20 @@ type Recipe struct {
 	// Example: "/vagrant"
 	ArtifactsGuestPath string
 
+	// PreSteps (optional) lists any guest commands to execute before normal Steps.
+	//
+	// Example: []string{"sudo yum update"}
+	PreSteps []string
+
 	// Steps (optional) lists the guest commands for building artifacts.
 	//
 	// Example: []string{"cd \"$TONIXXX_SYNC\"", "make"}
-	Steps              []string
+	Steps []string
+
+	// PostSteps (optional) lists any guest commands to execute after normal Steps.
+	//
+	// Example: []string{"sudo yum clean all"}
+	PostSteps []string
 
 	// projectData (injected) caches a project's data directory.
 	projectData string
@@ -303,7 +313,9 @@ func (o Recipe) Boil(effectiveOutputDirectory string, debug bool) error {
 
 	var stepsWithEnvironmentVariables []string
 	stepsWithEnvironmentVariables = append(stepsWithEnvironmentVariables, configureSyncedFolderEnvVarStep)
+	stepsWithEnvironmentVariables = append(stepsWithEnvironmentVariables, o.PreSteps...)
 	stepsWithEnvironmentVariables = append(stepsWithEnvironmentVariables, o.Steps...)
+	stepsWithEnvironmentVariables = append(stepsWithEnvironmentVariables, o.PostSteps...)
 
 	stepsAggregated := o.AggregateSteps(stepsWithEnvironmentVariables)
 

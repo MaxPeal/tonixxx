@@ -38,22 +38,12 @@ recipes:
     box: mcandre/fewer-buildbot-void-i386
   - label: linux-uclibc-amd64
     box: mcandre/fewer-buildbot-openwrt-amd64
-    steps:
+    presteps:
       - sudo find /vagrant -exec chown vagrant:vagrant {} +
-      - cd "$TONIXXX_SYNC"
-      - cmake .
-      # - cmake --build . --target lint
-      - cmake --build . --config Release
-      - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
   - label: linux-uclibc-i386
     box: mcandre/fewer-buildbot-openwrt-i386
-    steps:
+    presteps:
       - sudo find /vagrant -exec chown vagrant:vagrant {} +
-      - cd "$TONIXXX_SYNC"
-      - cmake .
-      # - cmake --build . --target lint
-      - cmake --build . --config Release
-      - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
   - label: macos-amd64
     box: mcandre/fewer-buildbot-macos
   - label: minix-i386
