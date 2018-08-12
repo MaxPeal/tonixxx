@@ -1,10 +1,11 @@
 cover.html
 /bin/
-# Created by https://www.gitignore.io/api/go,vagrant
+# Created by https://www.gitignore.io/api/go
 
 ### Go ###
 # Binaries for programs and plugins
 *.exe
+*.exe~
 *.dll
 *.so
 *.dylib
@@ -15,11 +16,9 @@ cover.html
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
-.glide/
+### Go Patch ###
+/vendor/
+/Godeps/
 
-### Vagrant ###
-.vagrant/
-*.box
 
-# End of https://www.gitignore.io/api/go,vagrant
+# End of https://www.gitignore.io/api/go
