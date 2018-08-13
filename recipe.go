@@ -94,14 +94,6 @@ func (o Recipe) Validate() error {
 		return errors.New("Recipe has empty Vagrant base box")
 	}
 
-	if o.projectData == "" {
-		return errors.New("Recipe missing projectData path")
-	}
-
-	if o.projectArtifacts == "" {
-		return errors.New("Recipe missing projectArtifacts path")
-	}
-
 	return nil
 }
 
@@ -304,7 +296,7 @@ func (o Recipe) MergeArtifacts(effectiveOutputDirectory string) error {
 // The build steps may include instructions to copy select build artifacts
 // to the SyncKey path. After a successful run of the build steps,
 // any files in the SyncKey path are copied back to the host.
-func (o Recipe) Boil(effectiveOutputDirectory string, debug bool) error {
+func (o Recipe) Boil(effectiveOutputDirectory *string, debug bool) error {
 	if err := o.EnsureRsync(); err != nil {
 		return err
 	}
@@ -323,11 +315,15 @@ func (o Recipe) Boil(effectiveOutputDirectory string, debug bool) error {
 		return err
 	}
 
-	if err := o.VagrantRsyncBack(); err != nil {
-		return err
+	if effectiveOutputDirectory != nil {
+		if err := o.VagrantRsyncBack(); err != nil {
+			return err
+		}
+
+		return o.MergeArtifacts(*effectiveOutputDirectory)
 	}
 
-	return o.MergeArtifacts(effectiveOutputDirectory)
+	return nil
 }
 
 // VagrantDown ensures a recipe is halted.

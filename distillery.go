@@ -35,11 +35,12 @@ type Distillery struct {
 	// Example: hello
 	Project string
 
-	// OutputDirectory specifices where build artifacts are placed.
-	// Default is DefaultOutputDirectory.
+	// OutputDirectory optionally specifices where build artifacts are found on guests.
+	// If OutputDirectory is nil, then artifacts are not copied back to the host.
 	//
 	// Example: bin
-	OutputDirectory string
+	// Default: <nil>
+	OutputDirectory *string
 
 	// Steps enumerates build steps.
 	//
@@ -67,15 +68,6 @@ type Distillery struct {
 	runningRecipes *lane.Deque
 }
 
-// EffectiveOutputDirectory determines the search path for copying artifacts back to the host.
-func (o Distillery) EffectiveOutputDirectory() string {
-	if o.OutputDirectory == "" {
-		return DefaultOutputDirectory
-	}
-
-	return o.OutputDirectory
-}
-
 // ProjectData calculates the per-project tonixxx data directory based on a hash of the project directory absolute path.
 func (o Distillery) ProjectData() (string, error) {
 	tonixxxHome, err := DataHome()
@@ -95,13 +87,7 @@ func (o Distillery) ProjectArtifacts() (string, error) {
 		return "", err
 	}
 
-	outputDirectory := o.OutputDirectory
-
-	if outputDirectory == "" {
-		outputDirectory = DefaultOutputDirectory
-	}
-
-	return path.Join(projectData, o.EffectiveOutputDirectory()), nil
+	return path.Join(projectData, *o.OutputDirectory), nil
 }
 
 // Validate applies some semantic checks to a Distillery configuration.
@@ -179,18 +165,24 @@ func Load(pth string) (*Distillery, error) {
 		return nil, err
 	}
 
-	projectArtifacts, err := distillery.ProjectArtifacts()
+	var projectArtifacts string
 
-	if err != nil {
-		return nil, err
+	if distillery.OutputDirectory != nil {
+		projectArtifacts, err = distillery.ProjectArtifacts()
+
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	for i := range distillery.Recipes {
 		// Inject ProjectData path into recipe
 		distillery.Recipes[i].projectData = projectData
 
-		// Inject ProjectArtifacts path into recipe
-		distillery.Recipes[i].projectArtifacts = projectArtifacts
+		if distillery.OutputDirectory != nil {
+			// Inject ProjectArtifacts path into recipe
+			distillery.Recipes[i].projectArtifacts = projectArtifacts
+		}
 
 		// Default recipe steps to top-level distillery steps
 		if len(distillery.Recipes[i].Steps) == 0 {
@@ -224,7 +216,7 @@ func (o Distillery) Boil() error {
 			o.runningRecipes.Append(recipe)
 		}
 
-		if err := recipe.Boil(o.EffectiveOutputDirectory(), o.Debug); err != nil {
+		if err := recipe.Boil(o.OutputDirectory, o.Debug); err != nil {
 			return err
 		}
 	}
@@ -233,13 +225,15 @@ func (o Distillery) Boil() error {
 		return nil
 	}
 
-	projectArtifacts, err := o.ProjectArtifacts()
+	if o.OutputDirectory != nil {
+		projectArtifacts, err := o.ProjectArtifacts()
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
+
+		log.Printf("Artifacts merged to %s", projectArtifacts)
 	}
-
-	log.Printf("Artifacts merged to %s", projectArtifacts)
 
 	return nil
 }

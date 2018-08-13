@@ -7,6 +7,8 @@ steps:
   - cmake --build . --config Release
   - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
 
+outputdirectory: bin
+
 recipes:
   - label: dragonflybsd-amd64
     box: mcandre/palindrome-buildbot-dragonfly

@@ -8,6 +8,8 @@ steps:
   - make
   - make test
 
+outputdirectory: bin
+
 recipes:
   - label: freebsd-amd64
     box: mcandre/bronze-buildbot-freebsd

@@ -1,7 +1,5 @@
 project: mo
 
-outputdirectory: dist/bin
-
 steps:
   - cd "$TONIXXX_SYNC"
   - cabal install --force-reinstalls --only-dependencies --enable-documentation
@@ -9,6 +7,8 @@ steps:
   - shake
   - shake lint
   - shake test
+
+outputdirectory: dist/bin
 
 recipes:
   - label: dragonflybsd-amd64
