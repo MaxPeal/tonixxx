@@ -11,22 +11,22 @@ steps:
   - shake test
 
 recipes:
-  - label: dragonflybsd-amd64
-    box: mcandre/mo-buildbot-dragonfly
-  - label: freebsd-amd64
-    box: mcandre/mo-buildbot-freebsd
-  - label: linux-glibc-2.17-amd64
-    box: mcandre/mo-buildbot-centos
-  - label: linux-glibc-2.24-amd64
-    box: mcandre/mo-buildbot-debian-amd64
-  - label: linux-glibc-2.24-i386
-    box: mcandre/mo-buildbot-debian-i386
-  - label: linux-musl-amd64
-    box: mcandre/mo-buildbot-void-amd64
-  - label: linux-musl-i386
-    box: mcandre/mo-buildbot-void-i386
-  - label: macos-amd64
-    box: mcandre/mo-buildbot-macos
+  # - label: dragonflybsd-amd64
+  #   box: mcandre/mo-buildbot-dragonfly
+  # - label: freebsd-amd64
+  #   box: mcandre/mo-buildbot-freebsd
+  # - label: linux-glibc-2.17-amd64
+  #   box: mcandre/mo-buildbot-centos
+  # - label: linux-glibc-2.24-amd64
+  #   box: mcandre/mo-buildbot-debian-amd64
+  # - label: linux-glibc-2.24-i386
+  #   box: mcandre/mo-buildbot-debian-i386
+  # - label: linux-musl-amd64
+  #   box: mcandre/mo-buildbot-void-amd64
+  # - label: linux-musl-i386
+  #   box: mcandre/mo-buildbot-void-i386
+  # - label: macos-amd64
+  #   box: mcandre/mo-buildbot-macos
   - label: windows-amd64
     box: mcandre/mo-buildbot-windows-amd64
     guesttype: Cygwin
