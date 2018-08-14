@@ -4,7 +4,11 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
+	"path/filepath"
+	"regexp"
 
 	"github.com/magefile/mage/mg"
 	"github.com/mcandre/tonixxx"
@@ -50,6 +54,49 @@ func Errcheck() error { return mageextras.Errcheck("-blank") }
 // Nakedret runs nakedret.
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
 
+// YamlRegex matches YAML files.
+var YamlRegex = regexp.MustCompile(".*\\.y(a)?ml$")
+
+// yamlLintWalk recursively lints YAML files.
+func yamlLintWalk(path string, info os.FileInfo, err error) error {
+	log.Printf("Path: %v", path)
+
+	if err != nil {
+		return err
+	}
+
+	if !info.IsDir() && YamlRegex.MatchString(path) {
+		command := exec.Command("yamllint", path)
+		command.Stdout = os.Stdout
+		command.Stderr = os.Stderr
+
+		if err := command.Run(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// YamlLint runs yamllint.
+func YamlLint() error {
+	command := exec.Command("yamllint", ".yamllint")
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+
+	if err := command.Run(); err != nil {
+		return err
+	}
+
+	cwd, err := os.Getwd()
+
+	if err != nil {
+		return err
+	}
+
+	return filepath.Walk(cwd, yamlLintWalk)
+}
+
 // Lint runs the lint suite.
 func Lint() error {
 	mg.Deps(GoVet)
@@ -58,6 +105,7 @@ func Lint() error {
 	mg.Deps(GoImports)
 	mg.Deps(Errcheck)
 	mg.Deps(Nakedret)
+	mg.Deps(YamlLint)
 	return nil
 }
 

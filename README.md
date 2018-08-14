@@ -109,6 +109,7 @@ See `tonixxx -help` for more information on tonixxx invocation syntax.
 * [nakedret](https://github.com/alexkohler/nakedret) (e.g. `go get github.com/alexkohler/nakedret`)
 * [goxcart](https://github.com/mcandre/goxcart) (e.g., `github.com/mcandre/goxcart/...`)
 * [zipc](https://github.com/mcandre/zipc) (e.g. `go get github.com/mcandre/zipc/...`)
+* [Python](https://www.python.org/) 2
 
 ## INSTALL FROM REMOTE GIT REPOSITORY
 
