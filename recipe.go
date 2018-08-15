@@ -163,7 +163,7 @@ func (o Recipe) EnsureSourceCopy() error {
 	return popcopy.Copy(
 		cwd,
 		o.CloneHost(),
-		[]*regexp.Regexp{regexp.MustCompile(BuildbotsBasename)},
+		ImplicitRecipeExclusions,
 	)
 }
 

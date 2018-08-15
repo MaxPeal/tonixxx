@@ -3,6 +3,7 @@ package tonixxx
 import (
 	"os/user"
 	"path"
+	"regexp"
 )
 
 // Version is semver.
@@ -18,6 +19,13 @@ const DataBasename = ".tonixxx"
 // which aids tonixxx in excluding these (potentially large files)
 // from recipe clones during project builds with tonixxx up and tonixxx boil.
 const BuildbotsBasename = "buildbot-src"
+
+// ImplicitRecipeExclusions names file patterns to be automatically ignored
+// when copying a tonixxx project's files to per-recipe directories.
+var ImplicitRecipeExclusions = []*regexp.Regexp{
+	regexp.MustCompile(BuildbotsBasename),
+	regexp.MustCompile("\\.envrc"),
+}
 
 // DefaultOutputDirectory locates project-wide binary aggregation at the end of a build, relative to the tonixxx per-project metadata directory.
 const DefaultOutputDirectory = "bin"
