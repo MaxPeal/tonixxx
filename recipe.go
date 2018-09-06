@@ -138,7 +138,14 @@ func (o Recipe) ConfigureEnvironmentVariable(key string, value string) string {
 
 // AggregateSteps constructs a logical whole command out of subcommands.
 func (o Recipe) AggregateSteps(steps []string) string {
-	return strings.Join(steps, " && ")
+	commandDelimiter := " && "
+
+	switch o.GuestType {
+	case GuestTypeCygwin:
+		commandDelimiter = " ^&^& "
+	}
+
+	return strings.Join(steps, commandDelimiter)
 }
 
 // CloneHost supplies the directory path inside ~/.tonixxx in which a recipe's Vagrant clone resides.
