@@ -3,6 +3,7 @@ project: mo
 
 steps:
   - cd "$TONIXXX_SYNC"
+  - cabal update
   - cabal install --force-reinstalls --only-dependencies --enable-documentation
   - cabal install --force-reinstalls --only-dependencies --enable-tests
   - shake
