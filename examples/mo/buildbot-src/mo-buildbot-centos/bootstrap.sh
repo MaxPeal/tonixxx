@@ -6,6 +6,4 @@ sudo yum update -y &&
     sh -c 'cd /etc/profile.d && sudo patch </home/vagrant/cabal-install.sh.patch' &&
     . /home/vagrant/.bash_profile &&
     cabal update &&
-    cabal install happy &&
-    cabal install hlint &&
-    cabal install shake
+    cabal install happy
