@@ -17,6 +17,6 @@ clean:
 	-rm Cargo.lock
 
 clippy: src/bin/*.rs src/lib/*.rs
-	cargo check --features clippy
+	cargo +nightly clippy
 
 lint: clippy
