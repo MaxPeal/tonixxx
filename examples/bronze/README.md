@@ -14,18 +14,10 @@ $ bronze
 (3.141592653589793, 45.518313724282066)
 ```
 
-# BUILD
+# RUNTIME REQUIREMENTS
 
-```console
-$ make
-```
+(None)
 
-# PORT
+# CONTRIBUTING
 
-```console
-$ tonixxx boil
-```
-
-# PROVISIONING
-
-See `buildbot-src` for more information about buildbot provisioning.
+For more details on developing bronze itself, see [DEVELOPMENT.md](DEVELOPMENT.md).

@@ -6,6 +6,13 @@ version = "0.0.1"
 authors = ["Andrew Pennebaker <andrew.pennebaker@gmail.com>"]
 license = "BSD-2-Clause"
 
+[dependencies]
+tinyrick = { version = "0.0.9", optional = true }
+tinyrick_extras = { version = "0.0.3", optional = true }
+
+[features]
+letmeout = ["tinyrick", "tinyrick_extras"]
+
 [lib]
 name = "bronze"
 path = "src/lib/bronze.rs"
@@ -13,3 +20,8 @@ path = "src/lib/bronze.rs"
 [[bin]]
 name = "bronze"
 path = "src/bin/bronze.rs"
+
+[[bin]]
+name = "tinyrick"
+path = "tinyrick.rs"
+required-features = ["letmeout"]

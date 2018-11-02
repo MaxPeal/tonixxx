@@ -1,4 +1,5 @@
 #!/bin/sh
-su root -c "pkgin update && pkgin -y install gmake" &&
-    rustup update nightly &&
-    rustup default nightly
+rustup update stable &&
+    rustup default stable &&
+    rustup component add clippy-preview &&
+    cargo install tinyrick

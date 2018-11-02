@@ -3,12 +3,8 @@ project: bronze
 
 steps:
   - rustup update
-  - rustup default nightly
-  - rustup component add clippy-preview --toolchain=nightly
   - cd "$TONIXXX_SYNC"
-  - make lint
-  - make
-  - make test
+  - tinyrick
 
 outputdirectory: bin
 
@@ -27,11 +23,13 @@ recipes:
     box: mcandre/bronze-buildbot-debian-i386
   - label: macos-amd64
     box: mcandre/bronze-buildbot-macos
-  - label: netbsd-amd64
-    box: mcandre/bronze-buildbot-netbsd-amd64
+  # clippy broken on NetBSD
+  # - label: netbsd-amd64
+  #   box: mcandre/bronze-buildbot-netbsd-amd64
   - label: windows-amd64
     box: mcandre/bronze-buildbot-windows-amd64
     guesttype: Cygwin
-  - label: windows-i386
-    box: mcandre/bronze-buildbot-windows-i386
-    guesttype: Cygwin
+  # rustup broken on 32-bit Windows
+  # - label: windows-i386
+  #   box: mcandre/bronze-buildbot-windows-i386
+  #   guesttype: Cygwin

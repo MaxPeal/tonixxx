@@ -1,4 +1,4 @@
-choco install -force -y make
-
-rustup update nightly
-rustup default nightly
+rustup update stable
+rustup default stable
+rustup component add clippy-preview
+cargo install tinyrick

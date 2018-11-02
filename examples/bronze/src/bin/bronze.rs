@@ -1,3 +1,5 @@
+//! Pi factoring
+
 #![deny(warnings)]
 #![cfg_attr(feature="clippy", feature(plugin))]
 #![cfg_attr(feature="clippy", plugin(clippy))]
@@ -6,6 +8,7 @@ extern crate bronze;
 
 use std::io;
 
+/// CLI entrypoint
 fn main() {
   loop {
     let mut line = String::new();
