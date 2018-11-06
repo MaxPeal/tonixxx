@@ -155,7 +155,9 @@ $ mage port
 
 # SEE ALSO
 
-[goxcart](https://github.com/mcandre/goxcart) is a lean option for porting Go projects
+* [goxcart](https://github.com/mcandre/goxcart) is a lean option for porting Go projects
+* [remy](https://github.com/mcandre/remy) is a lean option for porting Rust projects
+* [cartel](https://github.com/mcandre/cartel) provides Docker images for C/C++ cross-compilation toolchains
 
 # LICENSE
 
