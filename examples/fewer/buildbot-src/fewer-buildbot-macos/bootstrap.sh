@@ -1,7 +1,8 @@
 #!/bin/sh
-brew install \
-    cmake \
-    cppcheck \
-    splint \
-    vera++ \
-    valgrind
+brew install findutils --with-default-names &&
+    brew install \
+        cmake \
+        cppcheck \
+        splint \
+        vera++ \
+        valgrind
