@@ -3,4 +3,5 @@ brew install \
     cmake \
     cppcheck \
     splint \
-    vera++
+    vera++ \
+    valgrind

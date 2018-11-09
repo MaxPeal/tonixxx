@@ -6,4 +6,4 @@
 void usage(char* program);
 
 // Present an interactive command session.
-void repl(FILE* file, /*@out@*/ char* instruction, /*@out@*/ char* buffer);
+void repl(FILE* file, /*@out@*/ char* instruction, /*@out@*/ char* buffer, /*@out*/ char* hex_buf);

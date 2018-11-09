@@ -7,14 +7,16 @@ steps:
   # - cmake --build . --target lint
   - cmake --build . --config Release
   - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
+  - cmake --build . --target leaks
 
 outputdirectory: bin
 
 recipes:
   - label: dragonflybsd-amd64
     box: mcandre/fewer-buildbot-dragonfly
-  - label: freebsd-amd64
-    box: mcandre/fewer-buildbot-freebsd
+  # FreeBSD bot broken
+  # - label: freebsd-amd64
+  #   box: mcandre/fewer-buildbot-freebsd
   - label: haiku-amd64
     box: mcandre/fewer-buildbot-haiku-amd64
     guesttype: Haiku
@@ -31,6 +33,7 @@ recipes:
       # - cmake3 --build . --target lint
       - cmake3 --build . --config Release
       - CTEST_OUTPUT_ON_FAILURE=1 ctest3 -C Release
+      - cmake3 --build . --target leaks
   - label: linux-glibc-2.24-amd64
     box: mcandre/fewer-buildbot-debian-amd64
   - label: linux-glibc-2.24-i386

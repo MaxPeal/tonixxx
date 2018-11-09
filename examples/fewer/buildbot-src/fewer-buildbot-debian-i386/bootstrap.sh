@@ -5,4 +5,5 @@ sudo apt-get update &&
         cmake \
         cppcheck \
         splint \
-        vera++
+        vera++ \
+        valgrind

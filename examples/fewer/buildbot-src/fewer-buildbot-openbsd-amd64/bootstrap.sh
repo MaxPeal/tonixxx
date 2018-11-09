@@ -2,4 +2,5 @@
 sudo pkg_add \
     cmake \
     cppcheck \
-    splint
+    splint \
+    valgrind

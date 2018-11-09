@@ -4,5 +4,6 @@ sudo pkg update &&
         cmake \
         cppcheck \
         splint \
-        vera++ &&
+        vera++ \
+        valgrind &&
     sudo pkg clean -y

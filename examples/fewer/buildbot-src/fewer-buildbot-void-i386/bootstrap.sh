@@ -3,5 +3,6 @@ sudo xbps-install -uSy \
     make \
     cmake \
     cppcheck \
-    splint &&
+    splint \
+    valgrind &&
     sudo xbps-remove -O

@@ -4,4 +4,5 @@ sudo yum update -y &&
     sudo yum install -y \
         cmake3 \
         cppcheck \
-        splint
+        splint \
+        valgrind
