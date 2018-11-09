@@ -6,6 +6,7 @@ sudo apt-get update &&
         cppcheck \
         splint \
         vera++ \
+        valgrind \
         python3-pip \
         python3-setuptools &&
     sudo apt-get autoclean -y &&

@@ -5,6 +5,7 @@ sudo pkg update &&
         cppcheck \
         splint \
         vera++ \
+        valgrind \
         python3 \
         ca_root_nss &&
     sudo pkg clean -y &&

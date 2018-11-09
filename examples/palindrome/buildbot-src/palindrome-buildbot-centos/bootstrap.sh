@@ -6,6 +6,7 @@ sudo yum update -y &&
         cmake3 \
         cppcheck \
         splint \
+        valgrind \
         python36u \
         python36u-pip &&
     sudo pip3.6 install wheel &&

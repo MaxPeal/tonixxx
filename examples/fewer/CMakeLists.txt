@@ -34,8 +34,8 @@ enable_testing()
 add_test(NAME fewertest COMMAND fewer -t)
 
 add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg lib)
-add_custom_target(splint COMMAND splint lib/main.c lib/fewer.c lib/fewer.h)
-add_custom_target(vera++ COMMAND vera++ -s lib/main.c lib/fewer.c lib/fewer.h)
+add_custom_target(splint COMMAND 	find lib -type f -name '*.c' -print0 | xargs -0 -n1 -r splint)
+add_custom_target(vera++ COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 -r vera++ -s)
 
 # Missing linter ports
 if(MSVC OR
@@ -46,7 +46,7 @@ if(MSVC OR
   add_custom_target(lint)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Minix")
   add_custom_target(lint DEPENDS splint)
-elseif(CMAKE_SYSTEM_NAME MATCHES "HBSD")
+elseif(CMAKE_SYSTEM_VERSION MATCHES "HBSD")
   add_custom_target(lint DEPENDS splint vera++)
 elseif(CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
   LSB_RELEASE MATCHES "Void"
@@ -65,7 +65,7 @@ add_custom_target(valgrind DEPENDS valgrind_usage valgrind_test)
 if(MSVC OR
   CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
   CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
-  CMAKE_SYSTEM_NAME MATCHES "HBSD" OR
+  CMAKE_SYSTEM_VERSION MATCHES "HBSD" OR
   CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
   CMAKE_SYSTEM_NAME MATCHES "Darwin" OR
   CMAKE_SYSTEM_NAME MATCHES "Minix" OR

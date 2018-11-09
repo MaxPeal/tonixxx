@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <sstream>
+#include <cstdlib>
 #include <cstring>
 #include <cassert>
 #include <iomanip>
@@ -35,17 +36,23 @@ int main(int argc, char** argv) {
 
   if (argc > 2) {
     usage(argv[0]);
-    return 1;
+    return EXIT_FAILURE;
   }
 
   if (argc > 1 && strcmp(argv[1], "-t") == 0) {
     test();
-    return 0;
+    return EXIT_SUCCESS;
   }
 
-  while (true) {
+  while (!std::cin.bad() && !std::cin.eof()) {
     std::getline(std::cin, line);
 
     std::cout << "Palindrome: " << palindrome(line) << std::endl;
+  }
+
+  if (std::cin.bad()) {
+    return EXIT_FAILURE;
+  } else {
+    return EXIT_SUCCESS;
   }
 }
