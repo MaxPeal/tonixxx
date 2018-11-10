@@ -14,9 +14,8 @@ outputdirectory: bin
 recipes:
   - label: dragonflybsd-amd64
     box: mcandre/fewer-buildbot-dragonfly
-  # FreeBSD bot broken
-  # - label: freebsd-amd64
-  #   box: mcandre/fewer-buildbot-freebsd
+  - label: freebsd-amd64
+    box: mcandre/fewer-buildbot-freebsd
   - label: haiku-amd64
     box: mcandre/fewer-buildbot-haiku-amd64
     guesttype: Haiku
