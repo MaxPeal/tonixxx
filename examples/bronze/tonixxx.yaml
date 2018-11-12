@@ -2,34 +2,34 @@
 project: bronze
 
 steps:
-  - rustup update
-  - cd "$TONIXXX_SYNC"
-  - tinyrick
+    - rustup update
+    - cd "$TONIXXX_SYNC"
+    - tinyrick
 
 outputdirectory: bin
 
 recipes:
-  - label: freebsd-amd64
-    box: mcandre/bronze-buildbot-freebsd
-  - label: hardenedbsd-amd64
-    box: mcandre/bronze-buildbot-hardenedbsd
-  - label: linux-glibc-2.17-amd64
-    box: mcandre/bronze-buildbot-centos-amd64
-  - label: linux-glibc-2.17-i386
-    box: mcandre/bronze-buildbot-centos-i386
-  - label: linux-glibc-2.24-amd64
-    box: mcandre/bronze-buildbot-debian-amd64
-  - label: linux-glibc-2.24-i386
-    box: mcandre/bronze-buildbot-debian-i386
-  - label: macos-amd64
-    box: mcandre/bronze-buildbot-macos
-  # clippy broken on NetBSD
-  # - label: netbsd-amd64
-  #   box: mcandre/bronze-buildbot-netbsd-amd64
-  - label: windows-amd64
-    box: mcandre/bronze-buildbot-windows-amd64
-    guesttype: Cygwin
-  # rustup broken on 32-bit Windows
-  # - label: windows-i386
-  #   box: mcandre/bronze-buildbot-windows-i386
-  #   guesttype: Cygwin
+    - label: freebsd-amd64
+      box: mcandre/bronze-buildbot-freebsd
+    - label: hardenedbsd-amd64
+      box: mcandre/bronze-buildbot-hardenedbsd
+    - label: linux-glibc-2.17-amd64
+      box: mcandre/bronze-buildbot-centos-amd64
+    - label: linux-glibc-2.17-i386
+      box: mcandre/bronze-buildbot-centos-i386
+    - label: linux-glibc-2.24-amd64
+      box: mcandre/bronze-buildbot-debian-amd64
+    - label: linux-glibc-2.24-i386
+      box: mcandre/bronze-buildbot-debian-i386
+    - label: macos-amd64
+      box: mcandre/bronze-buildbot-macos
+    # clippy broken on NetBSD
+    # - label: netbsd-amd64
+    #   box: mcandre/bronze-buildbot-netbsd-amd64
+    - label: windows-amd64
+      box: mcandre/bronze-buildbot-windows-amd64
+      guesttype: Cygwin
+    # rustup broken on 32-bit Windows
+    # - label: windows-i386
+    #   box: mcandre/bronze-buildbot-windows-i386
+    #   guesttype: Cygwin

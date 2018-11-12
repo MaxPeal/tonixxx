@@ -2,68 +2,68 @@
 project: palindrome
 
 steps:
-  - cd "$TONIXXX_SYNC"
-  - cmake .
-  - cmake --build . --target lint
-  - cmake --build . --config Release
-  - cmake --build . --target leaks
-  - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
+    - cd "$TONIXXX_SYNC"
+    - cmake .
+    - cmake --build . --target lint
+    - cmake --build . --config Release
+    - cmake --build . --target leaks
+    - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
 
 outputdirectory: bin
 
 recipes:
-  - label: dragonflybsd-amd64
-    box: mcandre/palindrome-buildbot-dragonfly
-  - label: freebsd-amd64
-    box: mcandre/palindrome-buildbot-freebsd
-  - label: haiku-amd64
-    box: mcandre/palindrome-buildbot-haiku-amd64
-    guesttype: Haiku
-  - label: hardenedbsd-amd64
-    box: mcandre/palindrome-buildbot-hardenedbsd
-  - label: illumos-amd64
-    guesttype: SmartOSGZ
-    box: mcandre/palindrome-buildbot-smartos
-  - label: linux-glibc-2.17-amd64
-    box: mcandre/palindrome-buildbot-centos
-    steps:
-      - cd "$TONIXXX_SYNC"
-      - cmake3 .
-      - cmake3 --build . --target lint
-      - cmake3 --build . --config Release
-      - cmake3 --build . --target leaks
-      - CTEST_OUTPUT_ON_FAILURE=1 ctest3 -C Release
-  - label: linux-glibc-2.24-amd64
-    box: mcandre/palindrome-buildbot-debian-amd64
-  - label: linux-glibc-2.24-i386
-    box: mcandre/palindrome-buildbot-debian-i386
-  - label: linux-musl-amd64
-    box: mcandre/palindrome-buildbot-void-amd64
-  - label: linux-musl-i386
-    box: mcandre/palindrome-buildbot-void-i386
-  - label: linux-uclibc-amd64
-    box: mcandre/palindrome-buildbot-openwrt-amd64
-    presteps:
-      - sudo find /vagrant -exec chown vagrant:vagrant {} +
-  - label: linux-uclibc-i386
-    box: mcandre/palindrome-buildbot-openwrt-i386
-    presteps:
-      - sudo find /vagrant -exec chown vagrant:vagrant {} +
-  - label: macos-amd64
-    box: mcandre/palindrome-buildbot-macos
-  - label: minix-i386
-    box: mcandre/palindrome-buildbot-minix
-  - label: netbsd-amd64
-    box: mcandre/palindrome-buildbot-netbsd-amd64
-  - label: netbsd-i386
-    box: mcandre/palindrome-buildbot-netbsd-i386
-  - label: openbsd-amd64
-    box: mcandre/palindrome-buildbot-openbsd-amd64
-  - label: openbsd-i386
-    box: mcandre/palindrome-buildbot-openbsd-i386
-  - label: windows-amd64
-    guesttype: Cygwin
-    box: mcandre/palindrome-buildbot-windows-amd64
-  - label: windows-i386
-    guesttype: Cygwin
-    box: mcandre/palindrome-buildbot-windows-i386
+    - label: dragonflybsd-amd64
+      box: mcandre/palindrome-buildbot-dragonfly
+    - label: freebsd-amd64
+      box: mcandre/palindrome-buildbot-freebsd
+    - label: haiku-amd64
+      box: mcandre/palindrome-buildbot-haiku-amd64
+      guesttype: Haiku
+    - label: hardenedbsd-amd64
+      box: mcandre/palindrome-buildbot-hardenedbsd
+    - label: illumos-amd64
+      guesttype: SmartOSGZ
+      box: mcandre/palindrome-buildbot-smartos
+    - label: linux-glibc-2.17-amd64
+      box: mcandre/palindrome-buildbot-centos
+      steps:
+          - cd "$TONIXXX_SYNC"
+          - cmake3 .
+          - cmake3 --build . --target lint
+          - cmake3 --build . --config Release
+          - cmake3 --build . --target leaks
+          - CTEST_OUTPUT_ON_FAILURE=1 ctest3 -C Release
+    - label: linux-glibc-2.24-amd64
+      box: mcandre/palindrome-buildbot-debian-amd64
+    - label: linux-glibc-2.24-i386
+      box: mcandre/palindrome-buildbot-debian-i386
+    - label: linux-musl-amd64
+      box: mcandre/palindrome-buildbot-void-amd64
+    - label: linux-musl-i386
+      box: mcandre/palindrome-buildbot-void-i386
+    - label: linux-uclibc-amd64
+      box: mcandre/palindrome-buildbot-openwrt-amd64
+      presteps:
+          - sudo find /vagrant -exec chown vagrant:vagrant {} +
+    - label: linux-uclibc-i386
+      box: mcandre/palindrome-buildbot-openwrt-i386
+      presteps:
+          - sudo find /vagrant -exec chown vagrant:vagrant {} +
+    - label: macos-amd64
+      box: mcandre/palindrome-buildbot-macos
+    - label: minix-i386
+      box: mcandre/palindrome-buildbot-minix
+    - label: netbsd-amd64
+      box: mcandre/palindrome-buildbot-netbsd-amd64
+    - label: netbsd-i386
+      box: mcandre/palindrome-buildbot-netbsd-i386
+    - label: openbsd-amd64
+      box: mcandre/palindrome-buildbot-openbsd-amd64
+    - label: openbsd-i386
+      box: mcandre/palindrome-buildbot-openbsd-i386
+    - label: windows-amd64
+      guesttype: Cygwin
+      box: mcandre/palindrome-buildbot-windows-amd64
+    - label: windows-i386
+      guesttype: Cygwin
+      box: mcandre/palindrome-buildbot-windows-i386
