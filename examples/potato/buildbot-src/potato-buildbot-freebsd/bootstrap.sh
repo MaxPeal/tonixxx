@@ -1,7 +1,7 @@
 #!/bin/sh
 sudo pkg update &&
     sudo pkg install -y \
-        cmake \
+        meson \
         valgrind &&
     sudo pkg clean -y &&
     dub fetch dscanner

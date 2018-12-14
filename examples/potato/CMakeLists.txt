@@ -1,21 +1,9 @@
 cmake_minimum_required(VERSION 3.4)
-
-project(potato)
-
+project(potato D)
 set(EXECUTABLE_OUTPUT_PATH "bin")
 set(LSB_RELEASE "")
 
-if(MSVC)
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${EXECUTABLE_OUTPUT_PATH}")
-elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   execute_process(COMMAND lsb_release -a OUTPUT_VARIABLE LSB_RELEASE)
 endif()
 
@@ -29,13 +17,12 @@ add_executable(potato lib/main.d)
 
 enable_testing()
 
-add_test(NAME potatotest COMMAND potato)
+add_test(NAME potatotest COMMAND dub test)
 
-add_custom_target(dscanner COMMAND find lib -type f -name '*.d' -print0 | xargs -0 -n1 -r dub run dscanner -- --styleCheck)
-
+add_custom_target(dscanner COMMAND dub run dscanner -- --styleCheck)
 add_custom_target(lint DEPENDS dscanner)
 
-add_custom_target(valgrind_test COMMAND valgrind --error-exitcode=1 --leak-check=full bin/potato)
+add_custom_target(valgrind_test COMMAND valgrind --error-exitcode=1 --leak-check=full .dub/build/potato)
 add_custom_target(valgrind DEPENDS valgrind_usage valgrind_test)
 
 # Broken or missing valgrind

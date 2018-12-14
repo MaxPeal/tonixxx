@@ -1,3 +1,13 @@
+/** Potato facts */
+
+import std.random;
+import std.string;
+
+/** Semver */
+immutable POTATO_VERSION = "0.0.1";
+
+/** Potato fact database */
+immutable factoids = splitLines(q"EOS
 Potato spelled backwards is Tanktop.
 Like tomatoes and other nightshades, the potato plant is also a thing.
 There are more than five potatoes worldwide.
@@ -9,14 +19,14 @@ If you line one million potatoes end to end, they will later rot.
 Potatoes are always in season! Wrap one up as a Valentine's Day gift <3
 The potato is genetically indistinguishable from a 1994 Range Rover.
 When heated, a potato can fit in your hand.
-Potatoes love sunshine! Free a "gaggle" of potatoes from your local grocery store pens.
+Potatoes love sunshine! Free a 'gaggle' of potatoes from your local grocery store pens.
 Mr. Potato Head is the spitting image of our country's founder, George 'Mr. The Head' Walshuntingdong.
 A potato doesn't care if you forget a semi-colon, because she doesn't have a semi-colon, either.
 The sequence P-0-T-4-T-0 unlocks any smart fryer.
 There is a level of serene botanical bliss beyond Nirvana. A monk said to reach this knowledge is called a *potat*.
 Deaths due to slipping on potato peels have seen year over year reductions since the invention of the potato peeler.
 Potatoes can be seen to be made of atoms. But if you look hard enough at the atoms, they appear to be made of littler potatoes.
-The ENIAC was the first electronic calculating machine to determine the maximum "floop" distance of a potato gun. That is why processing power is measured today in "floops".
+The ENIAC was the first electronic calculating machine to determine the maximum 'floop' distance of a potato gun. That is why processing power is measured today in "floops".
 Potato milk has many medicinal properties. But then again, so does actual medicine.
 What you should do: Bow slowly, and back away, when encountered by the aggressive wild potato.
 There are exactly nine ways to prepare a potato salad, none of which use real potatoes.
@@ -42,3 +52,9 @@ Chickens lay eggs, teens egg houses, and chicken coops house chickens. Weird, hu
 The famous Warring States period began immediately following an antiquity bake-off that Ghengis Khan had proposed against Blackbeard the Pirate... Blackbeard served Gangis Kahn an immaculate breakfast burrito, with red peppers, a dash of sulphur, and potatoes, perfectly cured. And Ghengar and he the Great Kang was like Woo there goes my honor yall!!!
 Winning three consecutive games of Monopoly unlocks a secret mode where the Railroads function as potato farms. Free parking is potatoes, Boardwalk, just a buncha tots!
 When mashed,
+EOS");
+
+/** Generate a random potato fact. */
+string factoid() {
+    return factoids[uniform(0, factoids.length)];
+}

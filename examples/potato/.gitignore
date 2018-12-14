@@ -1,18 +1,7 @@
-bin
-# Created by https://www.gitignore.io/api/d,cmake
-# Edit at https://www.gitignore.io/?templates=d,cmake
-
-### CMake ###
-CMakeLists.txt.user
-CMakeCache.txt
-CMakeFiles
-CMakeScripts
-Testing
-Makefile
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
+*-test-*
+dub.selections.json
+# Created by https://www.gitignore.io/api/d
+# Edit at https://www.gitignore.io/?templates=d
 
 ### D ###
 # Compiled Object files
@@ -40,4 +29,4 @@ docs/
 # Code coverage
 *.lst
 
-# End of https://www.gitignore.io/api/d,cmake
+# End of https://www.gitignore.io/api/d
