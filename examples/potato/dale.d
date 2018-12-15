@@ -98,29 +98,40 @@ void valgrind() {
 void leaks() {
     deps(&buildRelease);
 
-    version(Windows) { return; }
-    version(DragonFlyBSD) { return; }
-    version(Haiku) { return; }
-    version(Solaris) { return; }
-    version(NetBSD) { return; }
-    version(OpenBSD) { return; }
-    version(OSX) { return; }
-    else {
-        try {
-            auto lsbReleaseAll = execStdoutUTF8("lsb_release", ["-a"]);
+    auto valgrindBroken = false;
 
-            if (lsbReleaseAll.indexOf("Void") != -1) { return; }
-        } catch (ProcessException e) {} // Non-Linux distribution
+    version(Windows) { valgrindBroken = true; }
 
-        try {
-            auto unameAll = execStdoutUTF8("uname", ["-a"]);
+    version(DragonFlyBSD) { valgrindBroken = true; }
 
-            if (unameAll.indexOf("HBSD") != -1 ||
-                unameAll.indexOf("Minix") != -1) { return; }
-        } catch (ProcessException e) {} // Non-UNIX distribution
+    version(Haiku) { valgrindBroken = true; }
 
-        deps(&valgrind);
+    version(Solaris) { valgrindBroken = true; }
+
+    version(NetBSD) { valgrindBroken = true; }
+
+    version(OpenBSD) { valgrindBroken = true; }
+
+    version(OSX) { valgrindBroken = true; }
+
+    if (valgrindBroken) {
+        return;
     }
+
+    try {
+        auto lsbReleaseAll = execStdoutUTF8("lsb_release", ["-a"]);
+
+        if (lsbReleaseAll.indexOf("Void") != -1) { return; }
+    } catch (ProcessException e) {} // Non-Linux distribution
+
+    try {
+        auto unameAll = execStdoutUTF8("uname", ["-a"]);
+
+        if (unameAll.indexOf("HBSD") != -1 ||
+            unameAll.indexOf("Minix") != -1) { return; }
+    } catch (ProcessException e) {} // Non-UNIX distribution
+
+    deps(&valgrind);
 }
 
 /** Lint, unittest, build (release) binaries, and optionally run leak checks. */
