@@ -1,9 +1,8 @@
 #!/bin/bash
-set -euo pipefail
+set -eEuo pipefail
 
-brew install findutils --with-default-names
-brew install \
-    cmake \
-    make \
-    valgrind
+brew install valgrind
+
 dub fetch dscanner
+
+dub fetch dale

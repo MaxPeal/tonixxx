@@ -110,14 +110,14 @@ void leaks() {
             auto lsbReleaseAll = execStdoutUTF8("lsb_release", ["-a"]);
 
             if (lsbReleaseAll.indexOf("Void") != -1) { return; }
-        } catch (AssertError e) {} // Non-Linux distribution
+        } catch (ProcessException e) {} // Non-Linux distribution
 
         try {
             auto unameAll = execStdoutUTF8("uname", ["-a"]);
 
             if (unameAll.indexOf("HBSD") != -1 ||
                 unameAll.indexOf("Minix") != -1) { return; }
-        } catch (AssertError e) {} // Non-UNIX distribution
+        } catch (ProcessException e) {} // Non-UNIX distribution
 
         deps(&valgrind);
     }
