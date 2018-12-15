@@ -70,6 +70,7 @@ See the `examples` directory for more demonstrative templates for building appli
 
 * C: `fewer`
 * C++: `palindrome`
+* D: `potato`
 * Haskell: `mo`
 * Rust: `bronze`
 

@@ -8,8 +8,8 @@ steps:
 outputdirectory: .dub/build/bin
 
 recipes:
-    # - label: freebsd-amd64
-    #   box: mcandre/potato-buildbot-freebsd
+    - label: freebsd-amd64
+      box: mcandre/potato-buildbot-freebsd
     # - label: linux-glibc-2.17-amd64
     #   box: mcandre/potato-buildbot-centos
     #   steps:
