@@ -8,20 +8,20 @@ steps:
 outputdirectory: .dub/build/bin
 
 recipes:
-    # - label: freebsd-amd64
-    #   box: mcandre/potato-buildbot-freebsd
-    # - label: linux-glibc-2.17-amd64
-    #   box: mcandre/potato-buildbot-centos
-    # - label: linux-glibc-2.24-amd64
-    #   box: mcandre/potato-buildbot-debian-amd64
-    # # D has segfaults in Debian/i386
-    # # - label: linux-glibc-2.24-i386
-    # #   box: mcandre/fewer-buildbot-debian-i386
-    # - label: macos-amd64
-    #   box: mcandre/potato-buildbot-macos
+    - label: freebsd-amd64
+      box: mcandre/potato-buildbot-freebsd
+    - label: linux-glibc-2.17-amd64
+      box: mcandre/potato-buildbot-centos
+    - label: linux-glibc-2.24-amd64
+      box: mcandre/potato-buildbot-debian-amd64
+    # D has segfaults in Debian/i386
+    # - label: linux-glibc-2.24-i386
+    #   box: mcandre/fewer-buildbot-debian-i386
+    - label: macos-amd64
+      box: mcandre/potato-buildbot-macos
     - label: windows-amd64
       guesttype: Cygwin
       box: mcandre/potato-buildbot-windows-amd64
-    # - label: windows-i386
-    #   guesttype: Cygwin
-    #   box: mcandre/potato-buildbot-windows-i386
+    - label: windows-i386
+      guesttype: Cygwin
+      box: mcandre/potato-buildbot-windows-i386
