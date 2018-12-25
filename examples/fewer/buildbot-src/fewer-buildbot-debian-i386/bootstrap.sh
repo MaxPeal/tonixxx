@@ -6,4 +6,6 @@ sudo apt-get update &&
         cppcheck \
         splint \
         vera++ \
-        valgrind
+        valgrind &&
+    sudo apt-get clean -y &&
+    sudo rm -rf /var/lib/apt/lists/*

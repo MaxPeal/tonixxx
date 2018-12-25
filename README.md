@@ -8,19 +8,17 @@
 $ cd examples/fewer
 
 $ tonixxx boil
-2018/03/11 12:53:50 Artifacts merged to ~/.tonixxx/fewer/bin
+2018/12/30 23:22:56 Artifacts merged to ~/.tonixxx/fewer/bin
 
 $ tree ~/.tonixxx/fewer/bin
 ~/.tonixxx/fewer/bin
+├── cloudabi-amd64
+│   └── fewer
 ├── dragonflybsd-amd64
 │   └── fewer
 ├── freebsd-amd64
 │   └── fewer
-├── haiku-amd64
-│   └── fewer
 ├── hardenedbsd-amd64
-│   └── fewer
-├── illumos-amd64
 │   └── fewer
 ├── linux-glibc-2.17-amd64
 │   └── fewer
@@ -38,20 +36,14 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── macos-amd64
 │   └── fewer
-├── minix-i386
-│   └── fewer
 ├── netbsd-amd64
 │   └── fewer
 ├── netbsd-i386
 │   └── fewer
 ├── openbsd-amd64
 │   └── fewer
-├── openbsd-i386
-│   └── fewer
-├── windows-amd64
-│   └── fewer.exe
-└── windows-i386
-    └── fewer.exe
+└── openbsd-i386
+    └── fewer
 ```
 
 # DOWNLOAD

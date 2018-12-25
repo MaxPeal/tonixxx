@@ -12,18 +12,24 @@ steps:
 outputdirectory: bin
 
 recipes:
+    - label: cloudabi-amd64
+      box: mcandre/fewer-buildbot-ubuntu-cloudabi
+      presteps:
+        - export CLOUD_ABI_TRIPLET=x86_64-unknown-cloudabi
     - label: dragonflybsd-amd64
       box: mcandre/fewer-buildbot-dragonfly
     - label: freebsd-amd64
       box: mcandre/fewer-buildbot-freebsd
-    - label: haiku-amd64
-      box: mcandre/fewer-buildbot-haiku-amd64
-      guesttype: Haiku
+    # See https://github.com/mcandre/tonixxx/issues/143
+    # - label: haiku-amd64
+    #   box: mcandre/fewer-buildbot-haiku-amd64
+    #   guesttype: Haiku
     - label: hardenedbsd-amd64
       box: mcandre/fewer-buildbot-hardenedbsd
-    - label: illumos-amd64
-      guesttype: SmartOSGZ
-      box: mcandre/fewer-buildbot-smartos
+    # See https://github.com/mcandre/tonixxx/issues/145
+    # - label: illumos-amd64
+    #   guesttype: SmartOSGZ
+    #   box: mcandre/fewer-buildbot-smartos
     - label: linux-glibc-2.17-amd64
       box: mcandre/fewer-buildbot-centos
       steps:
@@ -51,8 +57,9 @@ recipes:
           - sudo find /vagrant -exec chown vagrant:vagrant {} +
     - label: macos-amd64
       box: mcandre/fewer-buildbot-macos
-    - label: minix-i386
-      box: mcandre/fewer-buildbot-minix
+    # See https://github.com/mcandre/tonixxx/issues/156
+    # - label: minix-i386
+    #   box: mcandre/fewer-buildbot-minix
     - label: netbsd-amd64
       box: mcandre/fewer-buildbot-netbsd-amd64
     - label: netbsd-i386
@@ -61,9 +68,10 @@ recipes:
       box: mcandre/fewer-buildbot-openbsd-amd64
     - label: openbsd-i386
       box: mcandre/fewer-buildbot-openbsd-i386
-    - label: windows-amd64
-      guesttype: Cygwin
-      box: mcandre/fewer-buildbot-windows-amd64
-    - label: windows-i386
-      guesttype: Cygwin
-      box: mcandre/fewer-buildbot-windows-i386
+    # See https://github.com/mcandre/tonixxx/issues/160
+    # - label: windows-amd64
+    #   guesttype: Cygwin
+    #   box: mcandre/fewer-buildbot-windows-amd64
+    # - label: windows-i386
+    #   guesttype: Cygwin
+    #   box: mcandre/fewer-buildbot-windows-i386

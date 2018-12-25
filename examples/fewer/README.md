@@ -1,11 +1,12 @@
 # fewer: because `less` is `more`
 
-The fewer command line tool navigates files one byte at a time, printing the `n`ext byte and the `n`ext as a hexadecimal pair, occasionally `r`eading hexadecimal pairs and printing the corresponding ASCII character, until you `q`uit. It's not particularly useful.
+The fewer command line tool navigates files one byte at a time, printing the next byte and the next as a hexadecimal pair. It's not particularly useful.
 
 # EXAMPLES
 
 ```console
-$ fewer README.md
+$ fewer
+> l README.md
 > n
 23
 > n
@@ -15,13 +16,24 @@ $ fewer README.md
 > r
 23
 #
+> h
+l <path>	Load file
+n		Show next byte
+r		Render an input byte
+q		Quit
 > q
-
-$ fewer -h
-Usage: fewer -t|-h|<filename>
--t	Run self-test
--h	Show usage information
+$
 ```
+
+# CONFIGURATION
+
+## Conventional libc
+
+See `fewer -h` for usage information.
+
+## CloudABI
+
+Supply CloudABI YAML content to stdin. See [cloudabi.yml](cloudabi.yml) and related examples.
 
 # BUILD
 

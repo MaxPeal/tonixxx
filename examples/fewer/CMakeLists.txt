@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.4)
 
+if("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
+  set(CMAKE_C_COMPILER "$ENV{CLOUD_ABI_TRIPLET}-cc")
+  set(CMAKE_CXX_COMPILER "$ENV{CLOUD_ABI_TRIPLET}-c++")
+  set(CMAKE_AR "$ENV{CLOUD_ABI_TRIPLET}-ar" CACHE FILEPATH "Archiver")
+  set(CMAKE_NM "$ENV{CLOUD_ABI_TRIPLET}-nm" CACHE FILEPATH "Nm")
+  set(CMAKE_RANLIB "$ENV{CLOUD_ABI_TRIPLET}-ranlib" CACHE FILEPATH "Ranlib")
+  set(CMAKE_SYSTEM_NAME "Generic")
+endif()
+
 project(fewer)
 
 set(EXECUTABLE_OUTPUT_PATH "bin")
@@ -23,15 +32,21 @@ if(CMAKE_C_COMPILER_ID MATCHES "clang")
   set(CMAKE_C_FLAGS "-std=c11 -O2 -Wall -Wextra -Wmost -Weverything")
 elseif(CMAKE_C_COMPILER_ID MATCHES "gcc")
   set(CMAKE_C_FLAGS "-std=c11 -O2 -Wall -Wextra")
+elseif(MSVC)
+  set(CMAKE_C_FLAGS "/O2 /W4 /wd4710 /wd4711")
 else()
   set(CMAKE_C_FLAGS "-std=c11 -O2 -Wall")
 endif()
 
-add_executable(fewer lib/main.c lib/fewer.c lib/fewer.h)
+add_executable(fewer lib/main.c lib/fewer.c)
 
 enable_testing()
 
-add_test(NAME fewertest COMMAND fewer -t)
+if("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
+  add_test(NAME fewertest COMMAND sh -c "cloudabi-run -e bin/fewer <cloudabi-unittest.yml")
+else()
+  add_test(NAME fewertest COMMAND fewer -t)
+endif()
 
 add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg lib)
 add_custom_target(splint COMMAND 	find lib -type f -name '*.c' -print0 | xargs -0 -n1 -r splint)
@@ -56,10 +71,18 @@ else()
   add_custom_target(lint DEPENDS cppcheck splint vera++)
 endif()
 
-add_custom_target(valgrind_usage COMMAND valgrind --error-exitcode=1 --leak-check=full bin/fewer -h)
-add_custom_target(valgrind_test COMMAND valgrind --error-exitcode=1 --leak-check=full bin/fewer -t)
-add_custom_target(valgrind_repl COMMAND valgrind --error-exitcode=1 --leak-check=full bin/fewer lib/fewer.c)
-add_custom_target(valgrind DEPENDS valgrind_usage valgrind_test)
+if ("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
+  add_custom_target(valgrind_test COMMAND valgrind --error-exitcode=1 --leak-check=full cloudabi-run -e bin/fewer <cloudabi-unittest.yml)
+  add_custom_target(valgrind_repl COMMAND valgrind --error-exitcode=1 --leak-check=full cloudabi-run -e bin/fewer <cloudabi-test-repl.yml 3<fewer-script.txt)
+
+  add_custom_target(valgrind DEPENDS valgrind_test valgrind_repl)
+else()
+  add_custom_target(valgrind_usage COMMAND valgrind --error-exitcode=1 --leak-check=full bin/fewer -h)
+  add_custom_target(valgrind_test COMMAND valgrind --error-exitcode=1 --leak-check=full bin/fewer -t)
+  add_custom_target(valgrind_repl COMMAND valgrind --error-exitcode=1 --leak-check=full bin/fewer <fewer-script.txt)
+
+  add_custom_target(valgrind DEPENDS valgrind_usage valgrind_test valgrind_repl)
+endif()
 
 # Broken or missing valgrind
 if(MSVC OR
