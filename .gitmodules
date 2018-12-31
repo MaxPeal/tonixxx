@@ -10,6 +10,3 @@
 [submodule "vendor/github.com/oleiade/lane"]
 	path = vendor/github.com/oleiade/lane
 	url = https://github.com/oleiade/lane.git
-[submodule "examples/potato/cmake-d"]
-	path = examples/potato/cmake-d
-	url = https://github.com/dcarp/cmake-d.git
