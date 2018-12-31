@@ -166,7 +166,7 @@ tonixxx is not magic, but simply a Go wrapper for Vagrant. It won't do the hard 
 * Doesn't erase your code when `vagrant rsync-back`ing
 * Doesn't force you to use any particular build tools or build workflows
 * Does accelerate development and testing
-* Does support UNIX and Windows hosts, as well as UNIX and windows targets
+* Does support UNIX and Windows hosts, as well as UNIX and Windows targets
 * Does support configuration commenting
 
 Good luck and keep coding!
