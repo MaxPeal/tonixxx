@@ -51,6 +51,27 @@ void chomp(char *s) {
     }
 }
 
+void split_first_occurrence(char *haystack, char *needle, /*@out@*/ char *before, /*@out@*/ char *after) {
+    size_t haystack_len = strlen(haystack), needle_len = strlen(needle);
+
+    if (needle_len == 0) {
+        strncpy(before, haystack, haystack_len);
+        after[0] = '\0';
+        return;
+    }
+
+    char *at = strstr(haystack, needle);
+
+    if (!at) {
+        strncpy(before, haystack, haystack_len);
+        after[0] = '\0';
+        return;
+    }
+
+    strncpy(before, haystack, needle_len);
+    strncpy(after, at + needle_len, strlen(at) - needle_len);
+}
+
 int repl(
     int console_out,
     int console_err,
@@ -58,11 +79,12 @@ int repl(
     int root,
     /*@out@*/ char *instruction,
     size_t instruction_size,
+    /*@out@*/ char *command,
+    /*@out@*/ char* content,
     /*@out@*/ char *buffer,
     /*@out@*/ char *hex_buf,
     size_t hex_buf_size
 ) {
-    char *filename;
     int fd;
     size_t read_count;
     unsigned char c;
@@ -96,80 +118,80 @@ int repl(
 
         chomp(instruction);
 
-        switch (instruction[0]) {
-            case 'l':
-                if (strlen(instruction) < 3) {
-                    show_commands(console_out);
-                    continue;
-                }
+        if (strlen(instruction) == 0) {
+            show_commands(console_out);
+            continue;
+        }
 
-                if (file) {
-                    (void) fclose(file);
-                }
+        split_first_occurrence(instruction, " ", command, content);
 
-                filename = instruction + 2;
-
-                fd = openat(root, filename, O_RDONLY);
-
-                if (fd == -1) {
-                    dprintf(console_err, "Error opening file description for %s\n", filename);
-                    continue;
-                }
-
-                #ifdef _MSC_VER
-                    file = _fdopen(fd, "r");
-                #else
-                    file = fdopen(fd, "r");
-                #endif
-
-                if (!file) {
-                    dprintf(console_err, "Error opening file %s\n", filename);
-                }
-
-                break;
-            case 'n':
-                if (!file) {
-                    dprintf(console_err, "No file loaded\n");
-                    continue;
-                }
-
-                read_count = fread(buffer, 1, 1, file);
-
-                if (read_count != 1) {
-                    dprintf(console_err, "Error reading byte\n");
-                    (void) fclose(console_in_file);
-                    (void) fclose(file);
-                    return EXIT_FAILURE;
-                }
-
-                render_boi(buffer[0], hex_buf);
-                dprintf(console_out, "%s\n", hex_buf);
-                break;
-            case 'r':
-                #ifdef _MSC_VER
-                    read_count = fscanf_s(console_in_file, "%2s", hex_buf, hex_buf_size);
-                #else
-                    read_count = fscanf(console_in_file, "%2s", hex_buf);
-                #endif
-
-                if (read_count != 2) {
-                    show_commands(console_out);
-                    continue;
-                }
-
-                c = parse_boi(hex_buf);
-                dprintf(console_out, "%c\n", c);
-                break;
-            case 'q':
-                (void) fclose(console_in_file);
-
-                if (file) {
-                    (void) fclose(file);
-                }
-
-                return EXIT_SUCCESS;
-            default:
+        if (strcmp(command, "l") == 0) {
+            if (strlen(content) == 0) {
                 show_commands(console_out);
+                continue;
+            }
+
+            if (file) {
+                (void) fclose(file);
+            }
+
+            fd = openat(root, content, O_RDONLY);
+
+            if (fd == -1) {
+                dprintf(console_err, "Error opening file description for %s\n", content);
+                continue;
+            }
+
+            #ifdef _MSC_VER
+                file = _fdopen(fd, "r");
+            #else
+                file = fdopen(fd, "r");
+            #endif
+
+            if (!file) {
+                dprintf(console_err, "Error opening file %s\n", content);
+            }
+        } else if (strcmp(command, "n") == 0) {
+            if (!file) {
+                dprintf(console_err, "No file loaded\n");
+                continue;
+            }
+
+            read_count = fread(buffer, 1, 1, file);
+
+            if (read_count != 1) {
+                dprintf(console_err, "Error reading byte\n");
+                (void) fclose(console_in_file);
+                (void) fclose(file);
+                return EXIT_FAILURE;
+            }
+
+            render_boi(buffer[0], hex_buf);
+            dprintf(console_out, "%s\n", hex_buf);
+        } else if (strcmp(command, "r") == 0) {
+            #ifdef _MSC_VER
+                read_count = fscanf_s(console_in_file, "%2s", hex_buf, hex_buf_size);
+            #else
+                read_count = fscanf(console_in_file, "%2s", hex_buf);
+            #endif
+
+            if (read_count != 2) {
+                show_commands(console_out);
+                continue;
+            }
+
+            c = parse_boi(hex_buf);
+            dprintf(console_out, "%c\n", c);
+        } else if (strcmp(command, "q") == 0) {
+            (void) fclose(console_in_file);
+
+            if (file) {
+                (void) fclose(file);
+            }
+
+            return EXIT_SUCCESS;
+        } else {
+            show_commands(console_out);
         }
     }
 }

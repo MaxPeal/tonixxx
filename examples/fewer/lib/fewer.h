@@ -14,6 +14,9 @@ void show_commands(int console_out);
 // Removes any trailing CR/LF/CRLF.
 void chomp(char *s);
 
+// Split haystack at first occurrence of needle.
+void split_first_occurrence(char *haystack, char *needle, /*@out@*/ char *before, /*@out@*/ char *after);
+
 // Present an interactive command session.
 // Returns a success/failure exit code.
 int repl(
@@ -23,6 +26,8 @@ int repl(
     int root,
     /*@out@*/ char *instruction,
     size_t instruction_size,
+    /*@out@*/ char *command,
+    /*@out@*/ char* content,
     /*@out@*/ char *buffer,
     /*@out*/ char *hex_buf,
     size_t hex_buf_size

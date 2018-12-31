@@ -25,14 +25,10 @@
 #include "main.h"
 
 int m(int console_out, int console_err, int console_in, int file, bool test) {
-    char *buffer;
-    char *instruction;
+    char *buffer, *instruction;
     size_t instruction_size = 1024;
-    char *hex_buf;
+    char *command, *content, *hex_buf;
     size_t hex_buf_size = 3;
-
-    hex_buf = malloc(hex_buf_size * sizeof(char));
-    assert(hex_buf != NULL);
 
     if (console_out == -1) {
         return EXIT_FAILURE;
@@ -46,6 +42,9 @@ int m(int console_out, int console_err, int console_in, int file, bool test) {
         dprintf(console_err, "Error reading file\n");
         return EXIT_FAILURE;
     }
+
+    hex_buf = malloc(hex_buf_size * sizeof(char));
+    assert(hex_buf);
 
     if (test) {
         char c;
@@ -67,11 +66,17 @@ int m(int console_out, int console_err, int console_in, int file, bool test) {
         return EXIT_SUCCESS;
     }
 
-    buffer = malloc(1 * sizeof(char));
-    assert(buffer != NULL);
-
     instruction = malloc(instruction_size * sizeof(char));
-    assert(instruction != NULL);
+    assert(instruction);
+
+    command = malloc(instruction_size * sizeof(char));
+    assert(command);
+
+    content = malloc(instruction_size * sizeof(char));
+    assert(content);
+
+    buffer = malloc(1 * sizeof(char));
+    assert(buffer);
 
     repl(
         console_out,
@@ -80,13 +85,17 @@ int m(int console_out, int console_err, int console_in, int file, bool test) {
         file,
         instruction,
         instruction_size,
+        command,
+        content,
         buffer,
         hex_buf,
         hex_buf_size
     );
 
-    free(instruction);
     free(buffer);
+    free(content);
+    free(command);
+    free(instruction);
     free(hex_buf);
     return EXIT_SUCCESS;
 }
