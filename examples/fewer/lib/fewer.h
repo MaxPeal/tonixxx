@@ -2,6 +2,10 @@
 
 // Copyright 2017 Andrew Pennebaker
 
+#ifdef __HAIKU__
+    int dprintf(int, const char *__restrict, ...);
+#endif
+
 // Present a help menu.
 void show_commands(int fd);
 

@@ -20,10 +20,9 @@ recipes:
       box: mcandre/fewer-buildbot-dragonfly
     - label: freebsd-amd64
       box: mcandre/fewer-buildbot-freebsd
-    # See https://github.com/mcandre/tonixxx/issues/143
-    # - label: haiku-amd64
-    #   box: mcandre/fewer-buildbot-haiku-amd64
-    #   guesttype: Haiku
+    - label: haiku-amd64
+      box: mcandre/fewer-buildbot-haiku-amd64
+      guesttype: Haiku
     - label: hardenedbsd-amd64
       box: mcandre/fewer-buildbot-hardenedbsd
     # See https://github.com/mcandre/tonixxx/issues/145

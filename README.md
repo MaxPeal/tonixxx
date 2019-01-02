@@ -18,6 +18,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── freebsd-amd64
 │   └── fewer
+├── haiku-amd64
+│   └── fewer
 ├── hardenedbsd-amd64
 │   └── fewer
 ├── linux-glibc-2.17-amd64

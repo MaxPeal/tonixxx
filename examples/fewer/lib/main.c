@@ -45,10 +45,15 @@
                     FILE *f = fdopen(config->console_err, "w");
                     if (f) {
                         fswap(f, stderr);
-                        (void) fclose(f);
+
+                        if (fclose(f) == EOF) {
+                            dprintf(config->console_err, "Error closing temporary stderr file\n");
+                            destroy_fewer_config(config);
+                            exit(EXIT_FAILURE);
+                        }
                     } else {
                         dprintf(config->console_err, "Error setting stderr\n");
-                        free(config);
+                        destroy_fewer_config(config);
                         exit(EXIT_FAILURE);
                     }
                 } else if (strcmp(key, "stdout") == 0) {
