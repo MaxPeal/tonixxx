@@ -6,147 +6,85 @@
 #else
     #define _GNU_SOURCE
     #include <limits.h>
+#endif
 
-    #ifdef _MSC_VER
-        #include <direct.h>
-        #include <io.h>
-    #else
-        #include <unistd.h>
-    #endif
+#ifdef _MSC_VER
+    #include <direct.h>
+    #include <io.h>
+#else
+    #include <unistd.h>
 #endif
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include <limits.h>
 #include "fewer.h"
 #include "main.h"
 
-int m(int console_out, int console_err, int console_in, int file, bool test) {
-    char *buffer, *instruction;
-    size_t instruction_size = 1024;
-    char *command, *content, *hex_buf;
-    size_t hex_buf_size = 3;
-
-    if (console_out == -1) {
-        return EXIT_FAILURE;
-    } else if (console_err == -1) {
-        dprintf(console_out, "Error accessing stderr\n");
-        return EXIT_FAILURE;
-    } else if (!test && console_in == -1) {
-        dprintf(console_err, "Error accessing stdin\n");
-        return EXIT_FAILURE;
-    } else if (!test && file == -1) {
-        dprintf(console_err, "Error reading file\n");
-        return EXIT_FAILURE;
-    }
-
-    hex_buf = malloc(hex_buf_size * sizeof(char));
-    assert(hex_buf);
-
-    if (test) {
-        char c;
-
-        for (int i = 0; i <= CHAR_MAX; i++) {
-            c = (char) i;
-
-            render_boi(c, hex_buf);
-            unsigned char d = parse_boi(hex_buf);
-
-            if (d != c) {
-                dprintf(console_err, "Character %02x corrupted to %02x during hexadecimal translation\n", c, d);
-                free(hex_buf);
-                return EXIT_FAILURE;
-            }
-        }
-
-        free(hex_buf);
-        return EXIT_SUCCESS;
-    }
-
-    instruction = malloc(instruction_size * sizeof(char));
-    assert(instruction);
-
-    command = malloc(instruction_size * sizeof(char));
-    assert(command);
-
-    content = malloc(instruction_size * sizeof(char));
-    assert(content);
-
-    buffer = malloc(1 * sizeof(char));
-    assert(buffer);
-
-    repl(
-        console_out,
-        console_err,
-        console_in,
-        file,
-        instruction,
-        instruction_size,
-        command,
-        content,
-        buffer,
-        hex_buf,
-        hex_buf_size
-    );
-
-    free(buffer);
-    free(content);
-    free(command);
-    free(instruction);
-    free(hex_buf);
-    return EXIT_SUCCESS;
-}
-
 #ifdef __CloudABI__
     void program_main(const argdata_t *ad) {
-        int console_out = -1;
-        int console_err = -1;
-        int console_in = -1;
-        int root = -1;
-        bool test;
         argdata_map_iterator_t ad_iter;
         const argdata_t *key_ad, *value_ad;
-        const char *key;
+        const char *key = NULL;
+        int status;
+        fewer_config *config = new_fewer_config();
 
         argdata_map_iterate(ad, &ad_iter);
 
         while (argdata_map_get(&ad_iter, &key_ad, &value_ad)) {
             if (argdata_get_str_c(key_ad, &key) == 0) {
-                if (strcmp(key, "console_out") == 0) {
-                    argdata_get_fd(value_ad, &console_out);
-                } else if (strcmp(key, "console_err") == 0) {
-                    argdata_get_fd(value_ad, &console_err);
-                } else if (strcmp(key, "console_in") == 0) {
-                    argdata_get_fd(value_ad, &console_in);
+                if (strcmp(key, "stderr") == 0) {
+                    argdata_get_fd(value_ad, &config->console_err);
+
+                    //
+                    // Fix assert()
+                    //
+
+                    FILE *f = fdopen(config->console_err, "w");
+                    if (f) {
+                        fswap(f, stderr);
+                        (void) fclose(f);
+                    } else {
+                        dprintf(config->console_err, "Error setting stderr\n");
+                        free(config);
+                        exit(EXIT_FAILURE);
+                    }
+                } else if (strcmp(key, "stdout") == 0) {
+                    argdata_get_fd(value_ad, &config->console_out);
+                } else if (strcmp(key, "stdin") == 0) {
+                    argdata_get_fd(value_ad, &config->console_in);
                 } else if (strcmp(key, "root") == 0) {
-                    argdata_get_fd(value_ad, &root);
+                    argdata_get_fd(value_ad, &config->root);
                 } else if (strcmp(key, "test") == 0) {
-                    argdata_get_bool(value_ad, &test);
+                    argdata_get_bool(value_ad, &config->test);
                 }
             }
 
             argdata_map_next(&ad_iter);
         }
 
-        exit(m(console_out, console_err, console_in, root, test));
+        status = repl(config);
+
+        destroy_fewer_config(config);
+        exit(status);
+    }
 #else
-    void usage(int console_err, char *program) {
-        dprintf(console_err, "Usage: %s [OPTIONS]\n", program);
-        dprintf(console_err, "Options:\n");
-        dprintf(console_err, "-t\tRun self-test\n");
-        dprintf(console_err, "-h\tShow usage information\n");
+    void usage(int fd, char *program) {
+        dprintf(fd, "Usage: %s [OPTIONS]\n", program);
+        dprintf(fd, "Options:\n");
+        dprintf(fd, "-t\tRun self-test\n");
+        dprintf(fd, "-h\tShow usage information\n");
     }
 
     int main(int argc, char **argv) {
         char *program = argv[0];
-        int console_out = STDOUT_FILENO;
-        int console_err = STDERR_FILENO;
-        int console_in = STDIN_FILENO;
-        int root = -1, status;
-        bool test;
+        int status;
+        fewer_config *config = new_fewer_config();
+        config->console_err = STDERR_FILENO;
+        config->console_out = STDOUT_FILENO;
+        config->console_in = STDIN_FILENO;
 
         #ifdef _MSC_VER
             size_t cwd_size = _MAX_PATH;
@@ -155,25 +93,30 @@ int m(int console_out, int console_err, int console_in, int file, bool test) {
         #endif
 
         FILE *cwd_file = NULL;
-        char *cwd_ptr, *cwd;
+        char *cwd_ptr, *cwd = NULL;
 
         for (int i = 1; i < argc; i++) {
             char *arg = argv[i];
 
             if (strcmp(arg, "-h") == 0) {
-                usage(console_err, program);
+                usage(config->console_err, program);
+
+                destroy_fewer_config(config);
                 return EXIT_SUCCESS;
             }
 
             if (strcmp(arg, "-t") == 0) {
-                test = true;
+                config->test = true;
             } else {
-                usage(console_err, program);
+                usage(config->console_err, program);
+
+                destroy_fewer_config(config);
+                destroy_fewer_config(config);
                 return EXIT_FAILURE;
             }
         }
 
-        if (!test) {
+        if (!config->test) {
             cwd = malloc(cwd_size * sizeof(char));
 
             #ifdef _MSC_VER
@@ -183,43 +126,59 @@ int m(int console_out, int console_err, int console_in, int file, bool test) {
             #endif
 
             if (!cwd_ptr) {
-                dprintf(console_err, "Error getting current directory\n");
-                exit(EXIT_FAILURE);
+                dprintf(config->console_err, "Error getting current directory\n");
+
+                free(cwd);
+                destroy_fewer_config(config);
+                return EXIT_FAILURE;
             }
 
             #ifdef _MSC_VER
                 errno_t err = fopen_s(&cwd_file, cwd, "r");
 
                 if (err != 0) {
-                    dprintf(console_err, "Error opening current directory %s\n", cwd);
+                    dprintf(config->console_err, "Error opening current directory %s\n", cwd);
+
                     free(cwd);
-                    exit(EXIT_FAILURE);
+                    destroy_fewer_config(config);
+                    return EXIT_FAILURE;
                 }
             #else
                 cwd_file = fopen(cwd, "r");
+
+                if (!cwd_file) {
+                    dprintf(config->console_err, "Error opening current directory %s\n", cwd);
+
+                    free(cwd);
+                    destroy_fewer_config(config);
+                    return EXIT_FAILURE;
+                }
             #endif
 
             if (!cwd_file) {
-                dprintf(console_err, "Error opening current directory %s\n", cwd);
+                dprintf(config->console_err, "Error opening current directory %s\n", cwd);
+
                 free(cwd);
-                exit(EXIT_FAILURE);
+                destroy_fewer_config(config);
+                return EXIT_FAILURE;
             }
 
             free(cwd);
 
             #ifdef _MSC_VER
-                root = _fileno(cwd_file);
+                config->root = _fileno(cwd_file);
             #else
-                root = fileno(cwd_file);
+                config->root = fileno(cwd_file);
             #endif
         }
 
-        status = m(console_out, console_err, console_in, root, test);
+        status = repl(config);
 
         if (cwd_file) {
             fclose(cwd_file);
         }
 
+        destroy_fewer_config(config);
         return status;
-#endif
     }
+#endif

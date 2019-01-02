@@ -1,7 +1,7 @@
 %TAG ! tag:nuxi.nl,2015:cloudabi/
 ---
-console_out: !fd stdout
-console_err: !fd stderr
-console_in: !fd 3
+stderr: !fd stderr
+stdout: !fd stdout
+stdin: !fd 3
 root: !file
     path: .

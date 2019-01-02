@@ -35,6 +35,10 @@ See `fewer -h` for usage information.
 
 Supply CloudABI YAML content to stdin. See [cloudabi.yml](cloudabi.yml) and related examples.
 
+A `root` path for restricting file access is required, unless `test` is enabled.
+
+Note that some assertions may trigger an abort when `stderr` is unconfigured.
+
 # BUILD
 
 ```console

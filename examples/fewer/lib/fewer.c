@@ -1,9 +1,8 @@
 // Copyright 2017 Andrew Pennebaker
 
-#ifndef __CloudABI__
-    #define _GNU_SOURCE
-#endif
+#define _GNU_SOURCE
 
+#include <assert.h>
 #include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -11,9 +10,28 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <limits.h>
+
+#ifdef _MSC_VER
+    #include <direct.h>
+    #include <io.h>
+#else
+    #include <unistd.h>
+#endif
+
+#ifndef _XOPEN_PATH_MAX
+    #define _XOPEN_PATH_MAX _POSIX_PATH_MAX
+#endif
+
 #include "fewer.h"
 
 static const char *PROMPT = "> ";
+
+void show_commands(int fd) {
+    dprintf(fd, "l <path>\tLoad file\n");
+    dprintf(fd, "n\t\tShow next byte\n");
+    dprintf(fd, "r\t\tRender an input byte\n");
+    dprintf(fd, "q\t\tQuit\n");
+}
 
 // Format a byte as a hexadecimal string
 void render_boi(char b, /*@out@*/ char *s) {
@@ -23,13 +41,6 @@ void render_boi(char b, /*@out@*/ char *s) {
 // Parse a hexadecimal string to a byte
 unsigned char parse_boi(char *s) {
     return (unsigned char) strtol(s, NULL, 16);
-}
-
-void show_commands(int console_out) {
-    dprintf(console_out, "l <path>\tLoad file\n");
-    dprintf(console_out, "n\t\tShow next byte\n");
-    dprintf(console_out, "r\t\tRender an input byte\n");
-    dprintf(console_out, "q\t\tQuit\n");
 }
 
 void chomp(char *s) {
@@ -51,147 +62,196 @@ void chomp(char *s) {
     }
 }
 
-void split_first_occurrence(char *haystack, char *needle, /*@out@*/ char *before, /*@out@*/ char *after) {
-    size_t haystack_len = strlen(haystack), needle_len = strlen(needle);
+fewer_config * new_fewer_config(size_t instruction_size) {
+    fewer_config *config = malloc(sizeof(fewer_config));
+    config->console_err = -1;
+    config->console_out = -1;
+    config->console_in = -1;
+    config->root = -1;
+    config->test = false;
 
-    if (needle_len == 0) {
-        strncpy(before, haystack, haystack_len);
-        after[0] = '\0';
-        return;
-    }
-
-    char *at = strstr(haystack, needle);
-
-    if (!at) {
-        strncpy(before, haystack, haystack_len);
-        after[0] = '\0';
-        return;
-    }
-
-    strncpy(before, haystack, needle_len);
-    strncpy(after, at + needle_len, strlen(at) - needle_len);
+    return config;
 }
 
-int repl(
-    int console_out,
-    int console_err,
-    int console_in,
-    int root,
-    /*@out@*/ char *instruction,
-    size_t instruction_size,
-    /*@out@*/ char *command,
-    /*@out@*/ char* content,
-    /*@out@*/ char *buffer,
-    /*@out@*/ char *hex_buf,
-    size_t hex_buf_size
-) {
+void destroy_fewer_config(fewer_config *config) {
+    free(config);
+}
+
+void validate_fewer_config(fewer_config *config) {
+    assert(config->root != -1 || config->test);
+}
+
+int repl(fewer_config *config) {
     int fd;
-    size_t read_count;
-    unsigned char c;
-    FILE *console_in_file, *file;
-    file = NULL;
+    unsigned char
+        c,
+        d;
+    size_t
+        read_count,
+        command_size = 1,
+        content_size = _XOPEN_PATH_MAX,
+        instruction_size = command_size + 1 + content_size;
+    FILE
+        *stdin_file = NULL,
+        *file = NULL;
+    char
+        command,
+        *content = NULL,
+        *char_buf = NULL,
+        *instruction = NULL,
+        *hex_buf = NULL;
+
+    validate_fewer_config(config);
+
+    hex_buf = malloc(3 * sizeof(char));
+
+    if (config->test) {
+        for (int i = 0; i <= CHAR_MAX; i++) {
+            c = (char) i;
+
+            render_boi(c, hex_buf);
+            d = parse_boi(hex_buf);
+
+            if (d != c) {
+                dprintf(config->console_err, "Character %02x corrupted to %02x during hexadecimal translation\n", c, d);
+
+                free(hex_buf);
+                return EXIT_FAILURE;
+            }
+        }
+
+        free(hex_buf);
+        return EXIT_SUCCESS;
+    }
+
+    char_buf = malloc(sizeof(char)),
+    instruction = malloc(instruction_size * sizeof(char)),
 
     #ifdef _MSC_VER
-        console_in_file = _fdopen(console_in, "r");
+        stdin_file = _fdopen(config->console_in, "r");
     #else
-        console_in_file = fdopen(console_in, "r");
+        stdin_file = fdopen(config->console_in, "r");
     #endif
 
-    if (!console_in_file) {
-        dprintf(console_err, "Error opening stdin\n");
+    if (!stdin_file) {
+        dprintf(config->console_err, "Error opening stdin\n");
+
+        free(instruction);
+        free(char_buf);
+        free(hex_buf);
         return EXIT_FAILURE;
     }
 
     while (true) {
-        dprintf(console_out, "%s", PROMPT);
-        getline(&instruction, &instruction_size, console_in_file);
+        dprintf(config->console_out, "%s", PROMPT);
 
-        if (feof(console_in_file)) {
-            dprintf(console_out, "\n");
+        getline(&instruction, &instruction_size, stdin_file);
+
+        if (feof(stdin_file)) {
+            dprintf(config->console_out, "\n");
 
             if (file) {
                 (void) fclose(file);
             }
 
+            free(instruction);
+            free(char_buf);
+            free(hex_buf);
             return EXIT_SUCCESS;
         }
 
         chomp(instruction);
 
         if (strlen(instruction) == 0) {
-            show_commands(console_out);
+            show_commands(config->console_err);
             continue;
         }
 
-        split_first_occurrence(instruction, " ", command, content);
+        command = instruction[0];
 
-        if (strcmp(command, "l") == 0) {
-            if (strlen(content) == 0) {
-                show_commands(console_out);
-                continue;
-            }
+        switch(command) {
+            case 'l':
+                content = strchr(instruction, ' ');
 
-            if (file) {
-                (void) fclose(file);
-            }
+                if (!content || strlen(content) < 2) {
+                    show_commands(config->console_err);
+                    continue;
+                }
 
-            fd = openat(root, content, O_RDONLY);
+                content++;
 
-            if (fd == -1) {
-                dprintf(console_err, "Error opening file description for %s\n", content);
-                continue;
-            }
+                if (file) {
+                    (void) fclose(file);
+                }
 
-            #ifdef _MSC_VER
-                file = _fdopen(fd, "r");
-            #else
-                file = fdopen(fd, "r");
-            #endif
+                fd = openat(config->root, content, O_RDONLY);
 
-            if (!file) {
-                dprintf(console_err, "Error opening file %s\n", content);
-            }
-        } else if (strcmp(command, "n") == 0) {
-            if (!file) {
-                dprintf(console_err, "No file loaded\n");
-                continue;
-            }
+                if (fd == -1) {
+                    dprintf(config->console_err, "Error opening file description for %s\n", content);
+                    continue;
+                }
 
-            read_count = fread(buffer, 1, 1, file);
+                #ifdef _MSC_VER
+                    file = _fdopen(fd, "r");
+                #else
+                    file = fdopen(fd, "r");
+                #endif
 
-            if (read_count != 1) {
-                dprintf(console_err, "Error reading byte\n");
-                (void) fclose(console_in_file);
-                (void) fclose(file);
-                return EXIT_FAILURE;
-            }
+                if (!file) {
+                    dprintf(config->console_err, "Error opening file %s\n", content);
+                }
 
-            render_boi(buffer[0], hex_buf);
-            dprintf(console_out, "%s\n", hex_buf);
-        } else if (strcmp(command, "r") == 0) {
-            #ifdef _MSC_VER
-                read_count = fscanf_s(console_in_file, "%2s", hex_buf, hex_buf_size);
-            #else
-                read_count = fscanf(console_in_file, "%2s", hex_buf);
-            #endif
+                break;
+            case 'n':
+                if (!file) {
+                    dprintf(config->console_err, "No file loaded\n");
+                    continue;
+                }
 
-            if (read_count != 2) {
-                show_commands(console_out);
-                continue;
-            }
+                read_count = fread(char_buf, 1, 1, file);
 
-            c = parse_boi(hex_buf);
-            dprintf(console_out, "%c\n", c);
-        } else if (strcmp(command, "q") == 0) {
-            (void) fclose(console_in_file);
+                if (read_count != 1) {
+                    dprintf(config->console_err, "Error reading byte\n");
 
-            if (file) {
-                (void) fclose(file);
-            }
+                    (void) fclose(stdin_file);
+                    (void) fclose(file);
+                    free(instruction);
+                    free(char_buf);
+                    free(hex_buf);
+                    return EXIT_FAILURE;
+                }
 
-            return EXIT_SUCCESS;
-        } else {
-            show_commands(console_out);
+                render_boi(char_buf[0], hex_buf);
+                dprintf(config->console_out, "%s\n", hex_buf);
+                break;
+            case 'r':
+                #ifdef _MSC_VER
+                    read_count = fscanf_s(stdin_file, "%2s", hex_buf, hex_buf_size);
+                #else
+                    read_count = fscanf(stdin_file, "%2s", hex_buf);
+                #endif
+
+                if (read_count != 2) {
+                    show_commands(config->console_err);
+                    continue;
+                }
+
+                c = parse_boi(hex_buf);
+                dprintf(config->console_out, "%c\n", c);
+                break;
+            case 'q':
+                (void) fclose(stdin_file);
+
+                if (file) {
+                    (void) fclose(file);
+                }
+
+                free(instruction);
+                free(char_buf);
+                free(hex_buf);
+                return EXIT_SUCCESS;
+            default:
+                show_commands(config->console_err);
         }
     }
 }
