@@ -2,7 +2,26 @@
 
 // Copyright 2017 Andrew Pennebaker
 
-#ifdef __HAIKU__
+#define _GNU_SOURCE
+
+#if defined(__sun)
+    #define __EXTENSIONS__
+#endif
+
+#include <limits.h>
+#include <stdbool.h>
+
+#if !defined(_XOPEN_PATH_MAX)
+    #if defined(_POSIX_PATH_MAX)
+        #define _XOPEN_PATH_MAX _POSIX_PATH_MAX
+    #elif defined(_MAX_PATH)
+        #define _XOPEN_PATH_MAX _MAX_PATH
+    #else
+        #define _XOPEN_PATH_MAX PATH_MAX
+    #endif
+#endif
+
+#if defined(__sun) || defined(__HAIKU__)
     int dprintf(int, const char *__restrict, ...);
 #endif
 

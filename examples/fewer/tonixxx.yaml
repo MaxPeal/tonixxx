@@ -25,10 +25,9 @@ recipes:
       guesttype: Haiku
     - label: hardenedbsd-amd64
       box: mcandre/fewer-buildbot-hardenedbsd
-    # See https://github.com/mcandre/tonixxx/issues/145
-    # - label: illumos-amd64
-    #   guesttype: SmartOSGZ
-    #   box: mcandre/fewer-buildbot-smartos
+    - label: illumos-amd64
+      guesttype: SmartOSGZ
+      box: mcandre/fewer-buildbot-smartos
     - label: linux-glibc-2.17-amd64
       box: mcandre/fewer-buildbot-centos
       steps:

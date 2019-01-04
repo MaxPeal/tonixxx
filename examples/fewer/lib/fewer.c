@@ -1,30 +1,22 @@
 // Copyright 2017 Andrew Pennebaker
 
-#define _GNU_SOURCE
+#include "fewer.h"
 
 #include <assert.h>
 #include <fcntl.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <limits.h>
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
     #include <direct.h>
     #include <io.h>
 #else
     #include <unistd.h>
 #endif
 
-#ifndef _XOPEN_PATH_MAX
-    #define _XOPEN_PATH_MAX _POSIX_PATH_MAX
-#endif
-
-#include "fewer.h"
-
-#ifdef __HAIKU__
+#if defined(__sun) || defined(__HAIKU__)
     #include <stdarg.h>
 
     int dprintf(int fd, const char *restrict format, ...) {
@@ -38,10 +30,6 @@
         va_start(ap, format);
         int result = fprintf(f, format, ap);
         va_end(ap);
-
-        if (fclose(f) == EOF) {
-            return EOF;
-        }
 
         return result;
     }
@@ -150,7 +138,7 @@ int repl(fewer_config *config) {
     char_buf = malloc(sizeof(char)),
     instruction = malloc(instruction_size * sizeof(char)),
 
-    #ifdef _MSC_VER
+    #if defined(_MSC_VER)
         stdin_f = _fdopen(config->console_in, "r");
     #else
         stdin_f = fdopen(config->console_in, "r");
@@ -223,10 +211,10 @@ int repl(fewer_config *config) {
                     continue;
                 }
 
-                #ifdef _MSC_VER
-                    file = _fdopen(fd, "r");
+                #if defined(_MSC_VER)
+                    file = _fdopen(fd, "rb");
                 #else
-                    file = fdopen(fd, "r");
+                    file = fdopen(fd, "rb");
                 #endif
 
                 if (!file) {
@@ -263,7 +251,7 @@ int repl(fewer_config *config) {
                 dprintf(config->console_out, "%s\n", hex_buf);
                 break;
             case 'r':
-                #ifdef _MSC_VER
+                #if defined(_MSC_VER)
                     read_count = fscanf_s(stdin_f, "%2s", hex_buf, hex_buf_size);
                 #else
                     read_count = fscanf(stdin_f, "%2s", hex_buf);

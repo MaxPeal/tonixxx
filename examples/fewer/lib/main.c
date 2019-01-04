@@ -1,14 +1,14 @@
 // Copyright 2017 Andrew Pennebaker
 
-#ifdef __CloudABI__
+#include "fewer.h"
+#include "main.h"
+
+#if defined(__CloudABI__)
     #include <argdata.h>
     #include <program.h>
-#else
-    #define _GNU_SOURCE
-    #include <limits.h>
 #endif
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
     #include <direct.h>
     #include <io.h>
 #else
@@ -19,11 +19,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
-#include "fewer.h"
-#include "main.h"
 
-#ifdef __CloudABI__
+#if defined(__CloudABI__)
     void program_main(const argdata_t *ad) {
         argdata_map_iterator_t ad_iter;
         const argdata_t *key_ad, *value_ad;
@@ -91,11 +88,7 @@
         config->console_out = STDOUT_FILENO;
         config->console_in = STDIN_FILENO;
 
-        #ifdef _MSC_VER
-            size_t cwd_size = _MAX_PATH;
-        #else
-            size_t cwd_size = PATH_MAX;
-        #endif
+        size_t cwd_size = _XOPEN_PATH_MAX;
 
         FILE *cwd_file = NULL;
         char *cwd_ptr, *cwd = NULL;
@@ -124,7 +117,7 @@
         if (!config->test) {
             cwd = malloc(cwd_size * sizeof(char));
 
-            #ifdef _MSC_VER
+            #if defined(_MSC_VER)
                 cwd_ptr = _getcwd(cwd, cwd_size);
             #else
                 cwd_ptr = getcwd(cwd, cwd_size);
@@ -138,8 +131,8 @@
                 return EXIT_FAILURE;
             }
 
-            #ifdef _MSC_VER
-                errno_t err = fopen_s(&cwd_file, cwd, "r");
+            #if defined(_MSC_VER)
+                errno_t err = fopen_s(&cwd_file, cwd, "rb");
 
                 if (err != 0) {
                     dprintf(config->console_err, "Error opening current directory %s\n", cwd);
@@ -149,7 +142,7 @@
                     return EXIT_FAILURE;
                 }
             #else
-                cwd_file = fopen(cwd, "r");
+                cwd_file = fopen(cwd, "rb");
 
                 if (!cwd_file) {
                     dprintf(config->console_err, "Error opening current directory %s\n", cwd);
@@ -170,7 +163,7 @@
 
             free(cwd);
 
-            #ifdef _MSC_VER
+            #if defined(_MSC_VER)
                 config->root = _fileno(cwd_file);
             #else
                 config->root = fileno(cwd_file);

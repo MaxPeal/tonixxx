@@ -22,6 +22,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── hardenedbsd-amd64
 │   └── fewer
+├── illumos-amd64
+│   └── fewer
 ├── linux-glibc-2.17-amd64
 │   └── fewer
 ├── linux-glibc-2.24-amd64
