@@ -104,17 +104,15 @@ int repl(fewer_config *config) {
         instruction_size = command_size + 1 + content_size;
     FILE
         *stdin_f = NULL,
-        *file = NULL;
+        *f = NULL;
     char
         command,
         *content = NULL,
-        *char_buf = NULL,
-        *instruction = NULL,
-        *hex_buf = NULL;
+        *char_buf = malloc(sizeof(char)),
+        *hex_buf = malloc(3 * sizeof(char)),
+        *instruction = calloc(instruction_size, sizeof(char));
 
     validate_fewer_config(config);
-
-    hex_buf = malloc(3 * sizeof(char));
 
     if (config->test) {
         for (int i = 0; i <= CHAR_MAX; i++) {
@@ -126,17 +124,18 @@ int repl(fewer_config *config) {
             if (d != c) {
                 dprintf(config->console_err, "Character %02x corrupted to %02x during hexadecimal translation\n", c, d);
 
+                free(instruction);
                 free(hex_buf);
+                free(char_buf);
                 return EXIT_FAILURE;
             }
         }
 
+        free(instruction);
         free(hex_buf);
+        free(char_buf);
         return EXIT_SUCCESS;
     }
-
-    char_buf = malloc(sizeof(char)),
-    instruction = malloc(instruction_size * sizeof(char)),
 
     #if defined(_MSC_VER)
         stdin_f = _fdopen(config->console_in, "r");
@@ -148,29 +147,33 @@ int repl(fewer_config *config) {
         dprintf(config->console_err, "Error opening stdin\n");
 
         free(instruction);
-        free(char_buf);
         free(hex_buf);
+        free(char_buf);
         return EXIT_FAILURE;
     }
 
     while (true) {
-        dprintf(config->console_out, "%s", PROMPT);
-
-        getline(&instruction, &instruction_size, stdin_f);
-
         if (feof(stdin_f)) {
             dprintf(config->console_out, "\n");
 
             free(instruction);
-            free(char_buf);
             free(hex_buf);
+            free(char_buf);
 
-            if (file && fclose(file) == EOF) {
+            if (f && fclose(f) == EOF) {
                 dprintf(config->console_err, "Error closing file\n");
                 return EXIT_FAILURE;
             }
 
             return EXIT_SUCCESS;
+        }
+
+        dprintf(config->console_out, "%s", PROMPT);
+
+        getline(&instruction, &instruction_size, stdin_f);
+
+        if (!instruction) {
+            return EXIT_FAILURE;
         }
 
         chomp(instruction);
@@ -193,13 +196,13 @@ int repl(fewer_config *config) {
 
                 content++;
 
-                if (file) {
-                    if (fclose(file) == EOF) {
+                if (f) {
+                    if (fclose(f) == EOF) {
                         dprintf(config->console_err, "Error closing file\n");
 
                         free(instruction);
-                        free(char_buf);
                         free(hex_buf);
+                        free(char_buf);
                         return EXIT_FAILURE;
                     }
                 }
@@ -212,23 +215,23 @@ int repl(fewer_config *config) {
                 }
 
                 #if defined(_MSC_VER)
-                    file = _fdopen(fd, "rb");
+                    f = _fdopen(fd, "rb");
                 #else
-                    file = fdopen(fd, "rb");
+                    f = fdopen(fd, "rb");
                 #endif
 
-                if (!file) {
+                if (!f) {
                     dprintf(config->console_err, "Error opening file %s\n", content);
                 }
 
                 break;
             case 'n':
-                if (!file) {
+                if (!f) {
                     dprintf(config->console_err, "No file loaded\n");
                     continue;
                 }
 
-                read_count = fread(char_buf, 1, 1, file);
+                read_count = fread(char_buf, 1, 1, f);
 
                 if (read_count != 1) {
                     dprintf(config->console_err, "Error reading byte\n");
@@ -237,13 +240,13 @@ int repl(fewer_config *config) {
                         dprintf(config->console_err, "Error closing stdin\n");
                     }
 
-                    if (fclose(file) == EOF) {
+                    if (fclose(f) == EOF) {
                         dprintf(config->console_err, "Error closing file\n");
                     }
 
                     free(instruction);
-                    free(char_buf);
                     free(hex_buf);
+                    free(char_buf);
                     return EXIT_FAILURE;
                 }
 
@@ -267,10 +270,10 @@ int repl(fewer_config *config) {
                 break;
             case 'q':
                 free(instruction);
-                free(char_buf);
                 free(hex_buf);
+                free(char_buf);
 
-                if (file && fclose(file) == EOF) {
+                if (f && fclose(f) == EOF) {
                     dprintf(config->console_err, "Error closing file\n");
                     return EXIT_FAILURE;
                 }
