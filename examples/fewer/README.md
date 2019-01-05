@@ -39,9 +39,14 @@ A `root` path for restricting file access is required, unless `test` is enabled.
 
 Note that some assertions may trigger an abort when `stderr` is unconfigured.
 
+# LICENSE
+
+FreeBSD
+
 # BUILD
 
 ```console
+$ git submodule update --init
 $ cmake .
 $ cmake --build . --config Release
 ```

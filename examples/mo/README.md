@@ -36,6 +36,10 @@ $ mo -t
 * [GHC Haskell](http://www.haskell.org/) 8+
 * [happy](https://hackage.haskell.org/package/happy) (e.g., `cabal install happy`)
 
+# LICENSE
+
+FreeBSD
+
 # BUILD
 
 ```console

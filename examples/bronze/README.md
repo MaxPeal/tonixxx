@@ -18,6 +18,10 @@ $ bronze
 
 (None)
 
+# LICENSE
+
+FreeBSD
+
 # CONTRIBUTING
 
 For more details on developing bronze itself, see [DEVELOPMENT.md](DEVELOPMENT.md).

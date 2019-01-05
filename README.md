@@ -40,6 +40,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── macos-amd64
 │   └── fewer
+├── minix-i386
+│   └── fewer
 ├── netbsd-amd64
 │   └── fewer
 ├── netbsd-i386

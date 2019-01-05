@@ -21,7 +21,11 @@
     #endif
 #endif
 
-#if defined(__sun) || defined(__HAIKU__)
+#if defined(__minix)
+    // A crude shim for POSIX openat()
+    int openat(int fd, const char *path, int flags, ...);
+#elif defined(__sun) || defined(__HAIKU__)
+    // A crude shim for POSIX dprintf()
     int dprintf(int, const char *__restrict, ...);
 #endif
 

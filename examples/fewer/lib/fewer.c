@@ -16,9 +16,43 @@
     #include <unistd.h>
 #endif
 
-#if defined(__sun) || defined(__HAIKU__)
+#if defined(__minix) || defined(__sun) || defined(__HAIKU__)
     #include <stdarg.h>
+#endif
 
+#if defined(__minix)
+    int openat(int fd, const char *path, int flags, ...) {
+        mode_t mode = 0;
+        int fd2;
+
+        if (flags & O_CREAT) {
+            va_list arg;
+            va_start(arg, flags);
+            mode = va_arg(arg, mode_t);
+            va_end(arg);
+        }
+
+        // Path is simple, absolute
+        if (fd == AT_FDCWD || path[0] == '/' || path[0] == '\\') {
+            return open(path, flags, mode);
+        }
+
+        fd2 = open(".", O_SEARCH | O_CLOEXEC);
+
+        // Detect collision with cwd
+        if (fd >= 0 && fd == fd2) {
+            return -1;
+        }
+
+        fd2 = fchdir(fd);
+
+        if (!fd2) {
+            fd2 = open(path, flags, mode);
+        }
+
+        return fd2;
+    }
+#elif defined(__sun) || defined(__HAIKU__)
     int dprintf(int fd, const char *restrict format, ...) {
         va_list ap;
         FILE *f = fdopen(fd, "w");
@@ -260,7 +294,7 @@ int repl(fewer_config *config) {
                     read_count = fscanf(stdin_f, "%2s", hex_buf);
                 #endif
 
-                if (read_count != 2) {
+                if (read_count != 1) {
                     show_commands(config->console_err);
                     continue;
                 }

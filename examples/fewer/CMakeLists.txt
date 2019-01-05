@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.4)
+enable_testing()
 
 if("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
   set(CMAKE_C_COMPILER "$ENV{CLOUD_ABI_TRIPLET}-cc")
@@ -40,8 +41,6 @@ endif()
 
 add_executable(fewer lib/main.c lib/fewer.c)
 
-enable_testing()
-
 if("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
   add_test(NAME fewer_unit_test COMMAND sh -c "cloudabi-run -e bin/fewer <cloudabi-unittest.yml")
   add_test(NAME fewer_integration_test COMMAND sh -c "cloudabi-run -e bin/fewer <cloudabi-test-repl.yml 3<fewer-script.txt")
@@ -61,7 +60,7 @@ if(MSVC OR
   CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
   "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
 )
-  add_custom_target(lint)
+add_custom_target(lint)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Minix")
   add_custom_target(lint DEPENDS splint)
 elseif(CMAKE_SYSTEM_VERSION MATCHES "HBSD")
@@ -69,7 +68,7 @@ elseif(CMAKE_SYSTEM_VERSION MATCHES "HBSD")
 elseif(CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
   LSB_RELEASE MATCHES "Void"
 )
-  add_custom_target(lint DEPENDS cppcheck splint)
+add_custom_target(lint DEPENDS cppcheck splint)
 else()
   add_custom_target(lint DEPENDS cppcheck splint vera++)
 endif()
@@ -99,7 +98,7 @@ if(MSVC OR
   LSB_RELEASE MATCHES "Void" OR
   CMAKE_SYSTEM_NAME MATCHES "OpenBSD"
 )
-  add_custom_target(leaks)
+add_custom_target(leaks)
 else()
   add_custom_target(leaks DEPENDS valgrind)
 endif()

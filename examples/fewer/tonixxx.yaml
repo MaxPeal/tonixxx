@@ -55,9 +55,8 @@ recipes:
           - sudo find /vagrant -exec chown vagrant:vagrant {} +
     - label: macos-amd64
       box: mcandre/fewer-buildbot-macos
-    # See https://github.com/mcandre/tonixxx/issues/156
-    # - label: minix-i386
-    #   box: mcandre/fewer-buildbot-minix
+    - label: minix-i386
+      box: mcandre/fewer-buildbot-minix
     - label: netbsd-amd64
       box: mcandre/fewer-buildbot-netbsd-amd64
     - label: netbsd-i386

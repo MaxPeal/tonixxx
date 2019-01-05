@@ -3,22 +3,22 @@
 #include "fewer.h"
 #include "main.h"
 
-#if defined(__CloudABI__)
-    #include <argdata.h>
-    #include <program.h>
-#endif
-
-#if defined(_MSC_VER)
-    #include <direct.h>
-    #include <io.h>
-#else
-    #include <unistd.h>
-#endif
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#if defined(__CloudABI__)
+    #include <argdata.h>
+    #include <program.h>
+#else
+    #if defined(_MSC_VER)
+        #include <direct.h>
+        #include <io.h>
+    #else
+        #include <unistd.h>
+    #endif
+#endif
 
 #if defined(__CloudABI__)
     void program_main(const argdata_t *ad) {

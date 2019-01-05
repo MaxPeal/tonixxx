@@ -15,6 +15,10 @@ $ potato
 Need a paperweight? Buy a potato. Bake until tender, coat lightly with seasoning, consume, and buy a paperweight.
 ```
 
+# LICENSE
+
+FreeBSD
+
 # LINT + BUILD
 
 ```console

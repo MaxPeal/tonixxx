@@ -25,6 +25,10 @@ $ echo "$?"
 0
 ```
 
+# LICENSE
+
+FreeBSD
+
 # BUILD
 
 ```console
