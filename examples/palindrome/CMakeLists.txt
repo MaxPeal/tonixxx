@@ -6,25 +6,25 @@ set(EXECUTABLE_OUTPUT_PATH "bin")
 set(LSB_RELEASE "")
 
 if(MSVC)
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${EXECUTABLE_OUTPUT_PATH}")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${EXECUTABLE_OUTPUT_PATH}")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${EXECUTABLE_OUTPUT_PATH}")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${EXECUTABLE_OUTPUT_PATH}")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${EXECUTABLE_OUTPUT_PATH}")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${EXECUTABLE_OUTPUT_PATH}")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${EXECUTABLE_OUTPUT_PATH}")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${EXECUTABLE_OUTPUT_PATH}")
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
-  execute_process(COMMAND lsb_release -a OUTPUT_VARIABLE LSB_RELEASE)
+    execute_process(COMMAND lsb_release -a OUTPUT_VARIABLE LSB_RELEASE)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "clang")
-  set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall -Wextra -Wmost -Weverything")
+    set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall -Wextra -Wmost -Weverything")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "gcc")
-  set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall -Wextra")
+    set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall -Wextra")
 else()
-  set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall")
+    set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall")
 endif()
 
 add_executable(palindrome lib/main.cpp lib/palindrome.cpp)
@@ -39,25 +39,25 @@ add_custom_target(splint COMMAND 	find lib -type f -name '*.c' -print0 | xargs -
 add_custom_target(vera++ COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 -r vera++ -s)
 
 if(CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
-  CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
-  "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
+    CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
+    "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
 )
-  add_custom_target(lint)
+add_custom_target(lint)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Minix")
-  add_custom_target(lint DEPENDS splint)
+    add_custom_target(lint DEPENDS splint)
 elseif(CMAKE_SYSTEM_VERSION MATCHES "HBSD")
-  add_custom_target(lint DEPENDS splint cpplint vera++)
+    add_custom_target(lint DEPENDS splint cpplint vera++)
 elseif(MSVC)
-  add_custom_target(lint DEPENDS cppcheck)
+    add_custom_target(lint DEPENDS cppcheck)
 elseif(CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
-  CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
-  LSB_RELEASE MATCHES "Void"
+    CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
+    LSB_RELEASE MATCHES "Void"
 )
-  add_custom_target(lint DEPENDS cppcheck cpplint splint)
+add_custom_target(lint DEPENDS cppcheck cpplint splint)
 elseif(CMAKE_SYSTEM_NAME MATCHES "NetBSD")
-  add_custom_target(lint DEPENDS cppcheck splint vera++)
+    add_custom_target(lint DEPENDS cppcheck splint vera++)
 else()
-  add_custom_target(lint DEPENDS cppcheck cpplint splint vera++)
+    add_custom_target(lint DEPENDS cppcheck cpplint splint vera++)
 endif()
 
 add_custom_target(valgrind_test COMMAND valgrind --error-exitcode=1 --leak-check=full bin/palindrome -t)
@@ -65,19 +65,19 @@ add_custom_target(valgrind DEPENDS valgrind_test)
 
 # Broken or missing valgrind
 if(MSVC OR
-  CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
-  CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
-  CMAKE_SYSTEM_VERSION MATCHES "HBSD" OR
-  CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
-  CMAKE_SYSTEM_NAME MATCHES "Darwin" OR
-  CMAKE_SYSTEM_NAME MATCHES "Minix" OR
-  CMAKE_SYSTEM_NAME MATCHES "NetBSD" OR
-  LSB_RELEASE MATCHES "Void" OR
-  CMAKE_SYSTEM_NAME MATCHES "OpenBSD"
+    CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
+    CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
+    CMAKE_SYSTEM_VERSION MATCHES "HBSD" OR
+    CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
+    CMAKE_SYSTEM_NAME MATCHES "Darwin" OR
+    CMAKE_SYSTEM_NAME MATCHES "Minix" OR
+    CMAKE_SYSTEM_NAME MATCHES "NetBSD" OR
+    LSB_RELEASE MATCHES "Void" OR
+    CMAKE_SYSTEM_NAME MATCHES "OpenBSD"
 )
-  add_custom_target(leaks)
+add_custom_target(leaks)
 else()
-  add_custom_target(leaks DEPENDS valgrind)
+    add_custom_target(leaks DEPENDS valgrind)
 endif()
 
 add_custom_target(clean-cmake COMMAND find . -iwholename '*cmake*' -not -name CMakeLists.txt -delete)

@@ -13,17 +13,13 @@ $ fewer
 20
 > n
 66
-> r
-23
+> r 23
 #
-> h
-l <path>	Load file
-n		Show next byte
-r		Render an input byte
-q		Quit
 > q
 $
 ```
+
+See the `h` command for more information.
 
 # CONFIGURATION
 

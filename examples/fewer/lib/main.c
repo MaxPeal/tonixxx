@@ -1,8 +1,8 @@
 // Copyright 2017 Andrew Pennebaker
 
 #include "fewer.h"
-#include "main.h"
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,97 +25,124 @@
         argdata_map_iterator_t ad_iter;
         const argdata_t *key_ad, *value_ad;
         const char *key = NULL;
-        int status;
-        fewer_config *config = new_fewer_config();
+        int
+            console_err_fd = -1,
+            console_out_fd = -1,
+            console_in_fd = -1,
+            root = -1,
+            repl_status;
+        FILE
+            *console_err = NULL,
+            *console_out = NULL,
+            *console_in = NULL;
+        bool test = false;
 
         argdata_map_iterate(ad, &ad_iter);
 
         while (argdata_map_get(&ad_iter, &key_ad, &value_ad)) {
             if (argdata_get_str_c(key_ad, &key) == 0) {
                 if (strcmp(key, "stderr") == 0) {
-                    argdata_get_fd(value_ad, &config->console_err);
+                    argdata_get_fd(value_ad, &console_err_fd);
 
                     //
                     // Fix assert()
                     //
 
-                    FILE *f = fdopen(config->console_err, "w");
-                    if (f) {
-                        fswap(f, stderr);
+                    FILE *f2 = fdopen(console_err_fd, "w");
 
-                        if (fclose(f) == EOF) {
-                            dprintf(config->console_err, "Error closing temporary stderr file\n");
-                            destroy_fewer_config(config);
-                            exit(EXIT_FAILURE);
-                        }
-                    } else {
-                        dprintf(config->console_err, "Error setting stderr\n");
-                        destroy_fewer_config(config);
+                    if (!f2) {
                         exit(EXIT_FAILURE);
                     }
+
+                    fswap(f2, stderr);
+
+                    if (fclose(f2) == EOF) {
+                        exit(EXIT_FAILURE);
+                    }
+
+                    console_err = stderr;
                 } else if (strcmp(key, "stdout") == 0) {
-                    argdata_get_fd(value_ad, &config->console_out);
+                    argdata_get_fd(value_ad, &console_out_fd);
+
+                    console_out = fdopen(console_out_fd, "w");
+
+                    if (!console_out) {
+                        exit(EXIT_FAILURE);
+                    }
                 } else if (strcmp(key, "stdin") == 0) {
-                    argdata_get_fd(value_ad, &config->console_in);
+                    argdata_get_fd(value_ad, &console_in_fd);
+
+                    console_in = fdopen(console_in_fd, "r");
+
+                    if (!console_in) {
+                        exit(EXIT_FAILURE);
+                    }
                 } else if (strcmp(key, "root") == 0) {
-                    argdata_get_fd(value_ad, &config->root);
+                    argdata_get_fd(value_ad, &root);
                 } else if (strcmp(key, "test") == 0) {
-                    argdata_get_bool(value_ad, &config->test);
+                    argdata_get_bool(value_ad, &test);
                 }
             }
 
             argdata_map_next(&ad_iter);
         }
 
-        status = repl(config);
+        fewer_config *config = new_fewer_config();
+        config->console_err = console_err;
+        config->console_out = console_out;
+        config->console_in = console_in;
+        config->root = root;
+        config->test = test;
 
+        repl_status = repl(config);
         destroy_fewer_config(config);
-        exit(status);
+        exit(repl_status);
     }
 #else
-    void usage(int fd, char *program) {
-        dprintf(fd, "Usage: %s [OPTIONS]\n", program);
-        dprintf(fd, "Options:\n");
-        dprintf(fd, "-t\tRun self-test\n");
-        dprintf(fd, "-h\tShow usage information\n");
+    void usage(char *program) {
+        fprintf(stderr, "Usage: %s [OPTIONS]\n", program);
+        fprintf(stderr, "Options:\n");
+        fprintf(stderr, "-t\tRun self-test\n");
+        fprintf(stderr, "-h\tShow usage information\n");
     }
 
     int main(int argc, char **argv) {
-        char *program = argv[0];
-        int status;
-        fewer_config *config = new_fewer_config();
-        config->console_err = STDERR_FILENO;
-        config->console_out = STDOUT_FILENO;
-        config->console_in = STDIN_FILENO;
-
+        bool test = false;
+        int repl_status;
         size_t cwd_size = _XOPEN_PATH_MAX;
-
-        FILE *cwd_file = NULL;
-        char *cwd_ptr, *cwd = NULL;
+        char
+            *program = argv[0],
+            *cwd_ptr,
+            *cwd = NULL;
 
         for (int i = 1; i < argc; i++) {
             char *arg = argv[i];
 
             if (strcmp(arg, "-h") == 0) {
-                usage(config->console_err, program);
-
-                destroy_fewer_config(config);
+                usage(program);
+                free(cwd);
                 return EXIT_SUCCESS;
             }
 
             if (strcmp(arg, "-t") == 0) {
-                config->test = true;
-            } else {
-                usage(config->console_err, program);
-
-                destroy_fewer_config(config);
-                destroy_fewer_config(config);
-                return EXIT_FAILURE;
+                test = true;
+                continue;
             }
+
+            usage(program);
+            free(cwd);
+            return EXIT_FAILURE;
         }
+
+        fewer_config *config = new_fewer_config();
+        config->console_err = stderr;
+        config->console_out = stdout;
+        config->console_in = stdin;
+        config->test = test;
 
         if (!config->test) {
             cwd = malloc(cwd_size * sizeof(char));
+            assert(cwd);
 
             #if defined(_MSC_VER)
                 cwd_ptr = _getcwd(cwd, cwd_size);
@@ -124,59 +151,48 @@
             #endif
 
             if (!cwd_ptr) {
-                dprintf(config->console_err, "Error getting current directory\n");
-
-                free(cwd);
+                fprintf(stderr, "Error getting current directory\n");
                 destroy_fewer_config(config);
+                free(cwd);
                 return EXIT_FAILURE;
             }
 
             #if defined(_MSC_VER)
-                errno_t err = fopen_s(&cwd_file, cwd, "rb");
+                int fd = (int) CreateFileA(cwd, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
 
-                if (err != 0) {
-                    dprintf(config->console_err, "Error opening current directory %s\n", cwd);
-
-                    free(cwd);
+                if (fd == -1) {
+                    fprintf(stderr, "Error getting file descriptor to current directory %s\n", cwd);
                     destroy_fewer_config(config);
+                    free(cwd);
                     return EXIT_FAILURE;
                 }
+
+                config->root = fd;
             #else
-                cwd_file = fopen(cwd, "rb");
+                FILE *cwd_file = fopen(cwd, "r");
 
                 if (!cwd_file) {
-                    dprintf(config->console_err, "Error opening current directory %s\n", cwd);
-
-                    free(cwd);
+                    fprintf(stderr, "Error opening current directory %s\n", cwd);
                     destroy_fewer_config(config);
+                    free(cwd);
                     return EXIT_FAILURE;
                 }
+
+                config->root = fileno(cwd_file);
             #endif
 
-            if (!cwd_file) {
-                dprintf(config->console_err, "Error opening current directory %s\n", cwd);
-
-                free(cwd);
+            if (!config->root) {
+                fprintf(stderr, "Error extracting current directory %s\n", cwd);
                 destroy_fewer_config(config);
+                free(cwd);
                 return EXIT_FAILURE;
             }
 
             free(cwd);
-
-            #if defined(_MSC_VER)
-                config->root = _fileno(cwd_file);
-            #else
-                config->root = fileno(cwd_file);
-            #endif
         }
 
-        status = repl(config);
-
-        if (cwd_file) {
-            fclose(cwd_file);
-        }
-
+        repl_status = repl(config);
         destroy_fewer_config(config);
-        return status;
+        return repl_status;
     }
 #endif
