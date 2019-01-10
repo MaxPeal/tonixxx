@@ -4,6 +4,7 @@
 
 #include <assert.h>
 #include <fcntl.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,14 +17,42 @@
     #include <unistd.h>
 #endif
 
-#if defined(__minix) || defined(__sun) || defined(__HAIKU__)
+#if defined(_MSC_VER) || defined(__minix)
     #include <stdarg.h>
-#endif
 
-#if defined(__minix)
+    #if defined(_MSC_VER)
+        int fchdir(int fd) {
+            DWORD result;
+            unsigned int base_path_size = _XOPEN_PATH_MAX;
+            char *base_path = NULL;
+            base_path = malloc(base_path_size * sizeof(char));
+            assert(base_path);
+
+            result = GetFinalPathNameByHandleA(
+                (HANDLE) fd,
+                base_path,
+                base_path_size - 1,
+                FILE_NAME_NORMALIZED
+            );
+
+            if (result > base_path_size) {
+                free(base_path);
+                return -1;
+            }
+
+            if (result == 0) {
+                free(base_path);
+                return -1;
+            }
+
+            fd = _chdir(base_path);
+            free(base_path);
+            return fd;
+        }
+    #endif
+
     int openat(int fd, const char *path, int flags, ...) {
         mode_t mode = 0;
-        int fd2;
 
         if (flags & O_CREAT) {
             va_list arg;
@@ -32,50 +61,33 @@
             va_end(arg);
         }
 
-        // Path is simple, absolute
-        if (fd == AT_FDCWD || path[0] == '/' || path[0] == '\\') {
-            return open(path, flags, mode);
-        }
-
-        fd2 = open(".", O_SEARCH | O_CLOEXEC);
-
-        // Detect collision with cwd
-        if (fd >= 0 && fd == fd2) {
+        if (fchdir(fd) != 0) {
             return -1;
         }
 
-        fd2 = fchdir(fd);
+        #if defined(_MSC_VER)
+            if (_sopen_s(&fd, path, flags, _SH_DENYNO, mode) != 0) {
+                return -1;
+            }
+        #else
+            fd = open(path, flags, mode);
+        #endif
 
-        if (!fd2) {
-            fd2 = open(path, flags, mode);
-        }
-
-        return fd2;
-    }
-#elif defined(__sun) || defined(__HAIKU__)
-    int dprintf(int fd, const char *restrict format, ...) {
-        va_list ap;
-        FILE *f = fdopen(fd, "w");
-
-        if (!f) {
-            return -1;
-        }
-
-        va_start(ap, format);
-        int result = fprintf(f, format, ap);
-        va_end(ap);
-
-        return result;
+        return fd;
     }
 #endif
 
 static const char *PROMPT = "> ";
 
-void show_commands(int fd) {
-    dprintf(fd, "l <path>\tLoad file\n");
-    dprintf(fd, "n\t\tShow next byte\n");
-    dprintf(fd, "r\t\tRender an input byte\n");
-    dprintf(fd, "q\t\tQuit\n");
+void show_commands(FILE *console) {
+    fprintf(console, "l <path>\tLoad file\n");
+    fprintf(console, "n\t\tShow next byte\n");
+    fprintf(console, "r <hex pair>\tRender an input byte\n");
+    fprintf(console, "q\t\tQuit\n");
+
+    #if defined(__CloudABI__)
+        fflush(console);
+    #endif
 }
 
 // Format a byte as a hexadecimal string
@@ -107,14 +119,14 @@ void chomp(char *s) {
     }
 }
 
-fewer_config * new_fewer_config(size_t instruction_size) {
+fewer_config * new_fewer_config() {
     fewer_config *config = malloc(sizeof(fewer_config));
-    config->console_err = -1;
-    config->console_out = -1;
-    config->console_in = -1;
+    assert(config);
+    config->console_err = NULL;
+    config->console_out = NULL;
+    config->console_in = NULL;
     config->root = -1;
     config->test = false;
-
     return config;
 }
 
@@ -122,33 +134,45 @@ void destroy_fewer_config(fewer_config *config) {
     free(config);
 }
 
-void validate_fewer_config(fewer_config *config) {
-    assert(config->root != -1 || config->test);
+bool validate_fewer_config(fewer_config *config) {
+    return config->root != -1 || config->test;
 }
 
 int repl(fewer_config *config) {
-    int fd;
-    unsigned char
-        c,
-        d;
+    int root, fd;
+    bool test, test_passing = true;
+    unsigned char c, d;
     size_t
-        read_count,
         command_size = 1,
         content_size = _XOPEN_PATH_MAX,
-        instruction_size = command_size + 1 + content_size;
+        instruction_size = command_size + 1 + content_size,
+        hex_buf_size = 3;
     FILE
-        *stdin_f = NULL,
+        *console_err,
+        *console_out,
+        *console_in,
         *f = NULL;
     char
         command,
         *content = NULL,
-        *char_buf = malloc(sizeof(char)),
-        *hex_buf = malloc(3 * sizeof(char)),
-        *instruction = calloc(instruction_size, sizeof(char));
+        *hex_buf = NULL,
+        *char_buf = NULL,
+        *instruction = NULL;
 
-    validate_fewer_config(config);
+    if (!validate_fewer_config(config)) {
+        return EXIT_FAILURE;
+    }
 
-    if (config->test) {
+    console_err = config->console_err;
+    console_out = config->console_out;
+    console_in = config->console_in;
+    root = config->root;
+    test = config->test;
+
+    hex_buf = malloc(hex_buf_size * sizeof(char));
+    assert(hex_buf);
+
+    if (test) {
         for (int i = 0; i <= CHAR_MAX; i++) {
             c = (char) i;
 
@@ -156,64 +180,59 @@ int repl(fewer_config *config) {
             d = parse_boi(hex_buf);
 
             if (d != c) {
-                dprintf(config->console_err, "Character %02x corrupted to %02x during hexadecimal translation\n", c, d);
-
-                free(instruction);
-                free(hex_buf);
-                free(char_buf);
-                return EXIT_FAILURE;
+                fprintf(console_err, "Character %02x corrupted to %02x during hexadecimal translation\n", c, d);
+                test_passing = false;
+                break;
             }
         }
 
-        free(instruction);
         free(hex_buf);
-        free(char_buf);
+
+        if (!test_passing) {
+            return EXIT_FAILURE;
+        }
+
         return EXIT_SUCCESS;
     }
 
-    #if defined(_MSC_VER)
-        stdin_f = _fdopen(config->console_in, "r");
-    #else
-        stdin_f = fdopen(config->console_in, "r");
-    #endif
+    char_buf = malloc(sizeof(char));
+    assert(char_buf);
 
-    if (!stdin_f) {
-        dprintf(config->console_err, "Error opening stdin\n");
-
-        free(instruction);
-        free(hex_buf);
-        free(char_buf);
-        return EXIT_FAILURE;
-    }
+    instruction = calloc(instruction_size, sizeof(char));
+    assert(instruction);
 
     while (true) {
-        if (feof(stdin_f)) {
-            dprintf(config->console_out, "\n");
-
+        if (feof(console_in)) {
+            fprintf(console_out, "\n");
             free(instruction);
-            free(hex_buf);
             free(char_buf);
+            free(hex_buf);
 
             if (f && fclose(f) == EOF) {
-                dprintf(config->console_err, "Error closing file\n");
+                fprintf(console_err, "Error closing file\n");
                 return EXIT_FAILURE;
             }
 
             return EXIT_SUCCESS;
         }
 
-        dprintf(config->console_out, "%s", PROMPT);
+        fprintf(console_out, "%s", PROMPT);
 
-        getline(&instruction, &instruction_size, stdin_f);
+        #if defined(__CloudABI__)
+            fflush(console_out);
+        #endif
 
-        if (!instruction) {
-            return EXIT_FAILURE;
+        if (!fgets(instruction, instruction_size, console_in)) {
+            free(instruction);
+            free(char_buf);
+            free(hex_buf);
+            return EXIT_SUCCESS;
         }
 
         chomp(instruction);
 
         if (strlen(instruction) == 0) {
-            show_commands(config->console_err);
+            show_commands(console_err);
             continue;
         }
 
@@ -224,7 +243,7 @@ int repl(fewer_config *config) {
                 content = strchr(instruction, ' ');
 
                 if (!content || strlen(content) < 2) {
-                    show_commands(config->console_err);
+                    show_commands(console_err);
                     continue;
                 }
 
@@ -232,19 +251,23 @@ int repl(fewer_config *config) {
 
                 if (f) {
                     if (fclose(f) == EOF) {
-                        dprintf(config->console_err, "Error closing file\n");
-
+                        fprintf(console_err, "Error closing file\n");
                         free(instruction);
-                        free(hex_buf);
                         free(char_buf);
+                        free(hex_buf);
                         return EXIT_FAILURE;
                     }
                 }
 
-                fd = openat(config->root, content, O_RDONLY);
+                fd = openat(root, content, O_RDONLY);
 
                 if (fd == -1) {
-                    dprintf(config->console_err, "Error opening file description for %s\n", content);
+                    fprintf(console_err, "Error opening file description for %s\n", content);
+
+                    #if defined(__CloudABI__)
+                        fflush(console_err);
+                    #endif
+
                     continue;
                 }
 
@@ -255,71 +278,83 @@ int repl(fewer_config *config) {
                 #endif
 
                 if (!f) {
-                    dprintf(config->console_err, "Error opening file %s\n", content);
+                    fprintf(console_err, "Error opening path %s\n", content);
+
+                    #if defined(__CloudABI__)
+                        fflush(console_err);
+                    #endif
                 }
 
                 break;
             case 'n':
                 if (!f) {
-                    dprintf(config->console_err, "No file loaded\n");
+                    fprintf(console_err, "No file loaded\n");
+
+                    #if defined(__CloudABI__)
+                        fflush(console_err);
+                    #endif
                     continue;
                 }
 
-                read_count = fread(char_buf, 1, 1, f);
-
-                if (read_count != 1) {
-                    dprintf(config->console_err, "Error reading byte\n");
-
-                    if (fclose(stdin_f) == EOF) {
-                        dprintf(config->console_err, "Error closing stdin\n");
-                    }
-
-                    if (fclose(f) == EOF) {
-                        dprintf(config->console_err, "Error closing file\n");
-                    }
-
+                if (fread(char_buf, 1, 1, f) != 1) {
+                    fprintf(console_err, "Error reading byte\n");
                     free(instruction);
-                    free(hex_buf);
                     free(char_buf);
+                    free(hex_buf);
                     return EXIT_FAILURE;
                 }
 
                 render_boi(char_buf[0], hex_buf);
-                dprintf(config->console_out, "%s\n", hex_buf);
-                break;
-            case 'r':
-                #if defined(_MSC_VER)
-                    read_count = fscanf_s(stdin_f, "%2s", hex_buf, hex_buf_size);
-                #else
-                    read_count = fscanf(stdin_f, "%2s", hex_buf);
+                fprintf(console_out, "%s\n", hex_buf);
+
+                #if defined(__CloudABI__)
+                    fflush(console_out);
                 #endif
 
-                if (read_count != 1) {
-                    show_commands(config->console_err);
+                break;
+            case 'r':
+                content = strchr(instruction, ' ');
+
+                if (!content || strlen(content) < 2) {
+                    show_commands(console_err);
                     continue;
                 }
 
+                content++;
+
+                if (strlen(content) > hex_buf_size - 1) {
+                    show_commands(console_err);
+                    continue;
+                }
+
+                #if defined(_MSC_VER)
+                    strncpy_s(hex_buf, hex_buf_size, content, strlen(content));
+                #else
+                    strncpy(hex_buf, content, hex_buf_size);
+                #endif
+
+
                 c = parse_boi(hex_buf);
-                dprintf(config->console_out, "%c\n", c);
+                fprintf(console_out, "%c\n", c);
+
+                #if defined(__CloudABI__)
+                    fflush(console_out);
+                #endif
+
                 break;
             case 'q':
                 free(instruction);
-                free(hex_buf);
                 free(char_buf);
+                free(hex_buf);
 
                 if (f && fclose(f) == EOF) {
-                    dprintf(config->console_err, "Error closing file\n");
-                    return EXIT_FAILURE;
-                }
-
-                if (fclose(stdin_f)) {
-                    dprintf(config->console_err, "Error closing stdin\n");
+                    fprintf(console_err, "Error closing file\n");
                     return EXIT_FAILURE;
                 }
 
                 return EXIT_SUCCESS;
             default:
-                show_commands(config->console_err);
+                show_commands(console_err);
         }
     }
 }

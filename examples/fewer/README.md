@@ -1,6 +1,6 @@
 # fewer: because `less` is `more`
 
-The fewer command line tool navigates files one byte at a time, printing the next byte and the next as a hexadecimal pair. It's not particularly useful.
+The fewer command line tool navigates files one byte at a time, printing the next byte and the next as a hexadecimal pair. It's not particularly useful compared to `od`.
 
 # EXAMPLES
 
@@ -13,17 +13,13 @@ $ fewer
 20
 > n
 66
-> r
-23
+> r 23
 #
-> h
-l <path>	Load file
-n		Show next byte
-r		Render an input byte
-q		Quit
 > q
 $
 ```
+
+See the `h` command for more information.
 
 # CONFIGURATION
 

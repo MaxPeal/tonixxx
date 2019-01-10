@@ -6,10 +6,14 @@
 
 #if defined(__sun)
     #define __EXTENSIONS__
+#elif defined(_MSC_VER)
+    #include <windows.h>
+    typedef int mode_t;
 #endif
 
 #include <limits.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #if !defined(_XOPEN_PATH_MAX)
     #if defined(_POSIX_PATH_MAX)
@@ -21,16 +25,8 @@
     #endif
 #endif
 
-#if defined(__minix)
-    // A crude shim for POSIX openat()
-    int openat(int fd, const char *path, int flags, ...);
-#elif defined(__sun) || defined(__HAIKU__)
-    // A crude shim for POSIX dprintf()
-    int dprintf(int, const char *__restrict, ...);
-#endif
-
 // Present a help menu.
-void show_commands(int fd);
+void show_commands(FILE *console);
 
 // Format a byte as a hexadecimal string
 void render_boi(char b, /*@out@*/ char *s);
@@ -41,12 +37,11 @@ unsigned char parse_boi(char *s);
 // Removes any trailing CR/LF/CRLF.
 void chomp(char *s);
 
-// Entrypoint parameters.
-// A value of -1 indicates an unset stream.
+// Entrypoint parameters
 typedef struct {
-    int console_err;
-    int console_out;
-    int console_in;
+    FILE *console_err;
+    FILE *console_out;
+    FILE *console_in;
     int root;
     bool test;
 } fewer_config;
@@ -59,7 +54,7 @@ fewer_config * new_fewer_config();
 void destroy_fewer_config(fewer_config *config);
 
 // Check for basic errors in a fewer_config.
-void validate_fwer_config(fewer_config *config);
+bool validate_fewer_config(fewer_config *config);
 
 // Present an interactive command session.
 // Returns a system exit status.
