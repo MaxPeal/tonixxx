@@ -12,47 +12,51 @@
 #include "palindrome.h"
 
 void usage(char* program) {
-  std::cout << "Usage: " << program << "[-t]" << std::endl;
+    std::cout << "Usage: " << program << "[-t]" << std::endl;
 }
 
-void test() {
-  std::vector<int> palindromes;
+int test() {
+    std::vector<int> palindromes;
 
-  for (int x = 0; x < 256; x++) {
-    std::stringstream x_hex;
+    for (int x = 0; x < 256; x++) {
+        std::stringstream x_hex;
 
-    x_hex << std::setfill('0') << std::setw(2) << std::hex << x;
+        x_hex << std::setfill('0') << std::setw(2) << std::hex << x;
 
-    if (palindrome(x_hex.str())) {
-      palindromes.push_back(x);
+        if (palindrome(x_hex.str())) {
+            palindromes.push_back(x);
+        }
     }
-  }
 
-  assert(palindromes.size() == 16);
+    if (palindromes.size() != 16) {
+        std::cerr << "Expected to find 16 palindromes, instead found " << palindromes.size();
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
 
 int main(int argc, char** argv) {
-  std::string line;
+    std::string line;
 
-  if (argc > 2) {
-    usage(argv[0]);
-    return EXIT_FAILURE;
-  }
+    if (argc > 2) {
+        usage(argv[0]);
+        return EXIT_FAILURE;
+    }
 
-  if (argc > 1 && strcmp(argv[1], "-t") == 0) {
-    test();
-    return EXIT_SUCCESS;
-  }
+    if (argc > 1 && strcmp(argv[1], "-t") == 0) {
+        return test();
+    }
 
-  while (!std::cin.bad() && !std::cin.eof()) {
-    std::getline(std::cin, line);
+    while (!std::cin.bad() && !std::cin.eof()) {
+        std::getline(std::cin, line);
 
-    std::cout << "Palindrome: " << palindrome(line) << std::endl;
-  }
+        std::cout << "Palindrome: " << palindrome(line) << std::endl;
+    }
 
-  if (std::cin.bad()) {
-    return EXIT_FAILURE;
-  } else {
-    return EXIT_SUCCESS;
-  }
+    if (std::cin.bad()) {
+        return EXIT_FAILURE;
+    } else {
+        return EXIT_SUCCESS;
+    }
 }

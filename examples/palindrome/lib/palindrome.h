@@ -4,4 +4,5 @@
 
 #include <string>
 
+// Return whether the string is a palindrome.
 bool palindrome(std::string s);
