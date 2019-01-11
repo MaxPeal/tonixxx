@@ -25,6 +25,18 @@
     #endif
 #endif
 
+#if defined(_MSC_VER)
+    // Change directory given a directory file descriptor.
+    // Returns -1 and sets errno on failure.
+    int fchdir(int fd);
+#endif
+
+#if defined(_MSC_VER) || defined(__minix)
+    // Get file descriptor to file path nested in directory fd.
+    // Return -1 and set errno on failure.
+    int openat(int fd, const char *path, int flags, ...);
+#endif
+
 // Present a help menu.
 void show_commands(FILE *console);
 
@@ -48,6 +60,8 @@ typedef struct {
 
 // Construct a fewer_config.
 // By default, test is false and other parameters are unset.
+//
+// Returns NULL and sets errno on allocation failure.
 fewer_config * new_fewer_config();
 
 // Deallocate a fewer_config.

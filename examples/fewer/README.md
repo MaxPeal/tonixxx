@@ -19,6 +19,8 @@ $ fewer
 $
 ```
 
+Note that load (`l`) file path is relative to a root directory (either configured explicitly with CloudABI, or else the current working directory).
+
 See the `h` command for more information.
 
 # CONFIGURATION

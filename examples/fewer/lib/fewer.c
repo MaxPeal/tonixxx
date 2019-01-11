@@ -2,7 +2,6 @@
 
 #include "fewer.h"
 
-#include <assert.h>
 #include <fcntl.h>
 #include <math.h>
 #include <stdio.h>
@@ -19,38 +18,42 @@
 
 #if defined(_MSC_VER) || defined(__minix)
     #include <stdarg.h>
+#endif
 
-    #if defined(_MSC_VER)
-        int fchdir(int fd) {
-            DWORD result;
-            unsigned int base_path_size = _XOPEN_PATH_MAX;
-            char *base_path = NULL;
-            base_path = malloc(base_path_size * sizeof(char));
-            assert(base_path);
-
-            result = GetFinalPathNameByHandleA(
-                (HANDLE) fd,
-                base_path,
-                base_path_size - 1,
-                FILE_NAME_NORMALIZED
-            );
-
-            if (result > base_path_size) {
-                free(base_path);
-                return -1;
-            }
-
-            if (result == 0) {
-                free(base_path);
-                return -1;
-            }
-
-            fd = _chdir(base_path);
-            free(base_path);
-            return fd;
+#if defined(_MSC_VER)
+    int fchdir(int fd) {
+        DWORD result;
+        unsigned int base_path_size = _XOPEN_PATH_MAX;
+        char *base_path = NULL;
+        base_path = malloc(base_path_size * sizeof(char));
+        if (!base_path) {
+            return -1;
         }
-    #endif
 
+        result = GetFinalPathNameByHandleA(
+            (HANDLE) fd,
+            base_path,
+            base_path_size - 1,
+            FILE_NAME_NORMALIZED
+        );
+
+        if (result > base_path_size) {
+            free(base_path);
+            return -1;
+        }
+
+        if (result == 0) {
+            free(base_path);
+            return -1;
+        }
+
+        fd = _chdir(base_path);
+        free(base_path);
+        return fd;
+    }
+#endif
+
+#if defined(_MSC_VER) || defined(__minix)
     int openat(int fd, const char *path, int flags, ...) {
         mode_t mode = 0;
 
@@ -121,7 +124,10 @@ void chomp(char *s) {
 
 fewer_config * new_fewer_config() {
     fewer_config *config = malloc(sizeof(fewer_config));
-    assert(config);
+    if (!config) {
+        return NULL;
+    }
+
     config->console_err = NULL;
     config->console_out = NULL;
     config->console_in = NULL;
@@ -170,7 +176,10 @@ int repl(fewer_config *config) {
     test = config->test;
 
     hex_buf = malloc(hex_buf_size * sizeof(char));
-    assert(hex_buf);
+    if (!hex_buf) {
+        perror(NULL);
+        return EXIT_FAILURE;
+    }
 
     if (test) {
         for (int i = 0; i <= CHAR_MAX; i++) {
@@ -196,10 +205,19 @@ int repl(fewer_config *config) {
     }
 
     char_buf = malloc(sizeof(char));
-    assert(char_buf);
+    if (!char_buf) {
+        perror(NULL);
+        free(hex_buf);
+        return EXIT_FAILURE;
+    }
 
     instruction = calloc(instruction_size, sizeof(char));
-    assert(instruction);
+    if (!instruction) {
+        perror(NULL);
+        free(char_buf);
+        free(hex_buf);
+        return EXIT_FAILURE;
+    }
 
     while (true) {
         if (feof(console_in)) {
@@ -262,7 +280,7 @@ int repl(fewer_config *config) {
                 fd = openat(root, content, O_RDONLY);
 
                 if (fd == -1) {
-                    fprintf(console_err, "Error opening file description for %s\n", content);
+                    perror(NULL);
 
                     #if defined(__CloudABI__)
                         fflush(console_err);
@@ -278,7 +296,7 @@ int repl(fewer_config *config) {
                 #endif
 
                 if (!f) {
-                    fprintf(console_err, "Error opening path %s\n", content);
+                    perror(NULL);
 
                     #if defined(__CloudABI__)
                         fflush(console_err);
@@ -297,11 +315,16 @@ int repl(fewer_config *config) {
                 }
 
                 if (fread(char_buf, 1, 1, f) != 1) {
-                    fprintf(console_err, "Error reading byte\n");
                     free(instruction);
                     free(char_buf);
                     free(hex_buf);
-                    return EXIT_FAILURE;
+
+                    if (ferror(f)) {
+                        fprintf(console_err, "Error reading byte from file\n");
+                        return EXIT_FAILURE;
+                    }
+
+                    return EXIT_SUCCESS;
                 }
 
                 render_boi(char_buf[0], hex_buf);

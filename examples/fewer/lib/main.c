@@ -2,7 +2,6 @@
 
 #include "fewer.h"
 
-#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,7 +44,7 @@
                     argdata_get_fd(value_ad, &console_err_fd);
 
                     //
-                    // Fix assert()
+                    // Fix assert(), perror(), etc.
                     //
 
                     FILE *f2 = fdopen(console_err_fd, "w");
@@ -88,6 +87,11 @@
         }
 
         fewer_config *config = new_fewer_config();
+        if (!config) {
+            perror(NULL);
+            exit(EXIT_FAILURE);
+        }
+
         config->console_err = console_err;
         config->console_out = console_out;
         config->console_in = console_in;
@@ -135,6 +139,11 @@
         }
 
         fewer_config *config = new_fewer_config();
+        if (!config) {
+            perror(NULL);
+            return EXIT_FAILURE;
+        }
+
         config->console_err = stderr;
         config->console_out = stdout;
         config->console_in = stdin;
@@ -142,7 +151,10 @@
 
         if (!config->test) {
             cwd = malloc(cwd_size * sizeof(char));
-            assert(cwd);
+            if (!cwd) {
+                perror(NULL);
+                return EXIT_FAILURE;
+            }
 
             #if defined(_MSC_VER)
                 cwd_ptr = _getcwd(cwd, cwd_size);
@@ -151,17 +163,41 @@
             #endif
 
             if (!cwd_ptr) {
-                fprintf(stderr, "Error getting current directory\n");
+                perror(NULL);
                 destroy_fewer_config(config);
                 free(cwd);
                 return EXIT_FAILURE;
             }
 
             #if defined(_MSC_VER)
-                int fd = (int) CreateFileA(cwd, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+                int fd = (int) CreateFileA(
+                    cwd,
+                    GENERIC_READ,
+                    FILE_SHARE_READ |
+                        FILE_SHARE_DELETE,
+                    NULL,
+                    OPEN_EXISTING,
+                    FILE_FLAG_BACKUP_SEMANTICS,
+                    NULL
+                );
 
                 if (fd == -1) {
-                    fprintf(stderr, "Error getting file descriptor to current directory %s\n", cwd);
+                    DWORD err = GetLastError();
+                    char *errStr = NULL;
+                    FormatMessageA(
+                        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                            FORMAT_MESSAGE_FROM_SYSTEM |
+                            FORMAT_MESSAGE_IGNORE_INSERTS,
+                        NULL,
+                        err,
+                        0,
+                        (LPSTR) &errStr,
+                        0,
+                        NULL
+                    );
+
+                    fprintf(stderr, "%s\n", errStr);
+                    LocalFree(errStr);
                     destroy_fewer_config(config);
                     free(cwd);
                     return EXIT_FAILURE;
@@ -172,7 +208,7 @@
                 FILE *cwd_file = fopen(cwd, "r");
 
                 if (!cwd_file) {
-                    fprintf(stderr, "Error opening current directory %s\n", cwd);
+                    perror(NULL);
                     destroy_fewer_config(config);
                     free(cwd);
                     return EXIT_FAILURE;
@@ -182,7 +218,7 @@
             #endif
 
             if (!config->root) {
-                fprintf(stderr, "Error extracting current directory %s\n", cwd);
+                perror(NULL);
                 destroy_fewer_config(config);
                 free(cwd);
                 return EXIT_FAILURE;
