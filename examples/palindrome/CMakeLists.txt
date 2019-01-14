@@ -33,38 +33,38 @@ enable_testing()
 
 add_test(NAME palindrometest COMMAND palindrome -t)
 
-add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg lib)
-add_custom_target(cpplint COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 -r cpplint --filter=-readability/streams,-build/header_guard,-whitespace/parens,-readability/braces,-whitespace/newline,-legal/copyright)
-add_custom_target(splint COMMAND 	find lib -type f -name '*.c' -print0 | xargs -0 -n1 -r splint)
-add_custom_target(vera++ COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 -r vera++ -s)
+add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg -D_XOPEN_PATH_MAX=1024 --error-exitcode=1 lib)
+add_custom_target(cpplint COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 cpplint)
 
-if(CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
+if(CMAKE_SYSTEM_NAME MATCHES "NetBSD")
+    add_custom_target(vera++ COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 vera++)
+else()
+    add_custom_target(vera++ COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 vera++ -se)
+endif()
+
+if(
+    CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
-    "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
+    "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc" OR
+    CMAKE_SYSTEM_NAME MATCHES "Minix"
 )
-add_custom_target(lint)
-elseif(CMAKE_SYSTEM_NAME MATCHES "Minix")
-    add_custom_target(lint DEPENDS splint)
-elseif(CMAKE_SYSTEM_VERSION MATCHES "HBSD")
-    add_custom_target(lint DEPENDS splint cpplint vera++)
-elseif(MSVC)
-    add_custom_target(lint DEPENDS cppcheck)
-elseif(CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
-    CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
+    add_custom_target(lint)
+elseif(
+    MSVC OR
+    CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
     LSB_RELEASE MATCHES "Void"
 )
-add_custom_target(lint DEPENDS cppcheck cpplint splint)
-elseif(CMAKE_SYSTEM_NAME MATCHES "NetBSD")
-    add_custom_target(lint DEPENDS cppcheck splint vera++)
+    add_custom_target(lint DEPENDS cppcheck cpplint)
 else()
-    add_custom_target(lint DEPENDS cppcheck cpplint splint vera++)
+    add_custom_target(lint DEPENDS cppcheck cpplint vera++)
 endif()
 
 add_custom_target(valgrind_test COMMAND valgrind --error-exitcode=1 --leak-check=full bin/palindrome -t)
 add_custom_target(valgrind DEPENDS valgrind_test)
 
 # Broken or missing valgrind
-if(MSVC OR
+if(
+    MSVC OR
     CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
     CMAKE_SYSTEM_VERSION MATCHES "HBSD" OR

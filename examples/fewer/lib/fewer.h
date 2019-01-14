@@ -38,22 +38,27 @@
 #endif
 
 // Present a help menu.
-void show_commands(FILE *console);
+// Returns EOF and sets errno on error.
+int show_commands(FILE *console);
 
-// Format a byte as a hexadecimal string
-void render_boi(char b, /*@out@*/ char *s);
+// Format a byte as a hexadecimal string.
+// Any errors during processing are emitted to console.
+void render_boi(FILE *console, unsigned int b, /*@out@*/ char *s, size_t length);
 
-// Parse a hexadecimal string to a byte
-unsigned char parse_boi(char *s);
+// Parse a hexadecimal string to a byte.
+// Returns -1 on range error and sets errno.
+// Returns 0 on parse error.
+// Returns a value in [0, UINT_MAX] otherwise.
+int parse_boi(char *s);
 
 // Removes any trailing CR/LF/CRLF.
-void chomp(char *s);
+void chomp(char *s, size_t length);
 
 // Entrypoint parameters
 typedef struct {
-    FILE *console_err;
-    FILE *console_out;
-    FILE *console_in;
+    /*@dependent@*/ FILE *console_err;
+    /*@dependent@*/ FILE *console_out;
+    /*@dependent@*/ FILE *console_in;
     int root;
     bool test;
 } fewer_config;
@@ -62,7 +67,13 @@ typedef struct {
 // By default, test is false and other parameters are unset.
 //
 // Returns NULL and sets errno on allocation failure.
-fewer_config * new_fewer_config();
+/*@null@*/ fewer_config * new_fewer_config(
+    FILE *console_err,
+    FILE *console_out,
+    /*@null@*/ FILE *console_in,
+    int root,
+    bool test
+);
 
 // Deallocate a fewer_config.
 void destroy_fewer_config(fewer_config *config);

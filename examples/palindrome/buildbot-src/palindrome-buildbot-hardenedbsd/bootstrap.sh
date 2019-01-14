@@ -3,7 +3,7 @@ sudo hbsd-update &&
     sudo pkg update &&
     sudo pkg install -y \
         cmake \
-        splint \
+        cppcheck \
         vera++ \
         valgrind \
         python3 \

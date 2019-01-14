@@ -5,7 +5,6 @@ sudo yum update -y &&
     sudo yum install -y \
         cmake3 \
         cppcheck \
-        splint \
         valgrind \
         python36u \
         python36u-pip &&

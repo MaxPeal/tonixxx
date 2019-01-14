@@ -14,6 +14,7 @@ project(fewer)
 
 set(EXECUTABLE_OUTPUT_PATH "bin")
 set(LSB_RELEASE "")
+set(ETC_RELEASE "")
 
 if(MSVC)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
@@ -27,6 +28,7 @@ if(MSVC)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${EXECUTABLE_OUTPUT_PATH}")
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     execute_process(COMMAND lsb_release -a OUTPUT_VARIABLE LSB_RELEASE)
+    execute_process(COMMAND cat /etc/*release* OUTPUT_VARIABLE ETC_RELEASE)
 endif()
 
 if(CMAKE_C_COMPILER_ID MATCHES "clang")
@@ -52,27 +54,38 @@ else()
     add_test(NAME fewer_help_test COMMAND fewer -h)
 endif()
 
-add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg lib)
-add_custom_target(splint COMMAND 	find lib -type f -name '*.c' -print0 | xargs -0 -n1 -r splint)
-add_custom_target(vera++ COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 -r vera++ -s)
+add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg -D_XOPEN_PATH_MAX=1024 --error-exitcode=1 lib)
+add_custom_target(cpplint COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 cpplint)
+add_custom_target(splint COMMAND find lib -type f -name '*.c' -print0 | xargs -0 -n1 splint)
+
+if(CMAKE_SYSTEM_NAME MATCHES "NetBSD")
+    add_custom_target(vera++ COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 vera++)
+else()
+    add_custom_target(vera++ COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 vera++ -se)
+endif()
+
+# Pending full C99 support
+add_custom_target(splint99)
 
 # Missing linter ports
-if(MSVC OR
+if(
     CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
     "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
 )
-add_custom_target(lint)
+    add_custom_target(lint DEPENDS)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Minix")
-    add_custom_target(lint DEPENDS splint)
+    add_custom_target(lint DEPENDS splint99)
 elseif(CMAKE_SYSTEM_VERSION MATCHES "HBSD")
-    add_custom_target(lint DEPENDS splint vera++)
-elseif(CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
+    add_custom_target(lint DEPENDS cpplint vera++ splint99)
+elseif(
+    MSVC OR
+    CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
     LSB_RELEASE MATCHES "Void"
 )
-add_custom_target(lint DEPENDS cppcheck splint)
+    add_custom_target(lint DEPENDS cppcheck cpplint splint99)
 else()
-    add_custom_target(lint DEPENDS cppcheck splint vera++)
+    add_custom_target(lint DEPENDS cppcheck cpplint vera++ splint99)
 endif()
 
 if ("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
@@ -89,7 +102,8 @@ else()
 endif()
 
 # Broken or missing valgrind
-if(MSVC OR
+if(
+    MSVC OR
     CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
     CMAKE_SYSTEM_VERSION MATCHES "HBSD" OR

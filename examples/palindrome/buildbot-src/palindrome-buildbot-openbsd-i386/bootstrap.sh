@@ -2,7 +2,6 @@
 sudo pkg_add \
     cmake \
     cppcheck \
-    splint \
     valgrind \
     python-3.6.4p0 \
     py3-pip &&

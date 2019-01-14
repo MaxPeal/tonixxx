@@ -1,6 +1,6 @@
 // Copyright 2017 Andrew Pennebaker
 
-#include "fewer.h"
+#include "main.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -18,6 +18,8 @@
         #include <unistd.h>
     #endif
 #endif
+
+#include "fewer.h"
 
 #if defined(__CloudABI__)
     void program_main(const argdata_t *ad) {
@@ -49,7 +51,8 @@
 
                     FILE *f2 = fdopen(console_err_fd, "w");
 
-                    if (!f2) {
+                    if (f2 == NULL) {
+                        perror(NULL);
                         exit(EXIT_FAILURE);
                     }
 
@@ -65,7 +68,8 @@
 
                     console_out = fdopen(console_out_fd, "w");
 
-                    if (!console_out) {
+                    if (console_out == NULL) {
+                        perror(NULL);
                         exit(EXIT_FAILURE);
                     }
                 } else if (strcmp(key, "stdin") == 0) {
@@ -73,7 +77,8 @@
 
                     console_in = fdopen(console_in_fd, "r");
 
-                    if (!console_in) {
+                    if (console_in == NULL) {
+                        perror(NULL);
                         exit(EXIT_FAILURE);
                     }
                 } else if (strcmp(key, "root") == 0) {
@@ -86,17 +91,17 @@
             argdata_map_next(&ad_iter);
         }
 
-        fewer_config *config = new_fewer_config();
-        if (!config) {
+        fewer_config *config = new_fewer_config(
+            console_err,
+            console_out,
+            console_in,
+            root,
+            test
+        );
+        if (config == NULL) {
             perror(NULL);
             exit(EXIT_FAILURE);
         }
-
-        config->console_err = console_err;
-        config->console_out = console_out;
-        config->console_in = console_in;
-        config->root = root;
-        config->test = test;
 
         repl_status = repl(config);
         destroy_fewer_config(config);
@@ -112,19 +117,14 @@
 
     int main(int argc, char **argv) {
         bool test = false;
-        int repl_status;
-        size_t cwd_size = _XOPEN_PATH_MAX;
-        char
-            *program = argv[0],
-            *cwd_ptr,
-            *cwd = NULL;
+        int repl_status, i, root = -1;
+        char *program = argv[0];
 
-        for (int i = 1; i < argc; i++) {
+        for (i = 1; i < argc; i++) {
             char *arg = argv[i];
 
             if (strcmp(arg, "-h") == 0) {
                 usage(program);
-                free(cwd);
                 return EXIT_SUCCESS;
             }
 
@@ -134,23 +134,12 @@
             }
 
             usage(program);
-            free(cwd);
             return EXIT_FAILURE;
         }
 
-        fewer_config *config = new_fewer_config();
-        if (!config) {
-            perror(NULL);
-            return EXIT_FAILURE;
-        }
-
-        config->console_err = stderr;
-        config->console_out = stdout;
-        config->console_in = stdin;
-        config->test = test;
-
-        if (!config->test) {
-            cwd = malloc(cwd_size * sizeof(char));
+        if (!test) {
+            size_t cwd_size = _XOPEN_PATH_MAX;
+            char *cwd_ptr, *cwd = malloc(cwd_size * sizeof(char));
             if (!cwd) {
                 perror(NULL);
                 return EXIT_FAILURE;
@@ -162,9 +151,8 @@
                 cwd_ptr = getcwd(cwd, cwd_size);
             #endif
 
-            if (!cwd_ptr) {
+            if (cwd_ptr == NULL) {
                 perror(NULL);
-                destroy_fewer_config(config);
                 free(cwd);
                 return EXIT_FAILURE;
             }
@@ -198,33 +186,42 @@
 
                     fprintf(stderr, "%s\n", errStr);
                     LocalFree(errStr);
-                    destroy_fewer_config(config);
                     free(cwd);
                     return EXIT_FAILURE;
                 }
 
-                config->root = fd;
+                root = fd;
             #else
                 FILE *cwd_file = fopen(cwd, "r");
 
-                if (!cwd_file) {
+                if (cwd_file == NULL) {
                     perror(NULL);
-                    destroy_fewer_config(config);
                     free(cwd);
                     return EXIT_FAILURE;
                 }
 
-                config->root = fileno(cwd_file);
+                root = fileno(cwd_file);
             #endif
 
-            if (!config->root) {
+            if (root == -1) {
                 perror(NULL);
-                destroy_fewer_config(config);
                 free(cwd);
                 return EXIT_FAILURE;
             }
 
             free(cwd);
+        }
+
+        fewer_config *config = new_fewer_config(
+            stderr,
+            stdout,
+            stdin,
+            root,
+            test
+        );
+        if (config == NULL) {
+            perror(NULL);
+            return EXIT_FAILURE;
         }
 
         repl_status = repl(config);
