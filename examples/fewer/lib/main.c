@@ -91,20 +91,15 @@
             argdata_map_next(&ad_iter);
         }
 
-        fewer_config *config = new_fewer_config(
-            console_err,
-            console_out,
-            console_in,
-            root,
-            test
-        );
-        if (config == NULL) {
-            perror(NULL);
-            exit(EXIT_FAILURE);
-        }
+        fewer_config *config = &(fewer_config) {
+            .console_err = console_err,
+            .console_out = console_out,
+            .console_in = console_in,
+            .root = root,
+            .test = test
+        };
 
         repl_status = repl(config);
-        destroy_fewer_config(config);
         exit(repl_status);
     }
 #else
@@ -212,20 +207,15 @@
             free(cwd);
         }
 
-        fewer_config *config = new_fewer_config(
-            stderr,
-            stdout,
-            stdin,
-            root,
-            test
-        );
-        if (config == NULL) {
-            perror(NULL);
-            return EXIT_FAILURE;
-        }
+        fewer_config *config = &(fewer_config) {
+            .console_err = stderr,
+            .console_out = stdout,
+            .console_in = stdin,
+            .root = root,
+            .test = test
+        };
 
         repl_status = repl(config);
-        destroy_fewer_config(config);
         return repl_status;
     }
 #endif

@@ -55,14 +55,9 @@ else()
 endif()
 
 add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg -D_XOPEN_PATH_MAX=1024 --error-exitcode=1 lib)
-add_custom_target(cpplint COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 cpplint)
-add_custom_target(splint COMMAND find lib -type f -name '*.c' -print0 | xargs -0 -n1 splint)
-
-if(CMAKE_SYSTEM_NAME MATCHES "NetBSD")
-    add_custom_target(vera++ COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 vera++)
-else()
-    add_custom_target(vera++ COMMAND find lib -type f -name '*.cpp' -o -name '*.[ch]' -print0 | xargs -0 -n1 vera++ -se)
-endif()
+add_custom_target(cpplint COMMAND sh recur-cpplint.sh)
+add_custom_target(splint COMMAND sh recur-splint.sh)
+add_custom_target(vera++ COMMAND sh recur-vera++.sh)
 
 # Pending full C99 support
 add_custom_target(splint99)
@@ -119,4 +114,4 @@ else()
     add_custom_target(leaks DEPENDS valgrind)
 endif()
 
-add_custom_target(clean-cmake COMMAND find . -iwholename '*cmake*' -not -name CMakeLists.txt -delete)
+add_custom_target(clean-cmake COMMAND sh clean-cmake.sh)

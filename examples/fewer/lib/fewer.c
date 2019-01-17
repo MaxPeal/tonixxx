@@ -2,6 +2,7 @@
 
 #include "fewer.h"
 
+#include <errno.h>
 #include <fcntl.h>
 #include <math.h>
 #include <stdio.h>
@@ -138,39 +139,31 @@ void chomp(char *s, size_t length) {
     }
 }
 
-/*@null@*/ fewer_config * new_fewer_config(
-    FILE *console_err,
-    FILE *console_out,
-    /*@null@*/ FILE *console_in,
-    int root,
-    bool test
-) {
-    fewer_config *config = malloc(sizeof(fewer_config));
-    if (config == NULL) {
-        return NULL;
+bool validate_fewer_config(fewer_config *config) {
+    if (config->console_err == NULL) {
+        return false;
     }
 
-    config->console_err = console_err;
-    config->console_out = console_out;
-    config->console_in = console_in;
-    config->root = root;
-    config->test = test;
-    return config;
-}
+    if (config->test) {
+        return true;
+    }
 
-void destroy_fewer_config(fewer_config *config) {
-    free(config);
-}
+    if (config->root == -1) {
+        fprintf(config->console_err, "root is unset\n");
+        return false;
+    }
 
-bool validate_fewer_config(fewer_config *config) {
-    return config->console_err != NULL &&
-        (
-            config->test || (
-                config->console_out != NULL &&
-                    config->console_in != NULL &&
-                    config->root != -1
-            )
-        );
+    if (config->console_out == NULL) {
+        fprintf(config->console_err, "console_out is unset\n");
+        return false;
+    }
+
+    if (config->console_in == NULL) {
+        fprintf(config->console_err, "console_in is unset\n");
+        return false;
+    }
+
+    return true;
 }
 
 int repl(fewer_config *config) {
@@ -202,7 +195,7 @@ int repl(fewer_config *config) {
         bool test_passing = true;
 
         for (unsigned int d, c = (unsigned int) CHAR_MIN; c <= (unsigned int) CHAR_MAX; c++) {
-            render_boi(config->console_err, c, hex_buf, strlen(hex_buf));
+            render_boi(config->console_err, c, hex_buf, sizeof(hex_buf) - 1);
             b = parse_boi(hex_buf);
 
             if (b == -1) {
@@ -381,7 +374,7 @@ int repl(fewer_config *config) {
                     return EXIT_SUCCESS;
                 }
 
-                render_boi(config->console_err, (unsigned int) char_buf[0], hex_buf, strlen(hex_buf));
+                render_boi(config->console_err, (unsigned int) char_buf[0], hex_buf, sizeof(hex_buf) - 1);
                 fprintf(config->console_out, "%s\n", hex_buf);
 
                 #if defined(__CloudABI__)

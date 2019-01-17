@@ -63,22 +63,8 @@ typedef struct {
     bool test;
 } fewer_config;
 
-// Construct a fewer_config.
-// By default, test is false and other parameters are unset.
-//
-// Returns NULL and sets errno on allocation failure.
-/*@null@*/ fewer_config * new_fewer_config(
-    FILE *console_err,
-    FILE *console_out,
-    /*@null@*/ FILE *console_in,
-    int root,
-    bool test
-);
-
-// Deallocate a fewer_config.
-void destroy_fewer_config(fewer_config *config);
-
 // Check for basic errors in a fewer_config.
+// May set errno on file errors.
 bool validate_fewer_config(fewer_config *config);
 
 // Present an interactive command session.
