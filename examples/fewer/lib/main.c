@@ -2,6 +2,7 @@
 
 #include "main.h"
 
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,8 +31,7 @@
             console_err_fd = -1,
             console_out_fd = -1,
             console_in_fd = -1,
-            root = -1,
-            repl_status;
+            root = -1;
         FILE
             *console_err = NULL,
             *console_out = NULL,
@@ -49,16 +49,18 @@
                     // Fix assert(), perror(), etc.
                     //
 
+                    errno = 0;
                     FILE *f2 = fdopen(console_err_fd, "w");
 
                     if (f2 == NULL) {
-                        perror(NULL);
                         exit(EXIT_FAILURE);
                     }
 
                     fswap(f2, stderr);
 
+                    errno = 0;
                     if (fclose(f2) == EOF) {
+                        perror(NULL);
                         exit(EXIT_FAILURE);
                     }
 
@@ -66,6 +68,7 @@
                 } else if (strcmp(key, "stdout") == 0) {
                     argdata_get_fd(value_ad, &console_out_fd);
 
+                    errno = 0;
                     console_out = fdopen(console_out_fd, "w");
 
                     if (console_out == NULL) {
@@ -75,6 +78,7 @@
                 } else if (strcmp(key, "stdin") == 0) {
                     argdata_get_fd(value_ad, &console_in_fd);
 
+                    errno = 0;
                     console_in = fdopen(console_in_fd, "r");
 
                     if (console_in == NULL) {
@@ -99,8 +103,7 @@
             .test = test
         };
 
-        repl_status = repl(config);
-        exit(repl_status);
+        exit(repl(config));
     }
 #else
     void usage(char *program) {
@@ -112,7 +115,7 @@
 
     int main(int argc, char **argv) {
         bool test = false;
-        int repl_status, i, root = -1;
+        int i, root = -1;
         char *program = argv[0];
 
         for (i = 1; i < argc; i++) {
@@ -134,11 +137,16 @@
 
         if (!test) {
             size_t cwd_size = _XOPEN_PATH_MAX;
-            char *cwd_ptr, *cwd = malloc(cwd_size * sizeof(char));
+            char *cwd_ptr, *cwd;
+
+            errno = 0;
+            cwd = malloc(cwd_size * sizeof(char));
             if (!cwd) {
                 perror(NULL);
                 return EXIT_FAILURE;
             }
+
+            errno = 0;
 
             #if defined(_MSC_VER)
                 cwd_ptr = _getcwd(cwd, cwd_size);
@@ -187,6 +195,7 @@
 
                 root = fd;
             #else
+                errno = 0;
                 FILE *cwd_file = fopen(cwd, "r");
 
                 if (cwd_file == NULL) {
@@ -195,6 +204,7 @@
                     return EXIT_FAILURE;
                 }
 
+                errno = 0;
                 root = fileno(cwd_file);
             #endif
 
@@ -215,7 +225,6 @@
             .test = test
         };
 
-        repl_status = repl(config);
-        return repl_status;
+        return repl(config);
     }
 #endif

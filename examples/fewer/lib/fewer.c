@@ -26,6 +26,8 @@
         DWORD result;
         unsigned int base_path_size = _XOPEN_PATH_MAX;
         char *base_path = NULL;
+
+        errno = 0;
         base_path = malloc(base_path_size * sizeof(char));
         if (base_path == NULL) {
             return -1;
@@ -48,6 +50,7 @@
             return -1;
         }
 
+        errno = 0;
         fd = _chdir(base_path);
         free(base_path);
         return fd;
@@ -65,9 +68,12 @@
             va_end(arg);
         }
 
+        errno = 0;
         if (fchdir(fd) != 0) {
             return -1;
         }
+
+        errno = 0;
 
         #if defined(_MSC_VER)
             if (_sopen_s(&fd, path, flags, _SH_DENYNO, mode) != 0) {
@@ -90,6 +96,7 @@ int show_commands(FILE *console) {
     fprintf(console, "q\t\tQuit\n");
 
     #if defined(__CloudABI__)
+        errno = 0;
         return fflush(console);
     #else
         return 0;
@@ -185,6 +192,7 @@ int repl(fewer_config *config) {
         return EXIT_FAILURE;
     }
 
+    errno = 0;
     hex_buf = malloc(hex_buf_size * sizeof(char));
     if (hex_buf == NULL) {
         perror(NULL);
@@ -222,6 +230,7 @@ int repl(fewer_config *config) {
         return EXIT_SUCCESS;
     }
 
+    errno = 0;
     char_buf = malloc(sizeof(char));
     if (char_buf == NULL) {
         perror(NULL);
@@ -229,6 +238,7 @@ int repl(fewer_config *config) {
         return EXIT_FAILURE;
     }
 
+    errno = 0;
     instruction = calloc(instruction_size, sizeof(char));
     if (instruction == NULL) {
         perror(NULL);
@@ -241,6 +251,7 @@ int repl(fewer_config *config) {
         fprintf(config->console_out, "%s", PROMPT);
 
         #if defined(__CloudABI__)
+            errno = 0;
             if (fflush(config->console_out) == EOF) {
                 perror(NULL);
                 free(instruction);
@@ -265,6 +276,7 @@ int repl(fewer_config *config) {
         chomp(instruction, strlen(instruction));
 
         if (strlen(instruction) == 0) {
+            errno = 0;
             if (show_commands(config->console_err) == EOF) {
                 perror(NULL);
                 free(instruction);
@@ -305,12 +317,14 @@ int repl(fewer_config *config) {
                     }
                 }
 
+                errno = 0;
                 fd = openat(config->root, content, O_RDONLY);
 
                 if (fd == -1) {
                     perror(NULL);
 
                     #if defined(__CloudABI__)
+                        errno = 0;
                         if (fflush(config->console_err) == EOF) {
                             perror(NULL);
                             free(instruction);
@@ -323,6 +337,8 @@ int repl(fewer_config *config) {
                     break;
                 }
 
+                errno = 0;
+
                 #if defined(_MSC_VER)
                     f = _fdopen(fd, "rb");
                 #else
@@ -333,6 +349,7 @@ int repl(fewer_config *config) {
                     perror(NULL);
 
                     #if defined(__CloudABI__)
+                        errno = 0;
                         if (fflush(config->console_err) == EOF) {
                             perror(NULL);
                             free(instruction);
@@ -349,6 +366,7 @@ int repl(fewer_config *config) {
                     fprintf(config->console_err, "No file loaded\n");
 
                     #if defined(__CloudABI__)
+                        errno = 0;
                         if (fflush(config->console_err) == EOF) {
                             perror(NULL);
                             free(instruction);
@@ -378,6 +396,7 @@ int repl(fewer_config *config) {
                 fprintf(config->console_out, "%s\n", hex_buf);
 
                 #if defined(__CloudABI__)
+                    errno = 0;
                     if (fflush(config->console_out) == EOF) {
                         perror(NULL);
                         free(instruction);
@@ -427,6 +446,7 @@ int repl(fewer_config *config) {
                     fprintf(config->console_err, "Error parsing hexadecimal %s\n", hex_buf);
 
                     #if defined(__CloudABI__)
+                        errno = 0;
                         if (fflush(config->console_err) == EOF) {
                             perror(NULL);
                             free(instruction);
@@ -442,6 +462,7 @@ int repl(fewer_config *config) {
                 fprintf(config->console_out, "%c\n", (int) b);
 
                 #if defined(__CloudABI__)
+                    errno = 0;
                     if (fflush(config->console_out) == EOF) {
                         perror(NULL);
                         free(instruction);
