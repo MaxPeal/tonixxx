@@ -203,7 +203,7 @@ int repl(fewer_config *config) {
         bool test_passing = true;
 
         for (unsigned int d, c = (unsigned int) CHAR_MIN; c <= (unsigned int) CHAR_MAX; c++) {
-            render_boi(config->console_err, c, hex_buf, sizeof(hex_buf) - 1);
+            render_boi(config->console_err, c, hex_buf, hex_buf_size - 1);
             b = parse_boi(hex_buf);
 
             if (b == -1) {
@@ -392,7 +392,7 @@ int repl(fewer_config *config) {
                     return EXIT_SUCCESS;
                 }
 
-                render_boi(config->console_err, (unsigned int) char_buf[0], hex_buf, sizeof(hex_buf) - 1);
+                render_boi(config->console_err, (unsigned int) char_buf[0], hex_buf, hex_buf_size - 1);
                 fprintf(config->console_out, "%s\n", hex_buf);
 
                 #if defined(__CloudABI__)
