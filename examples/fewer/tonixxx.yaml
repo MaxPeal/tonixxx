@@ -6,8 +6,8 @@ steps:
     - cmake .
     - cmake --build . --target lint
     - cmake --build . --config Release
-    - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
     - cmake --build . --target leaks
+    - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
 
 outputdirectory: bin
 
@@ -35,8 +35,8 @@ recipes:
           - cmake3 .
           - cmake3 --build . --target lint
           - cmake3 --build . --config Release
-          - CTEST_OUTPUT_ON_FAILURE=1 ctest3 -C Release
           - cmake3 --build . --target leaks
+          - CTEST_OUTPUT_ON_FAILURE=1 ctest3 -C Release
     - label: linux-glibc-2.24-amd64
       box: mcandre/fewer-buildbot-debian-amd64
     - label: linux-glibc-2.24-i386

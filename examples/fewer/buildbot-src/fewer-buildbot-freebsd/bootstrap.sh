@@ -5,9 +5,9 @@ sudo pkg update &&
         cppcheck \
         splint \
         vera++ \
+        valgrind \
         python3 \
-        ca_root_nss \
-        valgrind &&
+        ca_root_nss &&
     cp -r /usr/local/lib/vera++ /home/vagrant/.vera++ &&
     ln -sf /vagrant/vera /home/vagrant/.vera++/profiles/default &&
     sudo python3 -m ensurepip &&
