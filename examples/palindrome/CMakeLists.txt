@@ -35,7 +35,7 @@ enable_testing()
 
 add_test(NAME palindrometest COMMAND palindrome -t)
 
-add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg -D_XOPEN_PATH_MAX=1024 --error-exitcode=1 lib)
+add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --suppressions-list=suppressions.cfg --error-exitcode=1 lib)
 add_custom_target(cpplint COMMAND sh recur-cpplint.sh)
 add_custom_target(vera++ COMMAND sh recur-vera++.sh)
 

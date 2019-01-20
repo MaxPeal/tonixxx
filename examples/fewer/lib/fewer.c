@@ -11,70 +11,69 @@
 #include <sys/stat.h>
 
 #if defined(_MSC_VER)
-    #include <direct.h>
-    #include <io.h>
+#include <direct.h>
+#include <io.h>
 #else
-    #include <unistd.h>
+#include <unistd.h>
 #endif
 
 #if defined(_MSC_VER) || defined(__minix)
-    #include <stdarg.h>
+#include <stdarg.h>
 #endif
 
 #if defined(_MSC_VER)
-    int fchdir(int fd) {
-        DWORD result;
-        char base_path[_XOPEN_PATH_MAX];
+int fchdir(int fd) {
+    DWORD result;
+    char base_path[_XOPEN_PATH_MAX];
 
-        result = GetFinalPathNameByHandleA(
-            (HANDLE) fd,
-            base_path,
-            sizeof(base_path)/sizeof(base_path[0]) - 1,
-            FILE_NAME_NORMALIZED
-        );
+    result = GetFinalPathNameByHandleA(
+        (HANDLE) fd,
+        base_path,
+        sizeof(base_path)/sizeof(base_path[0]) - 1,
+        FILE_NAME_NORMALIZED
+    );
 
-        if (result > sizeof(base_path)/sizeof(base_path[0])) {
-            return -1;
-        }
-
-        if (result == 0) {
-            return -1;
-        }
-
-        errno = 0;
-        fd = _chdir(base_path);
-        return fd;
+    if (result > sizeof(base_path)/sizeof(base_path[0])) {
+        return -1;
     }
+
+    if (result == 0) {
+        return -1;
+    }
+
+    errno = 0;
+    fd = _chdir(base_path);
+    return fd;
+}
 #endif
 
 #if defined(_MSC_VER) || defined(__minix)
-    int openat(int fd, const char *path, int flags, ...) {
-        mode_t mode = 0;
+int openat(int fd, const char *path, int flags, ...) {
+    mode_t mode = 0;
 
-        if (flags & O_CREAT) {
-            va_list arg;
-            va_start(arg, flags);
-            mode = va_arg(arg, mode_t);
-            va_end(arg);
-        }
-
-        errno = 0;
-        if (fchdir(fd) != 0) {
-            return -1;
-        }
-
-        errno = 0;
-
-        #if defined(_MSC_VER)
-            if (_sopen_s(&fd, path, flags, _SH_DENYNO, mode) != 0) {
-                return -1;
-            }
-        #else
-            fd = open(path, flags, mode);
-        #endif
-
-        return fd;
+    if (flags & O_CREAT) {
+        va_list arg;
+        va_start(arg, flags);
+        mode = va_arg(arg, mode_t);
+        va_end(arg);
     }
+
+    errno = 0;
+    if (fchdir(fd) != 0) {
+        return -1;
+    }
+
+    errno = 0;
+#if defined(_MSC_VER)
+    if (_sopen_s(&fd, path, flags, _SH_DENYNO, mode) != 0) {
+        return -1;
+    }
+#else
+    fd = open(path, flags, mode);
+#endif
+
+    return fd;
+}
 #endif
 
 static const char *PROMPT = "> ";
@@ -85,12 +84,12 @@ int show_commands(FILE *console) {
     fprintf(console, "r <hex pair>\tRender an input byte\n");
     fprintf(console, "q\t\tQuit\n");
 
-    #if defined(__CloudABI__)
-        errno = 0;
-        return fflush(console);
-    #else
-        return 0;
-    #endif
+#if defined(__CloudABI__)
+    errno = 0;
+    return fflush(console);
+#else
+    return 0;
+#endif
 }
 
 void render_boi(FILE *console, unsigned int b, /*@out@*/ char *s, size_t s_len) {
@@ -196,13 +195,13 @@ int repl(fewer_config *config) {
     while (true) {
         fprintf(config->console_out, "%s", PROMPT);
 
-        #if defined(__CloudABI__)
-            errno = 0;
-            if (fflush(config->console_out) == EOF) {
-                perror(NULL);
-                return EXIT_FAILURE;
-            }
-        #endif
+#if defined(__CloudABI__)
+        errno = 0;
+        if (fflush(config->console_out) == EOF) {
+            perror(NULL);
+            return EXIT_FAILURE;
+        }
+#endif
 
         if (fgets(instruction, sizeof(instruction)/sizeof(instruction[0]), config->console_in) == NULL) {
             if (ferror(config->console_in) != 0) {
@@ -253,35 +252,35 @@ int repl(fewer_config *config) {
                 if (fd == -1) {
                     perror(NULL);
 
-                    #if defined(__CloudABI__)
-                        errno = 0;
-                        if (fflush(config->console_err) == EOF) {
-                            perror(NULL);
-                            return EXIT_FAILURE;
-                        }
-                    #endif
+#if defined(__CloudABI__)
+                    errno = 0;
+                    if (fflush(config->console_err) == EOF) {
+                        perror(NULL);
+                        return EXIT_FAILURE;
+                    }
+#endif
 
                     break;
                 }
 
                 errno = 0;
 
-                #if defined(_MSC_VER)
-                    f = _fdopen(fd, "rb");
-                #else
-                    f = fdopen(fd, "rb");
-                #endif
+#if defined(_MSC_VER)
+                f = _fdopen(fd, "rb");
+#else
+                f = fdopen(fd, "rb");
+#endif
 
                 if (f == NULL) {
                     perror(NULL);
 
-                    #if defined(__CloudABI__)
-                        errno = 0;
-                        if (fflush(config->console_err) == EOF) {
-                            perror(NULL);
-                            return EXIT_FAILURE;
-                        }
-                    #endif
+#if defined(__CloudABI__)
+                    errno = 0;
+                    if (fflush(config->console_err) == EOF) {
+                        perror(NULL);
+                        return EXIT_FAILURE;
+                    }
+#endif
                 }
 
                 break;
@@ -289,13 +288,13 @@ int repl(fewer_config *config) {
                 if (f == NULL) {
                     fprintf(config->console_err, "No file loaded\n");
 
-                    #if defined(__CloudABI__)
-                        errno = 0;
-                        if (fflush(config->console_err) == EOF) {
-                            perror(NULL);
-                            return EXIT_FAILURE;
-                        }
-                    #endif
+#if defined(__CloudABI__)
+                    errno = 0;
+                    if (fflush(config->console_err) == EOF) {
+                        perror(NULL);
+                        return EXIT_FAILURE;
+                    }
+#endif
 
                     break;
                 }
@@ -315,13 +314,13 @@ int repl(fewer_config *config) {
                 render_boi(config->console_err, (unsigned int) c, &hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]));
                 fprintf(config->console_out, "%s\n", hex_buf);
 
-                #if defined(__CloudABI__)
-                    errno = 0;
-                    if (fflush(config->console_out) == EOF) {
-                        perror(NULL);
-                        return EXIT_FAILURE;
-                    }
-                #endif
+#if defined(__CloudABI__)
+                errno = 0;
+                if (fflush(config->console_out) == EOF) {
+                    perror(NULL);
+                    return EXIT_FAILURE;
+                }
+#endif
 
                 break;
             case 'r':
@@ -345,37 +344,37 @@ int repl(fewer_config *config) {
                     break;
                 }
 
-                #if defined(_MSC_VER)
-                    strncpy_s(hex_buf, sizeof(hex_buf)/sizeof(hex_buf[0]), content, strlen(content));
-                #else
-                    strncpy(hex_buf, content, sizeof(hex_buf)/sizeof(hex_buf[0]));
-                #endif
+#if defined(_MSC_VER)
+                strncpy_s(hex_buf, sizeof(hex_buf)/sizeof(hex_buf[0]), content, strlen(content));
+#else
+                strncpy(hex_buf, content, sizeof(hex_buf)/sizeof(hex_buf[0]));
+#endif
 
                 c = (int) parse_boi(hex_buf);
 
                 if (c == -1) {
                     fprintf(config->console_err, "Error parsing hexadecimal %s\n", hex_buf);
 
-                    #if defined(__CloudABI__)
-                        errno = 0;
-                        if (fflush(config->console_err) == EOF) {
-                            perror(NULL);
-                            return EXIT_FAILURE;
-                        }
-                    #endif
+#if defined(__CloudABI__)
+                    errno = 0;
+                    if (fflush(config->console_err) == EOF) {
+                        perror(NULL);
+                        return EXIT_FAILURE;
+                    }
+#endif
 
                     break;
                 }
 
                 fprintf(config->console_out, "%c\n", (unsigned int) c);
 
-                #if defined(__CloudABI__)
-                    errno = 0;
-                    if (fflush(config->console_out) == EOF) {
-                        perror(NULL);
-                        return EXIT_FAILURE;
-                    }
-                #endif
+#if defined(__CloudABI__)
+                errno = 0;
+                if (fflush(config->console_out) == EOF) {
+                    perror(NULL);
+                    return EXIT_FAILURE;
+                }
+#endif
 
                 break;
             case 'q':

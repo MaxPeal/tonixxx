@@ -5,10 +5,10 @@
 #define _GNU_SOURCE
 
 #if defined(__sun)
-    #define __EXTENSIONS__
+#define __EXTENSIONS__
 #elif defined(_MSC_VER)
-    #include <windows.h>
-    typedef int mode_t;
+#include <windows.h>
+typedef int mode_t;
 #endif
 
 #include <limits.h>
@@ -16,27 +16,27 @@
 #include <stdio.h>
 
 #if !defined(_XOPEN_PATH_MAX)
-    #if defined(_POSIX_PATH_MAX)
-        #define _XOPEN_PATH_MAX _POSIX_PATH_MAX
-    #elif defined(_MAX_PATH)
-        #define _XOPEN_PATH_MAX _MAX_PATH
-    #elif defined(PATH_MAX)
-        #define _XOPEN_PATH_MAX PATH_MAX
-    #else
-        #define _XOPEN_PATH_MAX 1024
-    #endif
+#if defined(_POSIX_PATH_MAX)
+#define _XOPEN_PATH_MAX _POSIX_PATH_MAX
+#elif defined(_MAX_PATH)
+#define _XOPEN_PATH_MAX _MAX_PATH
+#elif defined(PATH_MAX)
+#define _XOPEN_PATH_MAX PATH_MAX
+#else
+#define _XOPEN_PATH_MAX 1024
+#endif
 #endif
 
 #if defined(_MSC_VER)
-    // Change directory given a directory file descriptor.
-    // Returns -1 and sets errno on failure.
-    int fchdir(int fd);
+// Change directory given a directory file descriptor.
+// Returns -1 and sets errno on failure.
+int fchdir(int fd);
 #endif
 
 #if defined(_MSC_VER) || defined(__minix)
-    // Get file descriptor to file path nested in directory fd.
-    // Return -1 and set errno on failure.
-    int openat(int fd, const char *path, int flags, ...);
+// Get file descriptor to file path nested in directory fd.
+// Return -1 and set errno on failure.
+int openat(int fd, const char *path, int flags, ...);
 #endif
 
 // Present a help menu.
