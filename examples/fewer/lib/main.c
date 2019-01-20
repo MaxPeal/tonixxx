@@ -140,16 +140,15 @@
         }
 
         if (!test) {
-            size_t cwd_size = _XOPEN_PATH_MAX;
-            char cwd[cwd_size];
+            char cwd[_XOPEN_PATH_MAX];
             char *cwd_ptr;
 
             errno = 0;
 
             #if defined(_MSC_VER)
-                cwd_ptr = _getcwd(cwd, cwd_size);
+                cwd_ptr = _getcwd(cwd, sizeof(cwd)/sizeof(cwd[0]));
             #else
-                cwd_ptr = getcwd(cwd, cwd_size);
+                cwd_ptr = getcwd(cwd, sizeof(cwd)/sizeof(cwd[0]));
             #endif
 
             if (cwd_ptr == NULL) {

@@ -24,17 +24,16 @@
 #if defined(_MSC_VER)
     int fchdir(int fd) {
         DWORD result;
-        unsigned int base_path_size = _XOPEN_PATH_MAX;
-        char base_path[base_path_size];
+        char base_path[_XOPEN_PATH_MAX];
 
         result = GetFinalPathNameByHandleA(
             (HANDLE) fd,
             base_path,
-            base_path_size - 1,
+            sizeof(base_path)/sizeof(base_path[0]) - 1,
             FILE_NAME_NORMALIZED
         );
 
-        if (result > base_path_size) {
+        if (result > sizeof(base_path)/sizeof(base_path[0])) {
             return -1;
         }
 
@@ -165,11 +164,10 @@ bool validate_fewer_config(fewer_config *config) {
 }
 
 int unit_test(fewer_config *config) {
-    size_t hex_buf_size = 3;
-    char hex_buf[hex_buf_size];
+    char hex_buf[3];
 
     for (short d, c = 0; c < 0x100; c++) {
-        render_boi(config->console_err, (unsigned int) c, &hex_buf[0], hex_buf_size);
+        render_boi(config->console_err, (unsigned int) c, &hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]));
         d = parse_boi(hex_buf);
 
         if (d == -1) {
@@ -188,18 +186,8 @@ int unit_test(fewer_config *config) {
 
 int repl(fewer_config *config) {
     int fd, c;
-    size_t
-        hex_buf_size = 3,
-        command_size = 1,
-        content_size = _XOPEN_PATH_MAX;
-    size_t instruction_size = command_size + 1 + content_size;
     FILE *f = NULL;
-    char
-        hex_buf[hex_buf_size],
-        instruction[instruction_size];
-    char
-        command = '\0',
-        *content = NULL;
+    char hex_buf[3], instruction[_XOPEN_PATH_MAX + 2], command = '\0', *content = NULL;
 
     if (!validate_fewer_config(config)) {
         return EXIT_FAILURE;
@@ -216,7 +204,7 @@ int repl(fewer_config *config) {
             }
         #endif
 
-        if (fgets(instruction, (int) instruction_size, config->console_in) == NULL) {
+        if (fgets(instruction, sizeof(instruction)/sizeof(instruction[0]), config->console_in) == NULL) {
             if (ferror(config->console_in) != 0) {
                 return EXIT_FAILURE;
             }
@@ -324,7 +312,7 @@ int repl(fewer_config *config) {
                     return EXIT_SUCCESS;
                 }
 
-                render_boi(config->console_err, (unsigned int) c, &hex_buf[0], hex_buf_size);
+                render_boi(config->console_err, (unsigned int) c, &hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]));
                 fprintf(config->console_out, "%s\n", hex_buf);
 
                 #if defined(__CloudABI__)
@@ -349,7 +337,7 @@ int repl(fewer_config *config) {
 
                 content++;
 
-                if (strlen(content) > hex_buf_size - 1) {
+                if (strlen(content) > sizeof(hex_buf)/sizeof(hex_buf[0]) - 1) {
                     if (show_commands(config->console_err) == EOF) {
                         return EXIT_FAILURE;
                     }
@@ -358,9 +346,9 @@ int repl(fewer_config *config) {
                 }
 
                 #if defined(_MSC_VER)
-                    strncpy_s(hex_buf, hex_buf_size, content, strlen(content));
+                    strncpy_s(hex_buf, sizeof(hex_buf)/sizeof(hex_buf[0]), content, strlen(content));
                 #else
-                    strncpy(hex_buf, content, hex_buf_size);
+                    strncpy(hex_buf, content, sizeof(hex_buf)/sizeof(hex_buf[0]));
                 #endif
 
                 c = (int) parse_boi(hex_buf);

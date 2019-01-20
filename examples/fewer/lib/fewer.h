@@ -20,8 +20,10 @@
         #define _XOPEN_PATH_MAX _POSIX_PATH_MAX
     #elif defined(_MAX_PATH)
         #define _XOPEN_PATH_MAX _MAX_PATH
-    #else
+    #elif defined(PATH_MAX)
         #define _XOPEN_PATH_MAX PATH_MAX
+    #else
+        #define _XOPEN_PATH_MAX 1024
     #endif
 #endif
 
