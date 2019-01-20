@@ -4,6 +4,7 @@ set -eEuo pipefail
 apt-get update
 apt-get install -y \
     cmake \
+    make \
     cppcheck \
     vera++ \
     valgrind \

@@ -5,7 +5,10 @@ sudo pkg update &&
         cppcheck \
         vera++ \
         python3 \
-        py36-pip &&
-    sudo pkg clean -y &&
-    sudo pip-3.6 install wheel &&
-    sudo pip-3.6 install cpplint
+        ca_root_nss &&
+    cp -r /usr/local/lib/vera++ /home/vagrant/.vera++ &&
+    ln -sf /vagrant/vera /home/vagrant/.vera++/profiles/default &&
+    sudo python3 -m ensurepip &&
+    sudo pip3 install --upgrade pip &&
+    sudo pip3 install cpplint &&
+    sudo pkg clean -y

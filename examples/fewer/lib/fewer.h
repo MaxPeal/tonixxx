@@ -48,8 +48,7 @@ void render_boi(FILE *console, unsigned int b, /*@out@*/ char *s, size_t length)
 // Parse a hexadecimal string to a byte.
 // Returns -1 on range error and sets errno.
 // Returns 0 on parse error.
-// Returns a value in [0, UINT_MAX] otherwise.
-int parse_boi(char *s);
+short parse_boi(char *s);
 
 // Removes any trailing CR/LF/CRLF.
 void chomp(char *s, size_t length);
@@ -66,6 +65,10 @@ typedef struct {
 // Check for basic errors in a fewer_config.
 // May set errno on file errors.
 bool validate_fewer_config(fewer_config *config);
+
+// Run unit tests.
+// Returns a system exit status.
+int unit_test(fewer_config *config);
 
 // Present an interactive command session.
 // Returns a system exit status.

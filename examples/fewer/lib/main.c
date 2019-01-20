@@ -103,6 +103,10 @@
             .test = test
         };
 
+        if (config->test) {
+            exit(unit_test(config));
+        }
+
         exit(repl(config));
     }
 #else
@@ -137,14 +141,8 @@
 
         if (!test) {
             size_t cwd_size = _XOPEN_PATH_MAX;
-            char *cwd_ptr, *cwd;
-
-            errno = 0;
-            cwd = malloc(cwd_size * sizeof(char));
-            if (!cwd) {
-                perror(NULL);
-                return EXIT_FAILURE;
-            }
+            char cwd[cwd_size];
+            char *cwd_ptr;
 
             errno = 0;
 
@@ -156,7 +154,6 @@
 
             if (cwd_ptr == NULL) {
                 perror(NULL);
-                free(cwd);
                 return EXIT_FAILURE;
             }
 
@@ -189,7 +186,6 @@
 
                     fprintf(stderr, "%s\n", errStr);
                     LocalFree(errStr);
-                    free(cwd);
                     return EXIT_FAILURE;
                 }
 
@@ -200,7 +196,6 @@
 
                 if (cwd_file == NULL) {
                     perror(NULL);
-                    free(cwd);
                     return EXIT_FAILURE;
                 }
 
@@ -210,11 +205,8 @@
 
             if (root == -1) {
                 perror(NULL);
-                free(cwd);
                 return EXIT_FAILURE;
             }
-
-            free(cwd);
         }
 
         fewer_config *config = &(fewer_config) {
@@ -224,6 +216,10 @@
             .root = root,
             .test = test
         };
+
+        if (config->test) {
+            return unit_test(config);
+        }
 
         return repl(config);
     }

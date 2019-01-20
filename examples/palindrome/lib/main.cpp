@@ -4,9 +4,9 @@
 #include <sstream>
 #include <cstdlib>
 #include <cstring>
-#include <cassert>
 #include <iomanip>
 #include <iostream>
+#include <string>
 
 #include "main.h"
 #include "palindrome.h"

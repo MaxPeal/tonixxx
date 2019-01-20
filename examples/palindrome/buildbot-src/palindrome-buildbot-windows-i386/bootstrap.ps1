@@ -1,3 +1,5 @@
+$ErrorActionPreference = "Stop"
+
 # Install cmake, add to session PATH, persist PATH.
 choco install -force -y cmake
 $cmakePath = "C:\Program Files\CMake\bin"
@@ -14,3 +16,12 @@ Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Val
 
 # Update PowerShell SSL protocols
 [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
+
+choco install -force -y python3
+$pythonPath = "C:\Python37"
+$pythonScriptPath = "C:\Python37\Scripts"
+$env:PATH += ";$pythonPath;$pythonScriptPath"
+$userPath = (Get-ItemProperty "Registry::HKEY_CURRENT_USER\Environment").PATH
+Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Value "$userPath;$pythonPath;$pythonScriptPath"
+python -m pip install -U pip
+pip3 install cpplint

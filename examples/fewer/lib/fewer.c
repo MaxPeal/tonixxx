@@ -25,13 +25,7 @@
     int fchdir(int fd) {
         DWORD result;
         unsigned int base_path_size = _XOPEN_PATH_MAX;
-        char *base_path = NULL;
-
-        errno = 0;
-        base_path = malloc(base_path_size * sizeof(char));
-        if (base_path == NULL) {
-            return -1;
-        }
+        char base_path[base_path_size];
 
         result = GetFinalPathNameByHandleA(
             (HANDLE) fd,
@@ -41,18 +35,15 @@
         );
 
         if (result > base_path_size) {
-            free(base_path);
             return -1;
         }
 
         if (result == 0) {
-            free(base_path);
             return -1;
         }
 
         errno = 0;
         fd = _chdir(base_path);
-        free(base_path);
         return fd;
     }
 #endif
@@ -103,17 +94,17 @@ int show_commands(FILE *console) {
     #endif
 }
 
-void render_boi(FILE *console, unsigned int b, /*@out@*/ char *s, size_t length) {
-    int write_count = snprintf(s, length, "%02x", b);
+void render_boi(FILE *console, unsigned int b, /*@out@*/ char *s, size_t s_len) {
+    int write_count = snprintf(s, s_len, "%02x", b);
 
     if (write_count < 0) {
         fprintf(console, "Encoding error\n");
-    } else if ((size_t) write_count > length - 1) {
-        fprintf(console, "Buffer requires %d to render value\n", write_count);
+    } else if ((size_t) write_count > s_len - 1) {
+        fprintf(console, "Buffer requires %d character allocation to render value\n", write_count);
     }
 }
 
-int parse_boi(char *s) {
+short parse_boi(char *s) {
     unsigned long int n = strtoul(s, NULL, 16);
 
     if (n == ULONG_MAX) {
@@ -124,7 +115,7 @@ int parse_boi(char *s) {
         return -1;
     }
 
-    return (int) n;
+    return (short) n;
 }
 
 void chomp(char *s, size_t length) {
@@ -173,8 +164,30 @@ bool validate_fewer_config(fewer_config *config) {
     return true;
 }
 
+int unit_test(fewer_config *config) {
+    size_t hex_buf_size = 3;
+    char hex_buf[hex_buf_size];
+
+    for (short d, c = 0; c < 0x100; c++) {
+        render_boi(config->console_err, (unsigned int) c, &hex_buf[0], hex_buf_size);
+        d = parse_boi(hex_buf);
+
+        if (d == -1) {
+            fprintf(config->console_err, "Error parsing hexadecimal sequence %s\n", hex_buf);
+            return EXIT_FAILURE;
+        }
+
+        if (d != c) {
+            fprintf(config->console_err, "Character %02x corrupted to %02x during hexadecimal translation\n", c, d);
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+
 int repl(fewer_config *config) {
-    int fd, b;
+    int fd, c;
     size_t
         hex_buf_size = 3,
         command_size = 1,
@@ -182,68 +195,13 @@ int repl(fewer_config *config) {
     size_t instruction_size = command_size + 1 + content_size;
     FILE *f = NULL;
     char
-        command,
-        *content = NULL,
-        *hex_buf = NULL,
-        *char_buf = NULL,
-        *instruction = NULL;
+        hex_buf[hex_buf_size],
+        instruction[instruction_size];
+    char
+        command = '\0',
+        *content = NULL;
 
     if (!validate_fewer_config(config)) {
-        return EXIT_FAILURE;
-    }
-
-    errno = 0;
-    hex_buf = malloc(hex_buf_size * sizeof(char));
-    if (hex_buf == NULL) {
-        perror(NULL);
-        return EXIT_FAILURE;
-    }
-
-    if (config->test) {
-        bool test_passing = true;
-
-        for (unsigned int d, c = (unsigned int) CHAR_MIN; c <= (unsigned int) CHAR_MAX; c++) {
-            render_boi(config->console_err, c, hex_buf, hex_buf_size - 1);
-            b = parse_boi(hex_buf);
-
-            if (b == -1) {
-                fprintf(config->console_err, "Error parsing hexadecimal sequence %s\n", hex_buf);
-                test_passing = false;
-                break;
-            }
-
-            d = (unsigned int) b;
-
-            if (d != c) {
-                fprintf(config->console_err, "Character %02x corrupted to %02x during hexadecimal translation\n", c, d);
-                test_passing = false;
-                break;
-            }
-        }
-
-        free(hex_buf);
-
-        if (!test_passing) {
-            return EXIT_FAILURE;
-        }
-
-        return EXIT_SUCCESS;
-    }
-
-    errno = 0;
-    char_buf = malloc(sizeof(char));
-    if (char_buf == NULL) {
-        perror(NULL);
-        free(hex_buf);
-        return EXIT_FAILURE;
-    }
-
-    errno = 0;
-    instruction = calloc(instruction_size, sizeof(char));
-    if (instruction == NULL) {
-        perror(NULL);
-        free(char_buf);
-        free(hex_buf);
         return EXIT_FAILURE;
     }
 
@@ -254,18 +212,11 @@ int repl(fewer_config *config) {
             errno = 0;
             if (fflush(config->console_out) == EOF) {
                 perror(NULL);
-                free(instruction);
-                free(char_buf);
-                free(hex_buf);
                 return EXIT_FAILURE;
             }
         #endif
 
         if (fgets(instruction, (int) instruction_size, config->console_in) == NULL) {
-            free(instruction);
-            free(char_buf);
-            free(hex_buf);
-
             if (ferror(config->console_in) != 0) {
                 return EXIT_FAILURE;
             }
@@ -279,9 +230,6 @@ int repl(fewer_config *config) {
             errno = 0;
             if (show_commands(config->console_err) == EOF) {
                 perror(NULL);
-                free(instruction);
-                free(char_buf);
-                free(hex_buf);
                 return EXIT_FAILURE;
             }
 
@@ -296,9 +244,6 @@ int repl(fewer_config *config) {
 
                 if (content == NULL || strlen(content) < 2) {
                     if (show_commands(config->console_err) == EOF) {
-                        free(instruction);
-                        free(char_buf);
-                        free(hex_buf);
                         return EXIT_FAILURE;
                     }
 
@@ -310,9 +255,6 @@ int repl(fewer_config *config) {
                 if (f != NULL) {
                     if (fclose(f) == EOF) {
                         fprintf(config->console_err, "Error closing file\n");
-                        free(instruction);
-                        free(char_buf);
-                        free(hex_buf);
                         return EXIT_FAILURE;
                     }
                 }
@@ -327,9 +269,6 @@ int repl(fewer_config *config) {
                         errno = 0;
                         if (fflush(config->console_err) == EOF) {
                             perror(NULL);
-                            free(instruction);
-                            free(char_buf);
-                            free(hex_buf);
                             return EXIT_FAILURE;
                         }
                     #endif
@@ -352,9 +291,6 @@ int repl(fewer_config *config) {
                         errno = 0;
                         if (fflush(config->console_err) == EOF) {
                             perror(NULL);
-                            free(instruction);
-                            free(char_buf);
-                            free(hex_buf);
                             return EXIT_FAILURE;
                         }
                     #endif
@@ -369,9 +305,6 @@ int repl(fewer_config *config) {
                         errno = 0;
                         if (fflush(config->console_err) == EOF) {
                             perror(NULL);
-                            free(instruction);
-                            free(char_buf);
-                            free(hex_buf);
                             return EXIT_FAILURE;
                         }
                     #endif
@@ -379,29 +312,25 @@ int repl(fewer_config *config) {
                     break;
                 }
 
-                if (fread(char_buf, 1, 1, f) != 1) {
-                    free(instruction);
-                    free(char_buf);
-                    free(hex_buf);
+                errno = 0;
+                c = fgetc(f);
 
+                if (c == EOF) {
                     if (ferror(f) != 0) {
-                        fprintf(config->console_err, "Error reading byte from file\n");
+                        fprintf(config->console_err, "Error reading character from file\n");
                         return EXIT_FAILURE;
                     }
 
                     return EXIT_SUCCESS;
                 }
 
-                render_boi(config->console_err, (unsigned int) char_buf[0], hex_buf, hex_buf_size - 1);
+                render_boi(config->console_err, (unsigned int) c, &hex_buf[0], hex_buf_size);
                 fprintf(config->console_out, "%s\n", hex_buf);
 
                 #if defined(__CloudABI__)
                     errno = 0;
                     if (fflush(config->console_out) == EOF) {
                         perror(NULL);
-                        free(instruction);
-                        free(char_buf);
-                        free(hex_buf);
                         return EXIT_FAILURE;
                     }
                 #endif
@@ -412,9 +341,6 @@ int repl(fewer_config *config) {
 
                 if (content == NULL || strlen(content) < 2) {
                     if (show_commands(config->console_err) == EOF) {
-                        free(instruction);
-                        free(char_buf);
-                        free(hex_buf);
                         return EXIT_FAILURE;
                     }
 
@@ -425,9 +351,6 @@ int repl(fewer_config *config) {
 
                 if (strlen(content) > hex_buf_size - 1) {
                     if (show_commands(config->console_err) == EOF) {
-                        free(instruction);
-                        free(char_buf);
-                        free(hex_buf);
                         return EXIT_FAILURE;
                     }
 
@@ -440,18 +363,15 @@ int repl(fewer_config *config) {
                     strncpy(hex_buf, content, hex_buf_size);
                 #endif
 
-                b = parse_boi(hex_buf);
+                c = (int) parse_boi(hex_buf);
 
-                if (b == -1) {
+                if (c == -1) {
                     fprintf(config->console_err, "Error parsing hexadecimal %s\n", hex_buf);
 
                     #if defined(__CloudABI__)
                         errno = 0;
                         if (fflush(config->console_err) == EOF) {
                             perror(NULL);
-                            free(instruction);
-                            free(char_buf);
-                            free(hex_buf);
                             return EXIT_FAILURE;
                         }
                     #endif
@@ -459,25 +379,18 @@ int repl(fewer_config *config) {
                     break;
                 }
 
-                fprintf(config->console_out, "%c\n", (int) b);
+                fprintf(config->console_out, "%c\n", (unsigned int) c);
 
                 #if defined(__CloudABI__)
                     errno = 0;
                     if (fflush(config->console_out) == EOF) {
                         perror(NULL);
-                        free(instruction);
-                        free(char_buf);
-                        free(hex_buf);
                         return EXIT_FAILURE;
                     }
                 #endif
 
                 break;
             case 'q':
-                free(instruction);
-                free(char_buf);
-                free(hex_buf);
-
                 if (f != NULL && fclose(f) == EOF) {
                     fprintf(config->console_err, "Error closing file\n");
                     return EXIT_FAILURE;
@@ -486,9 +399,6 @@ int repl(fewer_config *config) {
                 return EXIT_SUCCESS;
             default:
                 if (show_commands(config->console_err) == EOF) {
-                    free(instruction);
-                    free(char_buf);
-                    free(hex_buf);
                     return EXIT_FAILURE;
                 }
         }

@@ -35,7 +35,7 @@ Supply CloudABI YAML content to stdin. See [cloudabi.yml](cloudabi.yml) and rela
 
 A `root` path for restricting file access is required, unless `test` is enabled.
 
-Note that some assertions may trigger an abort when `stderr` is unconfigured.
+Note that some assertions/perrors may trigger an abort when `stderr` is unconfigured.
 
 # LICENSE
 
