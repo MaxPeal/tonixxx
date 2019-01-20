@@ -1,15 +1,18 @@
 #!/bin/sh
+IFS=$'\n\t'
 
 SYS="$(uname -a)"
 
-case "$SYS" in
-    *NetBSD*)
-        FLAGS=''
-        ;;
-    *)
-        FLAGS='-se'
-        ;;
-esac
+xargs_vera() {
+    case "$SYS" in
+        *NetBSD*)
+            xargs -0 -n1 vera++
+            ;;
+        *)
+            xargs -0 -n1 vera++ -se
+            ;;
+    esac
+}
 
 /usr/bin/find lib \
     -type f \
@@ -22,7 +25,4 @@ esac
         -iname '*.[ch]' \
     \) \
     -print0 |
-    xargs \
-        -0 \
-        -n1 \
-        vera++ "$FLAGS"
+    xargs_vera
