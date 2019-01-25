@@ -54,6 +54,13 @@ func Errcheck() error { return mageextras.Errcheck("-blank") }
 // Nakedret runs nakedret.
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
 
+func Safety() error {
+	command := exec.Command("safety", "check")
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+	return command.Run()
+}
+
 // YamlRegex matches YAML files.
 var YamlRegex = regexp.MustCompile(".*\\.y(a)?ml$")
 
