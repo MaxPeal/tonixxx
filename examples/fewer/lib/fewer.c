@@ -17,7 +17,7 @@
 #include <unistd.h>
 #endif
 
-#if defined(_MSC_VER) || defined(__minix)
+#if defined(_MSC_VER) || defined(__MirBSD__) || defined(__minix)
 #include <stdarg.h>
 #endif
 
@@ -47,7 +47,7 @@ int fchdir(int fd) {
 }
 #endif
 
-#if defined(_MSC_VER) || defined(__minix)
+#if defined(_MSC_VER) || defined(__MirBSD__) || defined(__minix)
 int openat(int fd, const char *path, int flags, ...) {
     mode_t mode = 0;
 

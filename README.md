@@ -42,6 +42,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── minix-i386
 │   └── fewer
+├── miros-i386
+│   └── fewer
 ├── netbsd-amd64
 │   └── fewer
 ├── netbsd-i386

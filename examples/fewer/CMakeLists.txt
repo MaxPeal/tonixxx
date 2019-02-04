@@ -31,14 +31,16 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     execute_process(COMMAND cat /etc/*release* OUTPUT_VARIABLE ETC_RELEASE)
 endif()
 
-if(CMAKE_C_COMPILER_ID MATCHES "clang")
-    set(CMAKE_C_FLAGS "-std=c11 -O2 -Wall -Wextra -Wmost -Weverything")
-elseif(CMAKE_C_COMPILER_ID MATCHES "gcc")
-    set(CMAKE_C_FLAGS "-std=c11 -O2 -Wall -Wextra")
-elseif(MSVC)
+if(MSVC)
     set(CMAKE_C_FLAGS "/O2 /W4 /wd4204")
-else()
-    set(CMAKE_C_FLAGS "-std=c11 -O2 -Wall")
+elseif(CMAKE_C_COMPILER_ID MATCHES "clang")
+    set(CMAKE_C_FLAGS "-std=c11 -O2 -Wall -Wextra -Wmost -Weverything")
+elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+    if(CMAKE_SYSTEM_NAME MATCHES "MirBSD")
+        set(CMAKE_C_FLAGS "-std=c99 -O2 -Wall -Wextra")
+    else()
+        set(CMAKE_C_FLAGS "-std=c11 -O2 -Wall -Wextra")
+    endif()
 endif()
 
 add_executable(fewer lib/main.c lib/fewer.c)
@@ -64,8 +66,9 @@ add_custom_target(splint99)
 
 # Missing linter ports
 if(
-    CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
+    CMAKE_SYSTEM_NAME MATCHES "MirBSD" OR
+    CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
     "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
 )
     add_custom_target(lint DEPENDS)
@@ -105,6 +108,7 @@ if(
     CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
     CMAKE_SYSTEM_NAME MATCHES "Darwin" OR
     CMAKE_SYSTEM_NAME MATCHES "Minix" OR
+    CMAKE_SYSTEM_NAME MATCHES "MirBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "NetBSD" OR
     LSB_RELEASE MATCHES "Void" OR
     CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR

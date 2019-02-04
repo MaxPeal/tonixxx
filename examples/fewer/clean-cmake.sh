@@ -2,4 +2,5 @@
 /usr/bin/find . \
     -iwholename '*cmake*' \
     -not -name CMakeLists.txt \
-    -delete
+    -print \
+    -exec rm -rf '{}' \;

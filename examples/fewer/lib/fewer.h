@@ -33,7 +33,7 @@ typedef int mode_t;
 int fchdir(int fd);
 #endif
 
-#if defined(_MSC_VER) || defined(__minix)
+#if defined(_MSC_VER) || defined(__MirBSD__) || defined(__minix)
 // Get file descriptor to file path nested in directory fd.
 // Return -1 and set errno on failure.
 int openat(int fd, const char *path, int flags, ...);

@@ -57,6 +57,10 @@ recipes:
       box: mcandre/fewer-buildbot-macos
     - label: minix-i386
       box: mcandre/fewer-buildbot-minix
+    - label: miros-i386
+      box: mcandre/fewer-buildbot-miros-i386
+      presteps:
+        - export CC=mgcc
     - label: netbsd-amd64
       box: mcandre/fewer-buildbot-netbsd-amd64
     - label: netbsd-i386
