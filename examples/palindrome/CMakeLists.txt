@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.4)
 
+if("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
+    set(CMAKE_C_COMPILER "$ENV{CLOUD_ABI_TRIPLET}-cc")
+    set(CMAKE_CXX_COMPILER "$ENV{CLOUD_ABI_TRIPLET}-c++")
+    set(CMAKE_AR "$ENV{CLOUD_ABI_TRIPLET}-ar" CACHE FILEPATH "Archiver")
+    set(CMAKE_NM "$ENV{CLOUD_ABI_TRIPLET}-nm" CACHE FILEPATH "Nm")
+    set(CMAKE_RANLIB "$ENV{CLOUD_ABI_TRIPLET}-ranlib" CACHE FILEPATH "Ranlib")
+    set(CMAKE_SYSTEM_NAME "Generic")
+endif()
+
 project(palindrome)
 
 set(EXECUTABLE_OUTPUT_PATH "bin")
@@ -19,14 +28,12 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     execute_process(COMMAND lsb_release -a OUTPUT_VARIABLE LSB_RELEASE)
 endif()
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "clang")
-    set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall -Wextra -Wmost -Weverything")
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "gcc")
-    set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall -Wextra")
-elseif(MSVC)
-    set(CMAKE_C_FLAGS "/O2 /W4 /wd4204")
-else()
-    set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall")
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "/O2 /W4 /wd4204")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "clang")
+    set(CMAKE_CXX_FLAGS "-std=c++98 -O2 -Wall -Wextra -Wmost -Weverything")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set(CMAKE_CXX_FLAGS "-std=c++98 -O2 -Wall -Wextra")
 endif()
 
 add_executable(palindrome lib/main.cpp lib/palindrome.cpp)
@@ -40,10 +47,10 @@ add_custom_target(cpplint COMMAND sh recur-cpplint.sh)
 add_custom_target(vera++ COMMAND sh recur-vera++.sh)
 
 if(
-    CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
-    "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc" OR
-    CMAKE_SYSTEM_NAME MATCHES "Minix"
+    CMAKE_SYSTEM_NAME MATCHES "MirBSD" OR
+    CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
+    "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
 )
     add_custom_target(lint)
 elseif(
@@ -68,6 +75,7 @@ if(
     CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
     CMAKE_SYSTEM_NAME MATCHES "Darwin" OR
     CMAKE_SYSTEM_NAME MATCHES "Minix" OR
+    CMAKE_SYSTEM_NAME MATCHES "MirBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "NetBSD" OR
     LSB_RELEASE MATCHES "Void" OR
     CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR

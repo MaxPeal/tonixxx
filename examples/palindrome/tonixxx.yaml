@@ -53,6 +53,10 @@ recipes:
       box: mcandre/palindrome-buildbot-macos
     - label: minix-i386
       box: mcandre/palindrome-buildbot-minix
+    - label: miros-i386
+      box: mcandre/palindrome-buildbot-miros-i386
+      presteps:
+        - export CC=mgcc
     - label: netbsd-amd64
       box: mcandre/palindrome-buildbot-netbsd-amd64
     - label: netbsd-i386
