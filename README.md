@@ -68,7 +68,11 @@ https://godoc.org/github.com/mcandre/tonixxx
 
 # ABOUT
 
-tonixxx assists developers in cross-compiling software projects. No need for dedicated hardware, nor dual booting, nor configuring obscure toolchains. Instead, tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries targeting assorted operating system kernel environments. tonixxx is language and platform agnostic, so you can build to and from a multitude of operating systems, and build projects written in a multitude of programming languages. It's great for automating software ports from your laptop or CI server!
+tonixxx assists developers in cross-compiling software projects. No need for dedicated hardware, nor dual booting, nor configuring obscure toolchains. Instead, tonixxx pours your code through arrays of Vagrant boxes, yielding robust, reliable binaries targeting assorted operating system kernel environments.
+
+tonixxx chips away at integration surprises, testing the very limits of portability! For example, the C application `fewer` is written to closely match the C89/C99 standards, as opposed to newer standards, in order to support Windows and MirBSD builds. Without tonixxx, developers must rely on dedicated contributors to report any issues, compared to spotting issues early in the development process.
+
+C89/C99 are just one way among many to structure your applications. If you really want to emphasize C11 and higher, then you can elect to drop Windows and MirBSD support. Remember, these are simply examples. tonixxx itself is agnostic of programming language and platforms, giving you the power to decide which software stacks and environments you want to end up using. It's great for automating software ports from your laptop or CI server!
 
 See the `examples` directory for more demonstrative templates for building application ports.
 
