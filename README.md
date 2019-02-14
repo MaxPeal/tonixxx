@@ -52,6 +52,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── openbsd-i386
 │   └── fewer
+└── wasm64
+│   └── fewer.wasm
 ├── windows-amd64
 │   └── fewer.exe
 └── windows-i386

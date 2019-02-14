@@ -75,3 +75,12 @@ recipes:
     - label: windows-i386
       guesttype: Cygwin
       box: mcandre/fewer-buildbot-windows-i386
+    - label: wasm64
+      box: mcandre/fewer-buildbot-wasm64
+      presteps:
+          - . /home/vagrant/emsdk/emsdk_env.sh
+          - export CC=emcc
+      steps:
+          - cd "$TONIXXX_SYNC"
+          - mkdir -p bin
+          - emcc -s WASM=1 -o bin/fewer.wasm lib/main.c lib/fewer.c
