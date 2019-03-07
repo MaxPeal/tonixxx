@@ -136,7 +136,7 @@ func Load(pth string) (*Distillery, error) {
 		return nil, err
 	}
 
-	if er := yaml.UnmarshalStrict(contentYAML, distillery); err != nil {
+	if er := yaml.UnmarshalStrict(contentYAML, distillery); er != nil {
 		return nil, er
 	}
 
