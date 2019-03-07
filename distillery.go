@@ -136,8 +136,8 @@ func Load(pth string) (*Distillery, error) {
 		return nil, err
 	}
 
-	if err := yaml.UnmarshalStrict(contentYAML, distillery); err != nil {
-		return nil, err
+	if er := yaml.UnmarshalStrict(contentYAML, distillery); err != nil {
+		return nil, er
 	}
 
 	maxRecipesString := os.Getenv(MaxRecipesKey)
@@ -146,10 +146,10 @@ func Load(pth string) (*Distillery, error) {
 	// Bleugh. Go's integer parsing API is messy.
 	//
 	if maxRecipesString != "" {
-		maxRecipes, err := strconv.ParseInt(maxRecipesString, 10, 32)
+		maxRecipes, er := strconv.ParseInt(maxRecipesString, 10, 32)
 
-		if err != nil {
-			return nil, err
+		if er != nil {
+			return nil, er
 		}
 
 		distillery.MaxRunningRecipes = int(maxRecipes)

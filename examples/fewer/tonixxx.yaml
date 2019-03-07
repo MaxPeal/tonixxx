@@ -15,7 +15,7 @@ recipes:
     - label: cloudabi-amd64
       box: mcandre/fewer-buildbot-ubuntu-cloudabi
       presteps:
-        - export CLOUD_ABI_TRIPLET=x86_64-unknown-cloudabi
+          - export CLOUD_ABI_TRIPLET=x86_64-unknown-cloudabi
     - label: dragonflybsd-amd64
       box: mcandre/fewer-buildbot-dragonfly
     - label: freebsd-amd64
@@ -60,7 +60,7 @@ recipes:
     - label: miros-i386
       box: mcandre/fewer-buildbot-miros-i386
       presteps:
-        - export CC=mgcc
+          - export CC=mgcc
     - label: netbsd-amd64
       box: mcandre/fewer-buildbot-netbsd-amd64
     - label: netbsd-i386

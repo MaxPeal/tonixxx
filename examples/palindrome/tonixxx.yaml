@@ -56,7 +56,7 @@ recipes:
     - label: miros-i386
       box: mcandre/palindrome-buildbot-miros-i386
       presteps:
-        - export CC=mgcc
+          - export CC=mgcc
     - label: netbsd-amd64
       box: mcandre/palindrome-buildbot-netbsd-amd64
     - label: netbsd-i386
