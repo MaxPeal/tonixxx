@@ -104,6 +104,7 @@ See `tonixxx -help` for more information on tonixxx invocation syntax.
 
 ## Recommended
 
+* [Taurine](https://itunes.apple.com/us/app/taurine/id960276676) (macOS), [Caffeine](http://www.zhornsoftware.co.uk/caffeine/) (Windows), [Caffeine](https://launchpad.net/caffeine) (Linux) can prevent hibernation during any long builds
 * [tree](https://linux.die.net/man/1/tree)
 
 # BUILDTIME REQUIREMENTS
