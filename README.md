@@ -121,6 +121,7 @@ See `tonixxx -help` for more information on tonixxx invocation syntax.
 * [shadow](golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow) (e.g. `go get -u golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow`)
 * [goxcart](https://github.com/mcandre/goxcart) (e.g., `github.com/mcandre/goxcart/...`)
 * [zipc](https://github.com/mcandre/zipc) (e.g. `go get github.com/mcandre/zipc/...`)
+* [karp](https://github.com/mcandre/karp) (e.g., `go get github.com/mcandre/karp/...`)
 * [Python](https://www.python.org/) 2
 
 ## INSTALL FROM REMOTE GIT REPOSITORY
