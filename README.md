@@ -104,6 +104,15 @@ See `tonixxx -help` for more information on tonixxx invocation syntax.
 
 ## Recommended
 
+* [VirtualBox](https://www.virtualbox.org/)
+* [VMware](https://www.vmware.com/)
+* [qemu](https://www.qemu.org/) 2.12+
+* [KVM](https://wiki.qemu.org/Features/KVM)
+* [OpenBIOS](https://www.openfirmware.info/OpenBIOS)
+* [openhackware](https://github.com/qemu/openhackware)
+* [qemu-skiboot](https://github.com/qemu/skiboot)
+* [libguestfs-tools](http://libguestfs.org/)
+* [vagrant-libvirt](https://github.com/vagrant-libvirt/vagrant-libvirt)
 * [Taurine](https://itunes.apple.com/us/app/taurine/id960276676) (macOS), [Caffeine](http://www.zhornsoftware.co.uk/caffeine/) (Windows), [Caffeine](https://launchpad.net/caffeine) (Linux) can prevent hibernation during any long builds
 * [tree](https://linux.die.net/man/1/tree)
 
