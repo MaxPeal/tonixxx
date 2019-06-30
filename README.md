@@ -133,7 +133,7 @@ Finally, `sudo` may be requisite for producing buildbot boxes for alternate arch
 * [errcheck](https://github.com/kisielk/errcheck) (e.g. `go get github.com/kisielk/errcheck`)
 * [nakedret](https://github.com/alexkohler/nakedret) (e.g. `go get github.com/alexkohler/nakedret`)
 * [shadow](golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow) (e.g. `go get -u golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow`)
-* [goxcart](https://github.com/mcandre/goxcart) (e.g., `github.com/mcandre/goxcart/...`)
+* [goxcart](https://github.com/mcandre/goxcart) (e.g., `go get github.com/mcandre/goxcart/...`)
 * [zipc](https://github.com/mcandre/zipc) (e.g. `go get github.com/mcandre/zipc/...`)
 * [karp](https://github.com/mcandre/karp) (e.g., `go get github.com/mcandre/karp/...`)
 * [Python](https://www.python.org/) 2
