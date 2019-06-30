@@ -47,6 +47,11 @@ type Recipe struct {
 	// Example: "0.0.1"
 	Version string
 
+	// Provider (optional) describes a hypervisor.
+	//
+	// Example: "libvirt"
+	Provider string
+
 	// GuestType (optional) describes the kind of guest OS.
 	//
 	// Defaults to GuestTypePOSIX.
@@ -222,9 +227,18 @@ func (o Recipe) IsRunning() (bool, error) {
 	return VagrantStatusRunningPattern.MatchString(status), nil
 }
 
+// EffectiveProvider calculates the appropriate default provider for a VM.
+func (o Recipe) EffectiveProvider() string {
+	if o.Provider == "" {
+		return "virtualbox"
+	}
+
+	return o.Provider
+}
+
 // VagrantUp ensures a recipe is booted.
 func (o Recipe) VagrantUp() error {
-	cmd := exec.Command("vagrant", "up")
+	cmd := exec.Command("vagrant", "up", "--provider", o.EffectiveProvider())
 	cmd.Env = os.Environ()
 	cmd.Dir = o.CloneHost()
 	cmd.Stdout = os.Stdout

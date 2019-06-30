@@ -41,6 +41,9 @@ recipes:
       box: mcandre/fewer-buildbot-debian-amd64
     - label: linux-glibc-2.24-i386
       box: mcandre/fewer-buildbot-debian-i386
+    - label: linux-glibc-2.24-ppc64el
+      box: mcandre/fewer-buildbot-debian-ppc64el
+      provider: libvirt
     - label: linux-musl-amd64
       box: mcandre/fewer-buildbot-void-amd64
     - label: linux-musl-i386

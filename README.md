@@ -30,6 +30,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-glibc-2.24-i386
 │   └── fewer
+├── linux-glibc-2.24-ppc64el
+│   └── fewer
 ├── linux-musl-amd64
 │   └── fewer
 ├── linux-musl-i386
@@ -93,6 +95,8 @@ See the `examples` directory for more demonstrative templates for building appli
 See [examples/](https://github.com/mcandre/tonixxx/tree/master/examples) for more details on configuring tonixxx.yaml recipes and provisioning build bots for a variety of programming languages.
 
 See `tonixxx -help` for more information on tonixxx invocation syntax.
+
+Finally, `sudo` may be requisite for producing buildbot boxes for alternate architecture VM's, a known issue with [vagrant-libvirt](https://github.com/vagrant-libvirt/vagrant-libvirt/pull/928), but critically, `sudo` should be avoided when importing or running buildbots.
 
 # RUNTIME REQUIREMENTS
 
