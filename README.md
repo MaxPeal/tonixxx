@@ -32,6 +32,10 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-glibc-2.24-ppc64el
 │   └── fewer
+├── linux-glibc-2.28-mips64el
+│   └── fewer
+└── linux-glibc-2.28-mipsel
+│   └── fewer
 ├── linux-musl-amd64
 │   └── fewer
 ├── linux-musl-i386
