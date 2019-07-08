@@ -87,7 +87,10 @@ if ("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
     add_custom_target(valgrind_repl COMMAND valgrind --error-exitcode=1 --leak-check=full cloudabi-run -e bin/fewer <cloudabi-test-repl.yml 3<fewer-script.txt)
     add_custom_target(valgrind_repl_hanging COMMAND valgrind --error-exitcode=1 --leak-check=full cloudabi-run -e bin/fewer <cloudabi-test-repl.yml 3<fewer-script-hanging.txt)
     add_custom_target(valgrind DEPENDS valgrind_test valgrind_repl valgrind_repl_hanging)
-elseif("$ENV{CC}" MATCHES "mips")
+elseif(
+    "$ENV{CC}" MATCHES "aarch64" OR
+    "$ENV{CC}" MATCHES "mips"
+)
     add_custom_target(valgrind_test)
     add_custom_target(valgrind_repl)
     add_custom_target(valgrind_repl_hanging)
