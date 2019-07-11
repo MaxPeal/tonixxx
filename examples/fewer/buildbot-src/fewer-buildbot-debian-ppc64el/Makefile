@@ -5,7 +5,7 @@ BOX=$(BOX_BASENAME).box
 .PHONY: launch-vm clean-vm clean-boxes clean-vagrant-metadata
 
 launch-vm: Vagrantfile bootstrap.sh
-	vagrant up --provider libvirt
+	vagrant up
 
 clean-vm:
 	-vagrant destroy -f

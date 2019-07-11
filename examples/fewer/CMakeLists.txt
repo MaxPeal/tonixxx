@@ -90,7 +90,8 @@ if ("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
 elseif(
     "$ENV{CC}" MATCHES "aarch64" OR
     "$ENV{CC}" MATCHES "arm" OR
-    "$ENV{CC}" MATCHES "mips"
+    "$ENV{CC}" MATCHES "mips" OR
+    "$ENV{CC}" MATCHES "powerpc"
 )
     add_custom_target(valgrind_test)
     add_custom_target(valgrind_repl)

@@ -30,8 +30,6 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-glibc-2.24-i386
 │   └── fewer
-├── linux-glibc-2.24-ppc64el
-│   └── fewer
 ├── linux-glibc-2.28-arm64
 │   └── fewer
 ├── linux-glibc-2.28-armel
@@ -41,6 +39,8 @@ $ tree ~/.tonixxx/fewer/bin
 ├── linux-glibc-2.28-mips64el
 │   └── fewer
 ├── linux-glibc-2.28-mipsel
+│   └── fewer
+├── linux-glibc-2.28-ppc64el
 │   └── fewer
 ├── linux-musl-amd64
 │   └── fewer

@@ -21,5 +21,3 @@ rm -rf /var/lib/apt/lists/* \
 
 pip3 install wheel
 pip3 install cpplint
-
-sync
