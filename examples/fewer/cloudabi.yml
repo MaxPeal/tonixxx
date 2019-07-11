@@ -3,6 +3,6 @@
 stderr: !fd stderr
 stdout: !fd stdout
 stdin: !file
-    path: /dev/tty
+  path: /dev/tty
 root: !file
-    path: .
+  path: .

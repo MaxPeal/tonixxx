@@ -4,4 +4,4 @@ stderr: !fd stderr
 stdout: !fd stdout
 stdin: !fd 3
 root: !file
-    path: .
+  path: .

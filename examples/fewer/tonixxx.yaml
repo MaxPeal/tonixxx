@@ -2,109 +2,109 @@
 project: fewer
 
 steps:
-    - cd "$TONIXXX_SYNC"
-    - cmake .
-    - cmake --build . --target lint
-    - cmake --build . --config Release
-    - cmake --build . --target leaks
-    - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
+  - cd "$TONIXXX_SYNC"
+  - cmake .
+  - cmake --build . --target lint
+  - cmake --build . --config Release
+  - cmake --build . --target leaks
+  - CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release
 
 outputdirectory: bin
 
 recipes:
-    - label: cloudabi-amd64
-      box: mcandre/fewer-buildbot-ubuntu-cloudabi
-      presteps:
-          - export CLOUD_ABI_TRIPLET=x86_64-unknown-cloudabi
-    - label: dragonflybsd-amd64
-      box: mcandre/fewer-buildbot-dragonfly
-    - label: freebsd-amd64
-      box: mcandre/fewer-buildbot-freebsd
-    - label: haiku-amd64
-      box: mcandre/fewer-buildbot-haiku-amd64
-      guesttype: Haiku
-    - label: hardenedbsd-amd64
-      box: mcandre/fewer-buildbot-hardenedbsd
-    - label: illumos-amd64
-      guesttype: SmartOSGZ
-      box: mcandre/fewer-buildbot-smartos
-    - label: linux-glibc-2.17-amd64
-      box: mcandre/fewer-buildbot-centos
-      steps:
-          - cd "$TONIXXX_SYNC"
-          - cmake3 .
-          - cmake3 --build . --target lint
-          - cmake3 --build . --config Release
-          - cmake3 --build . --target leaks
-          - CTEST_OUTPUT_ON_FAILURE=1 ctest3 -C Release
-    - label: linux-glibc-2.24-amd64
-      box: mcandre/fewer-buildbot-debian-amd64
-    - label: linux-glibc-2.24-i386
-      box: mcandre/fewer-buildbot-debian-i386
-    - label: linux-glibc-2.28-arm64
-      box: mcandre/fewer-buildbot-debian-arm64
-      presteps:
-          - export CC=aarch64-linux-gnu-gcc
-    - label: linux-glibc-2.28-armel
-      box: mcandre/fewer-buildbot-debian-armel
-      presteps:
-          - export CC=arm-linux-gnueabi-gcc
-    - label: linux-glibc-2.28-armhf
-      box: mcandre/fewer-buildbot-debian-armhf
-      presteps:
-          - export CC=arm-linux-gnueabihf-gcc
-    - label: linux-glibc-2.28-mips64el
-      box: mcandre/fewer-buildbot-debian-mips64el
-      presteps:
-          - export CC=mips64el-linux-gnuabi64-gcc
-    - label: linux-glibc-2.28-mipsel
-      box: mcandre/fewer-buildbot-debian-mipsel
-      presteps:
-          - export CC=mipsel-linux-gnu-gcc
-    - label: linux-glibc-2.28-ppc64el
-      box: mcandre/fewer-buildbot-debian-ppc64el
-      presteps:
-          - export CC=powerpc64le-linux-gnu-gcc
-    - label: linux-musl-amd64
-      box: mcandre/fewer-buildbot-void-amd64
-    - label: linux-musl-i386
-      box: mcandre/fewer-buildbot-void-i386
-    - label: linux-uclibc-amd64
-      box: mcandre/fewer-buildbot-openwrt-amd64
-      presteps:
-          - sudo find /vagrant -exec chown vagrant:vagrant {} +
-    - label: linux-uclibc-i386
-      box: mcandre/fewer-buildbot-openwrt-i386
-      presteps:
-          - sudo find /vagrant -exec chown vagrant:vagrant {} +
-    - label: macos-amd64
-      box: mcandre/fewer-buildbot-macos
-    - label: minix-i386
-      box: mcandre/fewer-buildbot-minix
-    - label: miros-i386
-      box: mcandre/fewer-buildbot-miros-i386
-      presteps:
-          - export CC=mgcc
-    - label: netbsd-amd64
-      box: mcandre/fewer-buildbot-netbsd-amd64
-    - label: netbsd-i386
-      box: mcandre/fewer-buildbot-netbsd-i386
-    - label: openbsd-amd64
-      box: mcandre/fewer-buildbot-openbsd-amd64
-    - label: openbsd-i386
-      box: mcandre/fewer-buildbot-openbsd-i386
-    - label: windows-amd64
-      guesttype: Cygwin
-      box: mcandre/fewer-buildbot-windows-amd64
-    - label: windows-i386
-      guesttype: Cygwin
-      box: mcandre/fewer-buildbot-windows-i386
-    - label: wasm64
-      box: mcandre/fewer-buildbot-wasm64
-      presteps:
-          - . /home/vagrant/emsdk/emsdk_env.sh
-          - export CC=emcc
-      steps:
-          - cd "$TONIXXX_SYNC"
-          - mkdir -p bin
-          - emcc -s WASM=1 -o bin/fewer.wasm lib/main.c lib/fewer.c
+  - label: cloudabi-amd64
+    box: mcandre/fewer-buildbot-ubuntu-cloudabi
+    presteps:
+      - export CLOUD_ABI_TRIPLET=x86_64-unknown-cloudabi
+  - label: dragonflybsd-amd64
+    box: mcandre/fewer-buildbot-dragonfly
+  - label: freebsd-amd64
+    box: mcandre/fewer-buildbot-freebsd
+  - label: haiku-amd64
+    box: mcandre/fewer-buildbot-haiku-amd64
+    guesttype: Haiku
+  - label: hardenedbsd-amd64
+    box: mcandre/fewer-buildbot-hardenedbsd
+  - label: illumos-amd64
+    guesttype: SmartOSGZ
+    box: mcandre/fewer-buildbot-smartos
+  - label: linux-glibc-2.17-amd64
+    box: mcandre/fewer-buildbot-centos
+    steps:
+      - cd "$TONIXXX_SYNC"
+      - cmake3 .
+      - cmake3 --build . --target lint
+      - cmake3 --build . --config Release
+      - cmake3 --build . --target leaks
+      - CTEST_OUTPUT_ON_FAILURE=1 ctest3 -C Release
+  - label: linux-glibc-2.24-amd64
+    box: mcandre/fewer-buildbot-debian-amd64
+  - label: linux-glibc-2.24-i386
+    box: mcandre/fewer-buildbot-debian-i386
+  - label: linux-glibc-2.28-arm64
+    box: mcandre/fewer-buildbot-debian-arm64
+    presteps:
+      - export CC=aarch64-linux-gnu-gcc
+  - label: linux-glibc-2.28-armel
+    box: mcandre/fewer-buildbot-debian-armel
+    presteps:
+      - export CC=arm-linux-gnueabi-gcc
+  - label: linux-glibc-2.28-armhf
+    box: mcandre/fewer-buildbot-debian-armhf
+    presteps:
+      - export CC=arm-linux-gnueabihf-gcc
+  - label: linux-glibc-2.28-mips64el
+    box: mcandre/fewer-buildbot-debian-mips64el
+    presteps:
+      - export CC=mips64el-linux-gnuabi64-gcc
+  - label: linux-glibc-2.28-mipsel
+    box: mcandre/fewer-buildbot-debian-mipsel
+    presteps:
+      - export CC=mipsel-linux-gnu-gcc
+  - label: linux-glibc-2.28-ppc64el
+    box: mcandre/fewer-buildbot-debian-ppc64el
+    presteps:
+      - export CC=powerpc64le-linux-gnu-gcc
+  - label: linux-musl-amd64
+    box: mcandre/fewer-buildbot-void-amd64
+  - label: linux-musl-i386
+    box: mcandre/fewer-buildbot-void-i386
+  - label: linux-uclibc-amd64
+    box: mcandre/fewer-buildbot-openwrt-amd64
+    presteps:
+      - sudo find /vagrant -exec chown vagrant:vagrant {} +
+  - label: linux-uclibc-i386
+    box: mcandre/fewer-buildbot-openwrt-i386
+    presteps:
+      - sudo find /vagrant -exec chown vagrant:vagrant {} +
+  - label: macos-amd64
+    box: mcandre/fewer-buildbot-macos
+  - label: minix-i386
+    box: mcandre/fewer-buildbot-minix
+  - label: miros-i386
+    box: mcandre/fewer-buildbot-miros-i386
+    presteps:
+      - export CC=mgcc
+  - label: netbsd-amd64
+    box: mcandre/fewer-buildbot-netbsd-amd64
+  - label: netbsd-i386
+    box: mcandre/fewer-buildbot-netbsd-i386
+  - label: openbsd-amd64
+    box: mcandre/fewer-buildbot-openbsd-amd64
+  - label: openbsd-i386
+    box: mcandre/fewer-buildbot-openbsd-i386
+  - label: windows-amd64
+    guesttype: Cygwin
+    box: mcandre/fewer-buildbot-windows-amd64
+  - label: windows-i386
+    guesttype: Cygwin
+    box: mcandre/fewer-buildbot-windows-i386
+  - label: wasm64
+    box: mcandre/fewer-buildbot-wasm64
+    presteps:
+      - . /home/vagrant/emsdk/emsdk_env.sh
+      - export CC=emcc
+    steps:
+      - cd "$TONIXXX_SYNC"
+      - mkdir -p bin
+      - emcc -s WASM=1 -o bin/fewer.wasm lib/main.c lib/fewer.c
