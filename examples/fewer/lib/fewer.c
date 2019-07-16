@@ -103,7 +103,12 @@ void render_boi(FILE *console, unsigned int b, /*@out@*/ char *s, size_t s_len) 
 }
 
 short parse_boi(char *s) {
-    unsigned long int n = strtoul(s, NULL, 16);
+    char *endptr = s;
+    unsigned long int n = strtoul(s, &endptr, 16);
+
+    if (endptr == s) {
+        return -1;
+    }
 
     if (n == ULONG_MAX) {
         return -1;
