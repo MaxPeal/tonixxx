@@ -121,7 +121,7 @@ if(
     CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
     "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
 )
-add_custom_target(leaks)
+    add_custom_target(leaks)
 else()
     add_custom_target(leaks DEPENDS valgrind)
 endif()
