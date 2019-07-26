@@ -45,11 +45,16 @@ if("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
     add_test(NAME fewer_unit_test COMMAND sh -c "cloudabi-run -e bin/fewer <cloudabi-unittest.yml")
     add_test(NAME fewer_integration_test COMMAND sh -c "cloudabi-run -e bin/fewer <cloudabi-test-repl.yml 3<fewer-script.txt")
     add_test(NAME fewer_integration_test_hanging COMMAND sh -c "cloudabi-run -e bin/fewer <cloudabi-test-repl.yml 3<fewer-script-hanging.txt")
+elseif("$ENV{EMULATOR}" MATCHES "qemu")
+    add_test(NAME fewer_unit_test COMMAND "$ENV{EMULATOR}" bin/fewer -t)
+    add_test(NAME fewer_integration_test COMMAND sh -c "$ENV{EMULATOR} bin/fewer <fewer-script.txt")
+    add_test(NAME fewer_integration_test_hanging COMMAND sh -c "$ENV{EMULATOR} bin/fewer <fewer-script-hanging.txt")
+    add_test(NAME fewer_help_test COMMAND "$ENV{EMULATOR}" bin/fewer -h)
 else()
-    add_test(NAME fewer_unit_test COMMAND fewer -t)
+    add_test(NAME fewer_unit_test COMMAND bin/fewer -t)
     add_test(NAME fewer_integration_test COMMAND sh -c "bin/fewer <fewer-script.txt")
     add_test(NAME fewer_integration_test_hanging COMMAND sh -c "bin/fewer <fewer-script-hanging.txt")
-    add_test(NAME fewer_help_test COMMAND fewer -h)
+    add_test(NAME fewer_help_test COMMAND bin/fewer -h)
 endif()
 
 add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --inline-suppr --suppressions-list=suppressions.cfg -D_XOPEN_PATH_MAX=1024 --error-exitcode=1 lib)
@@ -91,7 +96,8 @@ elseif(
     "$ENV{CC}" MATCHES "aarch64" OR
     "$ENV{CC}" MATCHES "arm" OR
     "$ENV{CC}" MATCHES "mips" OR
-    "$ENV{CC}" MATCHES "powerpc"
+    "$ENV{CC}" MATCHES "powerpc" OR
+    "$ENV{CC}" MATCHES "sparc64"
 )
     add_custom_target(valgrind_test)
     add_custom_target(valgrind_repl)
