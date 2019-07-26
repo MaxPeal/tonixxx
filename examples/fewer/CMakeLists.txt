@@ -96,6 +96,7 @@ elseif(
     "$ENV{CC}" MATCHES "aarch64" OR
     "$ENV{CC}" MATCHES "alpha" OR
     "$ENV{CC}" MATCHES "arm" OR
+    "$ENV{CC}" MATCHES "hppa" OR
     "$ENV{CC}" MATCHES "mips" OR
     "$ENV{CC}" MATCHES "powerpc" OR
     "$ENV{CC}" MATCHES "sparc64"

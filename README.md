@@ -38,6 +38,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-glibc-2.28-armhf
 │   └── fewer
+├── linux-glibc-2.28-hppa
+│   └── fewer
 ├── linux-glibc-2.28-mips64el
 │   └── fewer
 ├── linux-glibc-2.28-mipsel

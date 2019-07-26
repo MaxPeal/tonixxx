@@ -59,6 +59,12 @@ recipes:
     box: mcandre/fewer-buildbot-debian-armhf
     presteps:
       - export CC=arm-linux-gnueabihf-gcc
+  - label: linux-glibc-2.28-hppa
+    box: mcandre/fewer-buildbot-debian-hppa
+    presteps:
+      - export CC=hppa-linux-gnu-gcc
+      - export CXX=hppa-linux-gnu-g++
+      - export EMULATOR=qemu-hppa-static
   - label: linux-glibc-2.28-mips64el
     box: mcandre/fewer-buildbot-debian-mips64el
     presteps:
