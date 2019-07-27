@@ -101,6 +101,11 @@ recipes:
       - export CC=sparc64-linux-gnu-gcc
       - export CXX=sparc64-linux-gnu-g++
       - export EMULATOR=qemu-sparc64-static
+  - label: linux-glibc-2.28-x32
+    box: mcandre/fewer-buildbot-debian-x32
+    presteps:
+      - export CC=x86_64-linux-gnux32-gcc
+      - export CXX=x86_64-linux-gnux32-g++
   - label: linux-musl-amd64
     box: mcandre/fewer-buildbot-void-amd64
   - label: linux-musl-i386

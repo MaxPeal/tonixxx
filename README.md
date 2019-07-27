@@ -54,6 +54,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-glibc-2.28-sparc64
 │   └── fewer
+├── linux-glibc-2.28-x32
+│   └── fewer
 ├── linux-musl-amd64
 │   └── fewer
 ├── linux-musl-i386

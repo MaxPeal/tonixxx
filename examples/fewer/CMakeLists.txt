@@ -100,7 +100,8 @@ elseif(
     "$ENV{CC}" MATCHES "mips" OR
     "$ENV{CC}" MATCHES "powerpc" OR
     "$ENV{CC}" MATCHES "riscv" OR
-    "$ENV{CC}" MATCHES "sparc"
+    "$ENV{CC}" MATCHES "sparc" OR
+    "$ENV{CC}" MATCHES "x32"
 )
     add_custom_target(valgrind_test)
     add_custom_target(valgrind_repl)
