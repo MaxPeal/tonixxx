@@ -50,6 +50,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-glibc-2.28-ppc64el
 │   └── fewer
+├── linux-glibc-2.28-riscv64
+│   └── fewer
 ├── linux-glibc-2.28-sparc64
 │   └── fewer
 ├── linux-musl-amd64

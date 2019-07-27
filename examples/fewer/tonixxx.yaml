@@ -89,6 +89,12 @@ recipes:
     box: mcandre/fewer-buildbot-debian-ppc64el
     presteps:
       - export CC=powerpc64le-linux-gnu-gcc
+  - label: linux-glibc-2.28-riscv64
+    box: mcandre/fewer-buildbot-debian-riscv64
+    presteps:
+      - export CC=riscv64-linux-gnu-gcc
+      - export CXX=riscv64-linux-gnu-g++
+      - export EMULATOR=qemu-riscv64-static
   - label: linux-glibc-2.28-sparc64
     box: mcandre/fewer-buildbot-debian-sparc64
     presteps:

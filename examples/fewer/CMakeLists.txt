@@ -99,6 +99,7 @@ elseif(
     "$ENV{CC}" MATCHES "hppa" OR
     "$ENV{CC}" MATCHES "mips" OR
     "$ENV{CC}" MATCHES "powerpc" OR
+    "$ENV{CC}" MATCHES "riscv" OR
     "$ENV{CC}" MATCHES "sparc"
 )
     add_custom_target(valgrind_test)
