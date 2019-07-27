@@ -201,7 +201,7 @@ $ mage port
 # HONORABLE MENTIONS
 
 * [CloudABI](https://nuxi.nl/) provides a C-level abstraction for applications to run on many different platforms.
-* Cross-platform [toolchains](https://elinux.org/Toolchains) can be configured, though the process is fairly masochistic.
+* Cross-platform [toolchains](https://elinux.org/Toolchains) can be configured, though the process is fairly masochistic. May involve chroots.
 * [Docker](https://www.docker.com/) is a fantastic resource for projects targeting the Linux kernel (from different host operating systems!)
 * [Go](https://golang.org/) provides superb out-of-the-box cross-compilation features. As a matter of fact, tonixxx was inspired as a workaround in order to support cross-compilation for non-Go projects, including Rust, C, and C++.
 
