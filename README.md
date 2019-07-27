@@ -44,6 +44,8 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer
 ├── linux-glibc-2.28-mipsel
 │   └── fewer
+├── linux-glibc-2.28-powerpc
+│   └── fewer
 ├── linux-glibc-2.28-ppc64
 │   └── fewer
 ├── linux-glibc-2.28-ppc64el

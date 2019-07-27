@@ -73,6 +73,12 @@ recipes:
     box: mcandre/fewer-buildbot-debian-mipsel
     presteps:
       - export CC=mipsel-linux-gnu-gcc
+  - label: linux-glibc-2.28-powerpc
+    box: mcandre/fewer-buildbot-debian-powerpc
+    presteps:
+      - export CC=powerpc-linux-gnu-gcc
+      - export CXX=powerpc-linux-gnu-g++
+      - export EMULATOR=qemu-ppc-static
   - label: linux-glibc-2.28-ppc64
     box: mcandre/fewer-buildbot-debian-ppc64
     presteps:
