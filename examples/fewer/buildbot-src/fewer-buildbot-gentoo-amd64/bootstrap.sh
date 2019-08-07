@@ -14,10 +14,6 @@ emerge \
     dev-python/setuptools
 
 echo "export PATH=\"\$PATH:/home/vagrant/.local/bin\"" >>/etc/profile
-emerge --depclean
-
-sudo -u vagrant pip3 install --user wheel
-sudo -u vagrant pip3 install --user cpplint
 
 # Fix libraries for valgrind
 mkdir -p /etc/portage/env
@@ -25,3 +21,8 @@ echo -e "CFLAGS=\"\${CFLAGS} -ggdb\"\nCXXFLAGS=\"\${CXXFLAGS} -ggdb\"\nFEATURES=
 echo -e "FEATURES=\"\${FEATURES} installsources\"" >/etc/portage/env/installsources
 echo 'sys-libs/glibc debugsyms installsources' >/etc/portage/package.env
 emerge --oneshot sys-libs/glibc
+
+emerge --depclean
+
+sudo -u vagrant pip3 install --user wheel
+sudo -u vagrant pip3 install --user cpplint
