@@ -131,7 +131,7 @@ func (o Recipe) GenerateVagrantfile() string {
 		vagrantfileContent += fmt.Sprintf("  config.vm.box_version = \"%s\"\n", o.Version)
 	}
 
-	vagrantfileContent += "\nend"
+	vagrantfileContent += "end\n"
 
 	return vagrantfileContent
 }
