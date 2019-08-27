@@ -229,5 +229,6 @@ tonixxx is not magic, but simply a Go wrapper for Vagrant. It won't do the hard 
 * Does accelerate development and testing
 * Does support UNIX and Windows hosts, as well as UNIX and Windows targets
 * Does support configuration commenting
+* Works best with *reasonably modern* guests featuring preemptive multitasking
 
 Good luck and keep coding!
