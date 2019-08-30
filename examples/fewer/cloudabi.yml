@@ -1,8 +1,8 @@
 %TAG ! tag:nuxi.nl,2015:cloudabi/
 ---
-stderr: !fd stderr
-stdout: !fd stdout
+stderr: !fd "stderr"
+stdout: !fd "stdout"
 stdin: !file
-  path: /dev/tty
+  path: "/dev/tty"
 root: !file
-  path: .
+  path: "."
