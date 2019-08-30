@@ -4,11 +4,8 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
-	"regexp"
 
 	"github.com/magefile/mage/mg"
 	"github.com/mcandre/tonixxx"
@@ -61,47 +58,12 @@ func Safety() error {
 	return command.Run()
 }
 
-// YamlRegex matches YAML files.
-var YamlRegex = regexp.MustCompile(".*\\.y(a)?ml$")
-
-// yamlLintWalk recursively lints YAML files.
-func yamlLintWalk(path string, info os.FileInfo, err error) error {
-	log.Printf("Path: %v", path)
-
-	if err != nil {
-		return err
-	}
-
-	if !info.IsDir() && YamlRegex.MatchString(path) {
-		command := exec.Command("yamllint", path)
-		command.Stdout = os.Stdout
-		command.Stderr = os.Stderr
-
-		if err := command.Run(); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 // YamlLint runs yamllint.
 func YamlLint() error {
-	command := exec.Command("yamllint", ".yamllint")
+	command := exec.Command("yamllint", "-s", ".yamllint", ".")
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
-
-	if err := command.Run(); err != nil {
-		return err
-	}
-
-	cwd, err := os.Getwd()
-
-	if err != nil {
-		return err
-	}
-
-	return filepath.Walk(cwd, yamlLintWalk)
+	return command.Run()
 }
 
 // Lint runs the lint suite.
