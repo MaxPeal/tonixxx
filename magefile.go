@@ -78,6 +78,9 @@ func Lint() error {
 	return nil
 }
 
+// Compile checks compilability.
+func Compile() error { return mageextras.Compile() }
+
 // portBasename labels the artifact basename.
 var portBasename = fmt.Sprintf("tonixxx-%s", tonixxx.Version)
 

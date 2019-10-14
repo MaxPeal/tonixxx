@@ -192,6 +192,7 @@ $ mage uninstall
 
 ```console
 $ mage lint
+$ mage compile
 ```
 
 ## PORT
