@@ -44,7 +44,6 @@ FreeBSD
 # BUILD
 
 ```console
-$ git submodule update --init
 $ cmake .
 $ cmake --build . --config Release
 ```
