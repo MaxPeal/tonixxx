@@ -16,9 +16,8 @@ recipes:
     box: "mcandre/fewer-buildbot-ubuntu-cloudabi"
     presteps:
       - "export CLOUD_ABI_TRIPLET=x86_64-unknown-cloudabi"
-  # Currently broken due to missing repository for previous releases
-  # - label: "dragonflybsd-amd64"
-  #   box: "mcandre/fewer-buildbot-dragonfly"
+  - label: "dragonflybsd-amd64"
+    box: "mcandre/fewer-buildbot-dragonfly"
   - label: "freebsd-amd64"
     box: "mcandre/fewer-buildbot-freebsd"
   - label: "haiku-amd64"
