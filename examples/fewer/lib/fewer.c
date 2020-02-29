@@ -24,7 +24,7 @@
 #if defined(_MSC_VER)
 int fchdir(int fd) {
     DWORD result;
-    char base_path[_XOPEN_PATH_MAX];
+    char base_path[X_PATH_MAX];
 
     result = GetFinalPathNameByHandleA(
         (HANDLE) fd,
@@ -191,7 +191,7 @@ int unit_test(fewer_config *config) {
 int repl(fewer_config *config) {
     int fd, c;
     FILE *f = NULL;
-    char hex_buf[3], instruction[_XOPEN_PATH_MAX + 2], command = '\0', *content = NULL;
+    char hex_buf[3], instruction[X_PATH_MAX + 2], command = '\0', *content = NULL;
 
     if (!validate_fewer_config(config)) {
         return EXIT_FAILURE;

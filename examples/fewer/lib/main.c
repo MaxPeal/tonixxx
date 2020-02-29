@@ -98,7 +98,7 @@ void program_main(const argdata_t *ad) {
         .console_out = console_out,
         .console_in = console_in,
         .root = root,
-        .test = test
+        .test = (int) test
     };
 
     if (config->test) {
@@ -138,15 +138,15 @@ int main(int argc, char **argv) {
     }
 
     if (!test) {
-        char cwd[_XOPEN_PATH_MAX];
+        char cwd[X_PATH_MAX];
         char *cwd_ptr;
 
         errno = 0;
 
 #if defined(_MSC_VER)
-        cwd_ptr = _getcwd(cwd, sizeof(cwd)/sizeof(cwd[0]));
+        cwd_ptr = _getcwd(cwd, X_PATH_MAX);
 #else
-        cwd_ptr = getcwd(cwd, sizeof(cwd)/sizeof(cwd[0]));
+        cwd_ptr = getcwd(cwd, X_PATH_MAX);
 #endif
 
         if (cwd_ptr == NULL) {

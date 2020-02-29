@@ -31,12 +31,23 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     execute_process(COMMAND cat /etc/*release* OUTPUT_VARIABLE ETC_RELEASE)
 endif()
 
+set(WINDOWS_C_FLAGS "${CMAKE_C_FLAGS} /O2 /WX /W4 /wd4204")
+
+set(UNIX_C_FLAGS "${CMAKE_C_FLAGS} -O2 -Werror")
+set(GNU_C_FLAGS "${UNIX_C_FLAGS} -std=gnu99 -Wextra -Wall -pedantic")
+set(CLANG_C_FLAGS "${GNU_C_FLAGS} -Wmost -Weverything")
+
 if(MSVC)
-    set(CMAKE_C_FLAGS "/O2 /W4 /wd4204")
-elseif(CMAKE_C_COMPILER_ID MATCHES "clang")
-    set(CMAKE_C_FLAGS "-std=c99 -O2 -Wall -Wextra -Wmost -Weverything")
+    set(CMAKE_C_FLAGS "${WINDOWS_C_FLAGS}")
+elseif("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
+    set(CMAKE_C_FLAGS "${UNIX_C_FLAGS}")
+elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_C_COMPILER "clang")
+    set(CMAKE_C_FLAGS "${CLANG_C_FLAGS}")
 elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
-    set(CMAKE_C_FLAGS "-std=c99 -O2 -Wall -Wextra")
+    set(CMAKE_C_FLAGS "${GNU_C_FLAGS}")
+else()
+    set(CMAKE_C_FLAGS "${UNIX_C_FLAGS}")
 endif()
 
 add_executable(fewer lib/main.c lib/fewer.c)
@@ -57,7 +68,7 @@ else()
     add_test(NAME fewer_help_test COMMAND bin/fewer -h)
 endif()
 
-add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --inline-suppr --suppressions-list=suppressions.cfg -D_XOPEN_PATH_MAX=1024 --error-exitcode=1 lib)
+add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --inline-suppr --suppressions-list=suppressions.cfg -DX_PATH_MAX=1024 --error-exitcode=1 lib)
 add_custom_target(cpplint COMMAND sh recur-cpplint.sh)
 add_custom_target(splint COMMAND sh recur-splint.sh)
 add_custom_target(vera++ COMMAND sh recur-vera++.sh)
@@ -76,7 +87,7 @@ if(
 elseif(CMAKE_SYSTEM_NAME MATCHES "Minix")
     add_custom_target(lint DEPENDS splint99)
 elseif(CMAKE_SYSTEM_VERSION MATCHES "HBSD")
-    add_custom_target(lint DEPENDS cpplint vera++ splint99)
+    add_custom_target(lint DEPENDS cpplint splint99)
 elseif(
     MSVC OR
     CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
@@ -121,6 +132,7 @@ endif()
 if(
     MSVC OR
     CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
+    CMAKE_SYSTEM_NAME MATCHES "FreeBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
     CMAKE_SYSTEM_VERSION MATCHES "HBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "SunOS" OR

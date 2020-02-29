@@ -2,5 +2,8 @@
 
 // Copyright 2017 Andrew Pennebaker
 
-#define _GNU_SOURCE
+#if defined(__SVR4)
 #define _POSIX_C_SOURCE 200809L
+#endif
+
+void usage(char *program);

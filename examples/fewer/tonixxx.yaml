@@ -18,9 +18,8 @@ recipes:
       - "export CLOUD_ABI_TRIPLET=x86_64-unknown-cloudabi"
   - label: "dragonflybsd-amd64"
     box: "mcandre/fewer-buildbot-dragonfly"
-  # Temporarily broken due to missing package repositories.
-  # - label: "freebsd-amd64"
-  #   box: "mcandre/fewer-buildbot-freebsd"
+  - label: "freebsd-amd64"
+    box: "mcandre/fewer-buildbot-freebsd"
   - label: "haiku-amd64"
     box: "mcandre/fewer-buildbot-haiku-amd64"
     guesttype: "Haiku"

@@ -2,8 +2,6 @@
 
 // Copyright 2017 Andrew Pennebaker
 
-#define _GNU_SOURCE
-
 #if defined(__sun)
 #define __EXTENSIONS__
 #elif defined(_MSC_VER)
@@ -15,16 +13,25 @@ typedef int mode_t;
 #include <stdbool.h>
 #include <stdio.h>
 
-#if !defined(_XOPEN_PATH_MAX)
-#if defined(_POSIX_PATH_MAX)
-#define _XOPEN_PATH_MAX _POSIX_PATH_MAX
-#elif defined(_MAX_PATH)
-#define _XOPEN_PATH_MAX _MAX_PATH
-#elif defined(PATH_MAX)
-#define _XOPEN_PATH_MAX PATH_MAX
-#else
-#define _XOPEN_PATH_MAX 1024
+#if defined(__MirBSD__)
+#include <sys/param.h>
 #endif
+
+// _XOPEN_PATH_MAX may be either missing or reserved,
+// depending on the environment,
+// so we define our own macro.
+#if defined(_XOPEN_PATH_MAX)
+#define X_PATH_MAX _XOPEN_PATH_MAX
+#elif defined(MAXPATHLEN)
+#define X_PATH_MAX MAXPATHLEN
+#elif defined(_POSIX_PATH_MAX)
+#define X_PATH_MAX _POSIX_PATH_MAX
+#elif defined(_MAX_PATH)
+#define X_PATH_MAX _MAX_PATH
+#elif defined(PATH_MAX)
+#define X_PATH_MAX PATH_MAX
+#else
+#define X_PATH_MAX 1024
 #endif
 
 #if defined(_MSC_VER)
@@ -57,11 +64,11 @@ void chomp(char *s, size_t length);
 
 // Entrypoint parameters
 typedef struct {
+    int root;
+    int test;
     /*@dependent@*/ FILE *console_err;
     /*@dependent@*/ FILE *console_out;
     /*@dependent@*/ FILE *console_in;
-    int root;
-    bool test;
 } fewer_config;
 
 // Check for basic errors in a fewer_config.
