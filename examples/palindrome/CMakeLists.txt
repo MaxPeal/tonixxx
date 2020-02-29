@@ -56,7 +56,8 @@ if(
 elseif(
     MSVC OR
     CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
-    LSB_RELEASE MATCHES "Void"
+    LSB_RELEASE MATCHES "Void" OR
+    CMAKE_SYSTEM_VERSION MATCHES "HBSD"
 )
     add_custom_target(lint DEPENDS cppcheck cpplint)
 else()
