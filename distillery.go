@@ -1,6 +1,8 @@
 package tonixxx
 
 import (
+	"gopkg.in/yaml.v2"
+
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -9,9 +11,7 @@ import (
 	"path"
 	"regexp"
 	"strconv"
-
-	"github.com/oleiade/lane"
-	"gopkg.in/yaml.v2"
+	"sync"
 )
 
 // ProjectNamePattern constrains names in order to use names as-is for file paths while building a project.
@@ -64,8 +64,8 @@ type Distillery struct {
 	// Example: 1
 	MaxRunningRecipes int
 
-	// runningRecipes tracks running recipes
-	runningRecipes *lane.Deque
+	// runningRecipes tracks concurrent recipes.
+	runningRecipes *AtomicDeque
 }
 
 // ProjectData calculates the per-project tonixxx data directory based on a hash of the project directory absolute path.
@@ -109,20 +109,32 @@ func (o Distillery) Validate() error {
 	return nil
 }
 
-// UpdateRunningRecipes collects information about Vagrant instances.
-func (o Distillery) UpdateRunningRecipes() error {
-	for _, recipe := range o.Recipes {
-		running, err := recipe.IsRunning()
+// UpdateRunningRecipe collects information about a Vagrant instance.
+func (o *Distillery) UpdateRunningRecipe(recipe Recipe, wg *sync.WaitGroup) {
+	defer wg.Done()
 
-		if err != nil {
-			return err
-		}
+	running, err := recipe.IsRunning()
 
-		if running {
-			o.runningRecipes.Append(recipe)
-		}
+	if err != nil {
+		log.Print(err)
+		return
 	}
 
+	if running {
+		o.runningRecipes.Append(recipe)
+	}
+}
+
+// UpdateRunningRecipes collects information about Vagrant instances.
+func (o *Distillery) UpdateRunningRecipes() error {
+	var wg sync.WaitGroup
+	wg.Add(len(o.Recipes))
+
+	for _, recipe := range o.Recipes {
+		go o.UpdateRunningRecipe(recipe, &wg)
+	}
+
+	wg.Wait()
 	return nil
 }
 
@@ -194,17 +206,16 @@ func Load(pth string) (*Distillery, error) {
 		return nil, err
 	}
 
-	distillery.runningRecipes = lane.NewDeque()
-
-	if err := distillery.UpdateRunningRecipes(); err != nil {
-		return nil, err
-	}
-
+	distillery.runningRecipes = NewAtomicDeque()
 	return distillery, nil
 }
 
 // Boil executes configured recipes for a distillery.
-func (o Distillery) Boil() error {
+func (o *Distillery) Boil() error {
+	if err := o.UpdateRunningRecipes(); err != nil {
+		return err
+	}
+
 	for _, recipe := range o.Recipes {
 		if o.MaxRunningRecipes > 0 {
 			for o.runningRecipes.Size() > o.MaxRunningRecipes-1 {
@@ -238,25 +249,45 @@ func (o Distillery) Boil() error {
 	return nil
 }
 
+// DownRecipe pauses a Vagrant box.
+func (o Distillery) DownRecipe(recipe Recipe, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	if err := recipe.VagrantDown(); err != nil {
+		log.Print(err)
+	}
+}
+
 // Down pauses the configured Vagrant boxes.
 func (o Distillery) Down() error {
+	var wg sync.WaitGroup
+	wg.Add(len(o.Recipes))
+
 	for _, recipe := range o.Recipes {
-		if err := recipe.VagrantDown(); err != nil {
-			return err
-		}
+		go o.DownRecipe(recipe, &wg)
 	}
 
+	wg.Wait()
 	return nil
+}
+
+// CleanRecipe destroys a recipe's Vagrant instance box and
+// removes the recipe artifact directory under ~/.tonixxx
+func (o Distillery) CleanRecipe(recipe Recipe, wg *sync.WaitGroup) {
+	recipe.Clean(wg)
 }
 
 // Clean destroys a project's Vagrant instances boxes and
 // removes the project directory from ~/.tonixxx
 func (o Distillery) Clean() error {
+	var wg sync.WaitGroup
+	wg.Add(len(o.Recipes))
+
 	for _, recipe := range o.Recipes {
-		if err := recipe.Clean(); err != nil {
-			log.Print(err)
-		}
+		go o.CleanRecipe(recipe, &wg)
 	}
+
+	wg.Wait()
 
 	projectData, err := o.ProjectData()
 

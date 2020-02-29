@@ -11,6 +11,7 @@ import (
 	"path"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/mcandre/popcopy"
 )
@@ -383,10 +384,14 @@ func (o Recipe) Destroy() error {
 
 // Clean destroys a Vagrant instance and
 // removes the per-recipe host directory.
-func (o Recipe) Clean() error {
+func (o Recipe) Clean(wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	if err := o.Destroy(); err != nil {
 		log.Print(err)
 	}
 
-	return os.RemoveAll(o.CloneHost())
+	if err := os.RemoveAll(o.CloneHost()); err != nil {
+		log.Print(err)
+	}
 }
