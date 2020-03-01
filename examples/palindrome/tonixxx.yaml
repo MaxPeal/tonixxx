@@ -57,6 +57,7 @@ recipes:
     box: "mcandre/palindrome-buildbot-miros-i386"
     presteps:
       - "export CC=mgcc"
+      - "export CXX=mgcc"
   - label: "netbsd-amd64"
     box: "mcandre/palindrome-buildbot-netbsd-amd64"
   - label: "netbsd-i386"

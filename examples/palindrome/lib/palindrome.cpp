@@ -1,13 +1,14 @@
 // Copyright 2018 Andrew Pennebaker
 
-#include <string>
+#include "palindrome.hh"
+
 #include <algorithm>
+#include <string>
 
-#include "palindrome.h"
+using std::string;
 
-bool palindrome(std::string s) {
-    std::string s_copy(s);
+bool palindrome(string s) {
+    string s_copy(s);
     std::reverse(s_copy.begin(), s_copy.end());
-
     return s == s_copy;
 }

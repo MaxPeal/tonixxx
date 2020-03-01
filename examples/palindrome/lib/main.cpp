@@ -1,18 +1,24 @@
 // Copyright 2018 Andrew Pennebaker
 
-#include <vector>
-#include <sstream>
+#include "main.hh"
+
 #include <cstdlib>
 #include <cstring>
+
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <vector>
 
-#include "main.h"
-#include "palindrome.h"
+#include "palindrome.hh"
+
+using std::cin;
+using std::cout;
+using std::endl;
 
 void usage(char* program) {
-    std::cout << "Usage: " << program << "[-t]" << std::endl;
+    cout << "Usage: " << program << "[-t]" << endl;
 }
 
 int test() {
@@ -20,7 +26,6 @@ int test() {
 
     for (int x = 0; x < 256; x++) {
         std::stringstream x_hex;
-
         x_hex << std::setfill('0') << std::setw(2) << std::hex << x;
 
         if (palindrome(x_hex.str())) {
@@ -29,7 +34,7 @@ int test() {
     }
 
     if (palindromes.size() != 16) {
-        std::cerr << "Expected to find 16 palindromes, instead found " << palindromes.size();
+        std::cerr << "Expected to find 16 palindromes, instead found " << palindromes.size() << endl;
         return EXIT_FAILURE;
     }
 
@@ -48,15 +53,14 @@ int main(int argc, char** argv) {
         return test();
     }
 
-    while (!std::cin.bad() && !std::cin.eof()) {
-        std::getline(std::cin, line);
-
-        std::cout << "Palindrome: " << palindrome(line) << std::endl;
+    while (!cin.bad() && !cin.eof()) {
+        std::getline(cin, line);
+        cout << "Palindrome: " << palindrome(line) << endl;
     }
 
-    if (std::cin.bad()) {
+    if (cin.bad()) {
         return EXIT_FAILURE;
-    } else {
-        return EXIT_SUCCESS;
     }
+
+    return EXIT_SUCCESS;
 }
