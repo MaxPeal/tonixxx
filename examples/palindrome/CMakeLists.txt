@@ -48,6 +48,7 @@ add_custom_target(vera++ COMMAND sh recur-vera++.sh)
 
 if(
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
+    CMAKE_SYSTEM_NAME MATCHES "Minix" OR
     CMAKE_SYSTEM_NAME MATCHES "MirBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
     "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
