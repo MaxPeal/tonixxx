@@ -211,6 +211,7 @@ $ mage port
 
 # SEE ALSO
 
+* [xgo](https://github.com/karalabe/xgo) automates cross-compiling Go applications, including cgo apps with native dependencies.
 * [goxcart](https://github.com/mcandre/goxcart) is a lean option for porting Go projects
 * [remy](https://github.com/mcandre/remy) is a lean option for porting Rust projects
 * [cartel](https://github.com/mcandre/cartel) provides Docker images for C/C++ cross-compilation toolchains
