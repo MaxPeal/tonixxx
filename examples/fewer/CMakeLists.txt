@@ -69,9 +69,9 @@ else()
 endif()
 
 add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --inline-suppr --suppressions-list=suppressions.cfg -DX_PATH_MAX=1024 --error-exitcode=1 lib)
-add_custom_target(cpplint COMMAND sh recur-cpplint.sh)
-add_custom_target(splint COMMAND sh recur-splint.sh)
-add_custom_target(vera++ COMMAND sh recur-vera++.sh)
+add_custom_target(cpplint COMMAND ./recur-cpplint)
+add_custom_target(splint COMMAND ./recur-splint)
+add_custom_target(vera++ COMMAND ./recur-vera++)
 
 # Pending full C99 support
 add_custom_target(splint99)

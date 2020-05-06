@@ -1,18 +1,7 @@
 #!/bin/sh
-IFS=$'\n\t'
-
-SYS="$(uname -a)"
-
-xargs_vera() {
-    case "$SYS" in
-        *NetBSD*)
-            xargs -0 -n1 vera++
-            ;;
-        *)
-            xargs -0 -n1 vera++ -se
-            ;;
-    esac
-}
+set -eu
+IFS="$(printf '%b_' '\n\t ')"
+IFS="${IFS%_}"
 
 /usr/bin/find lib \
     -type f \
@@ -25,4 +14,7 @@ xargs_vera() {
         -iname '*.[ch]' \
     \) \
     -print0 |
-    xargs_vera
+    xargs \
+        -0 \
+        -n1 \
+        cpplint

@@ -1,5 +1,7 @@
 #!/bin/sh
-IFS=$'\n\t'
+set -eu
+IFS="$(printf '%b_' '\n\t ')"
+IFS="${IFS%_}"
 
 /usr/bin/find lib \
     -type f \
