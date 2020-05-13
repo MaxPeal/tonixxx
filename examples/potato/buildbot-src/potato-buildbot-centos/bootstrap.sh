@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eEuo pipefail
+set -eufEo pipefail
 
 sudo yum update -y
 

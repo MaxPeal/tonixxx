@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eEuo pipefail
+set -eufEo pipefail
 
 apt-get update
 apt-get install -y \

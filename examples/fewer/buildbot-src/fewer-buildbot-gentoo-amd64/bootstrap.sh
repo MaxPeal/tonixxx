@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eEuo pipefail
+set -eufEo pipefail
 
 echo 'app-admin/rsyslog openssl' >>/etc/portage/package.use/rsyslog
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eEuo pipefail
+set -eufEo pipefail
 
 brew update || echo 'Homebrew partially broke during update'
 brew install valgrind

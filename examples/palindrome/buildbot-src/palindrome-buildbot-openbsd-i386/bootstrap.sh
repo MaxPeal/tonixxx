@@ -1,5 +1,5 @@
 #!/bin/ksh
-set -eu
+set -euf
 
 sudo pkg_add -u
 sudo pkg_add \
