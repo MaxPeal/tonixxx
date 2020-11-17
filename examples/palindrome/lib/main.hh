@@ -3,7 +3,7 @@
 #pragma once
 
 // Show CLI options.
-void usage(char* program);
+void usage(char **argv);
 
 // Returns system-relative exit code signifying test success/failure.
 int test();

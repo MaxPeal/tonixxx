@@ -1,0 +1,10 @@
+#!/bin/sh
+set -euf
+unset IFS
+
+sudo pkg update
+sudo pkg install -y valgrind
+sudo pkg clean -y
+
+dub fetch dscanner
+dub fetch dale

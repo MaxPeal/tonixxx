@@ -17,16 +17,9 @@ Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Val
 # Update PowerShell SSL protocols
 [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
 
-# Install splint, add to session PATH, persist PATH.
-Invoke-WebRequest -Uri "https://github.com/downloads/maoserr/splint_win32/splint_installer-3.1.2.msi" -Outfile "C:\Windows\temp\splint_installer-3.1.2.msi"
-msiexec /i "C:\Windows\temp\splint_installer-3.1.2.msi"
-$splintPath = "C:\splint-3.1.2\bin"
-$userPath = (Get-ItemProperty "Registry::HKEY_CURRENT_USER\Environment").PATH
-Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Value "$userPath;$splintPath"
-
 choco install -force -y python3
-$pythonPath = "C:\Python37"
-$pythonScriptPath = "C:\Python37\Scripts"
+$pythonPath = "C:\Python39"
+$pythonScriptPath = "C:\Python39\Scripts"
 $env:PATH += ";$pythonPath;$pythonScriptPath"
 $userPath = (Get-ItemProperty "Registry::HKEY_CURRENT_USER\Environment").PATH
 Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Value "$userPath;$pythonPath;$pythonScriptPath"

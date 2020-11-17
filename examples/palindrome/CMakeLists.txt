@@ -30,15 +30,12 @@ endif()
 
 set(WINDOWS_C_FLAGS "${CMAKE_C_FLAGS} /O2 /WX /W4 /wd4204")
 set(WINDOWS_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2 /WX /W4 /wd4204")
-
 set(UNIX_C_FLAGS "${CMAKE_C_FLAGS} -O2 -Werror")
 set(UNIX_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Werror")
-
 set(GNU_C_FLAGS "${UNIX_C_FLAGS} -std=gnu98 -Wextra -Wall -pedantic")
 set(GNU_CXX_FLAGS "${UNIX_CXX_FLAGS} -std=c++98 -Wextra -Wall -pedantic -Weffc++")
-
 set(CLANG_C_FLAGS "${GNU_C_FLAGS} -Wmost -Weverything")
-set(CLANG_CXX_FLAGS "${GNU_CXX_FLAGS} -Wmost -Weverything")
+set(CLANG_CXX_FLAGS "${GNU_CXX_FLAGS} -Wmost -Weverything -Wno-c++98-compat")
 
 if(MSVC)
     set(CMAKE_C_FLAGS "${WINDOWS_C_FLAGS}")
@@ -69,23 +66,27 @@ enable_testing()
 
 add_test(NAME palindrometest COMMAND palindrome -t)
 
-add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --inline-suppr --suppressions-list=suppressions.cfg --error-exitcode=1 lib)
-add_custom_target(cpplint COMMAND ./recur-cpplint)
-add_custom_target(vera++ COMMAND ./recur-vera++)
+add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --inline-suppr --suppressions-list=suppressions.cfg -DX_PATH_MAX=1024 --error-exitcode=1 lib)
+add_custom_target(cpplint COMMAND sail lib | xargs -n 1 cpplint)
+add_custom_target(vera++ COMMAND sail lib | xargs -n 1 vera++)
 
+# Missing linter ports
 if(
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
-    CMAKE_SYSTEM_NAME MATCHES "Minix" OR
     CMAKE_SYSTEM_NAME MATCHES "MirBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
+    CMAKE_SYSTEM_NAME MATCHES "Minix" OR
     "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
 )
-    add_custom_target(lint)
+    add_custom_target(lint DEPENDS)
+elseif(MSVC)
+    add_custom_target(lint DEPENDS cppcheck)
+elseif(CMAKE_SYSTEM_VERSION MATCHES "HBSD")
+    add_custom_target(lint DEPENDS cpplint)
 elseif(
-    MSVC OR
     CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
-    LSB_RELEASE MATCHES "Void" OR
-    CMAKE_SYSTEM_VERSION MATCHES "HBSD"
+    CMAKE_SYSTEM_VERSION MATCHES "gentoo" OR
+    LSB_RELEASE MATCHES "Void"
 )
     add_custom_target(lint DEPENDS cppcheck cpplint)
 else()
@@ -98,7 +99,17 @@ add_custom_target(valgrind DEPENDS valgrind_test)
 # Broken or missing valgrind
 if(
     MSVC OR
+    "$ENV{CC}" MATCHES "aarch64" OR
+    "$ENV{CC}" MATCHES "alpha" OR
+    "$ENV{CC}" MATCHES "arm" OR
+    "$ENV{CC}" MATCHES "hppa" OR
+    "$ENV{CC}" MATCHES "mips" OR
+    "$ENV{CC}" MATCHES "powerpc" OR
+    "$ENV{CC}" MATCHES "riscv" OR
+    "$ENV{CC}" MATCHES "sparc" OR
+    "$ENV{CC}" MATCHES "x32" OR
     CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
+    CMAKE_SYSTEM_NAME MATCHES "FreeBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
     CMAKE_SYSTEM_VERSION MATCHES "HBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
@@ -110,7 +121,7 @@ if(
     CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
     "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
 )
-add_custom_target(leaks)
+    add_custom_target(leaks)
 else()
     add_custom_target(leaks DEPENDS valgrind)
 endif()

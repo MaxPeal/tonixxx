@@ -12,80 +12,18 @@ $ tonixxx boil
 
 $ tree ~/.tonixxx/fewer/bin
 ~/.tonixxx/fewer/bin
-├── cloudabi-amd64
-│   └── fewer
-├── dragonflybsd-amd64
-│   └── fewer
 ├── freebsd-amd64
-│   └── fewer
-├── haiku-amd64
-│   └── fewer
-├── hardenedbsd-amd64
-│   └── fewer
-├── illumos-amd64
 │   └── fewer
 ├── linux-glibc-2.17-amd64
 │   └── fewer
 ├── linux-glibc-2.24-amd64
 │   └── fewer
-├── linux-glibc-2.24-i386
-│   └── fewer
-├── linux-glibc-2.28-alpha
-│   └── fewer
 ├── linux-glibc-2.28-arm64
-│   └── fewer
-├── linux-glibc-2.28-armel
-│   └── fewer
-├── linux-glibc-2.28-armhf
-│   └── fewer
-├── linux-glibc-2.28-hppa
-│   └── fewer
-├── linux-glibc-2.28-mips64el
-│   └── fewer
-├── linux-glibc-2.28-mipsel
-│   └── fewer
-├── linux-glibc-2.28-powerpc
-│   └── fewer
-├── linux-glibc-2.28-ppc64
-│   └── fewer
-├── linux-glibc-2.28-ppc64el
-│   └── fewer
-├── linux-glibc-2.28-riscv64
-│   └── fewer
-├── linux-glibc-2.28-sparc64
-│   └── fewer
-├── linux-glibc-2.28-x32
-│   └── fewer
-├── linux-glibc-2.29-amd64
-│   └── fewer
-├── linux-musl-amd64
-│   └── fewer
-├── linux-musl-i386
-│   └── fewer
-├── linux-uclibc-amd64
-│   └── fewer
-├── linux-uclibc-i386
 │   └── fewer
 ├── macos-amd64
 │   └── fewer
-├── minix-i386
-│   └── fewer
-├── miros-i386
-│   └── fewer
-├── netbsd-amd64
-│   └── fewer
-├── netbsd-i386
-│   └── fewer
-├── openbsd-amd64
-│   └── fewer
-├── openbsd-i386
-│   └── fewer
-├── wasm64
-│   └── fewer.wasm
 ├── windows-amd64
 │   └── fewer.exe
-└── windows-i386
-    └── fewer.exe
 ```
 
 # DOWNLOAD

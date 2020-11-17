@@ -1,0 +1,21 @@
+#!/bin/sh
+set -euf
+unset IFS
+
+sudo pkg update
+sudo pkg install -y \
+    ca_root_nss \
+    cmake \
+    cppcheck \
+    git \
+    python3 \
+    vera++    
+cp -r /usr/local/lib/vera++ /home/vagrant/.vera++
+ln -sf /vagrant/vera /home/vagrant/.vera++/profiles/default
+sudo python3 -m ensurepip
+sudo pip3 install --upgrade pip
+sudo pip3 install cpplint
+sudo pkg clean -y
+
+git clone https://github.com/mcandre/sail.git /home/vagrant/sail
+sudo sh -c "echo \"export PATH=\\\"\\\$PATH:/home/vagrant/sail/bin\\\"\" >>/etc/profile"

@@ -18,8 +18,8 @@ Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Val
 [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
 
 choco install -force -y python3
-$pythonPath = "C:\Python37"
-$pythonScriptPath = "C:\Python37\Scripts"
+$pythonPath = "C:\Python39"
+$pythonScriptPath = "C:\Python39\Scripts"
 $env:PATH += ";$pythonPath;$pythonScriptPath"
 $userPath = (Get-ItemProperty "Registry::HKEY_CURRENT_USER\Environment").PATH
 Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Value "$userPath;$pythonPath;$pythonScriptPath"

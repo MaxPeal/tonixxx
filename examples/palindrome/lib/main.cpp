@@ -17,8 +17,8 @@ using std::cin;
 using std::cout;
 using std::endl;
 
-void usage(char* program) {
-    cout << "Usage: " << program << "[-t]" << endl;
+void usage(char **argv) {
+    cout << "Usage: " << argv[0] << "[-t]" << endl;
 }
 
 int test() {
@@ -41,11 +41,11 @@ int test() {
     return EXIT_SUCCESS;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     std::string line;
 
     if (argc > 2) {
-        usage(argv[0]);
+        usage(argv);
         return EXIT_FAILURE;
     }
 

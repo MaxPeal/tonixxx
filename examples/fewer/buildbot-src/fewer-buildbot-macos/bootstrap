@@ -1,0 +1,17 @@
+#!/bin/sh
+set -euf
+unset IFS
+
+brew update || echo 'Homebrew partially broke during update'
+brew install \
+    cmake \
+    cppcheck \
+    valgrind \
+    vera++    
+cp -r /usr/local/lib/vera++ /Users/vagrant/.vera++
+ln -sf /vagrant/vera /Users/vagrant/.vera++/profiles/default
+
+pip3 install cpplint
+
+git clone https://github.com/mcandre/sail.git /Users/vagrant/sail
+sudo sh -c "echo \"export PATH=\\\"\\\$PATH:/Users/vagrant/sail/bin\\\"\" >>/etc/profile"

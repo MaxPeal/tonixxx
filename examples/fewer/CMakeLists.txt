@@ -69,34 +69,30 @@ else()
 endif()
 
 add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --inline-suppr --suppressions-list=suppressions.cfg -DX_PATH_MAX=1024 --error-exitcode=1 lib)
-add_custom_target(cpplint COMMAND ./recur-cpplint)
-add_custom_target(splint COMMAND ./recur-splint)
-add_custom_target(vera++ COMMAND ./recur-vera++)
-
-# Pending full C99 support
-add_custom_target(splint99)
+add_custom_target(cpplint COMMAND sail lib | xargs -n 1 cpplint)
+add_custom_target(vera++ COMMAND sail lib | xargs -n 1 vera++)
 
 # Missing linter ports
 if(
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
     CMAKE_SYSTEM_NAME MATCHES "MirBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
+    CMAKE_SYSTEM_NAME MATCHES "Minix" OR
     "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
 )
     add_custom_target(lint DEPENDS)
-elseif(CMAKE_SYSTEM_NAME MATCHES "Minix")
-    add_custom_target(lint DEPENDS splint99)
+elseif(MSVC)
+    add_custom_target(lint DEPENDS cppcheck)
 elseif(CMAKE_SYSTEM_VERSION MATCHES "HBSD")
-    add_custom_target(lint DEPENDS cpplint splint99)
+    add_custom_target(lint DEPENDS cpplint)
 elseif(
-    MSVC OR
     CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
     CMAKE_SYSTEM_VERSION MATCHES "gentoo" OR
     LSB_RELEASE MATCHES "Void"
 )
-    add_custom_target(lint DEPENDS cppcheck cpplint splint99)
+    add_custom_target(lint DEPENDS cppcheck cpplint)
 else()
-    add_custom_target(lint DEPENDS cppcheck cpplint vera++ splint99)
+    add_custom_target(lint DEPENDS cppcheck cpplint vera++)
 endif()
 
 if ("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
@@ -104,22 +100,6 @@ if ("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
     add_custom_target(valgrind_repl COMMAND valgrind --error-exitcode=1 --leak-check=full cloudabi-run -e bin/fewer <cloudabi-test-repl.yml 3<fewer-script.txt)
     add_custom_target(valgrind_repl_hanging COMMAND valgrind --error-exitcode=1 --leak-check=full cloudabi-run -e bin/fewer <cloudabi-test-repl.yml 3<fewer-script-hanging.txt)
     add_custom_target(valgrind DEPENDS valgrind_test valgrind_repl valgrind_repl_hanging)
-elseif(
-    "$ENV{CC}" MATCHES "aarch64" OR
-    "$ENV{CC}" MATCHES "alpha" OR
-    "$ENV{CC}" MATCHES "arm" OR
-    "$ENV{CC}" MATCHES "hppa" OR
-    "$ENV{CC}" MATCHES "mips" OR
-    "$ENV{CC}" MATCHES "powerpc" OR
-    "$ENV{CC}" MATCHES "riscv" OR
-    "$ENV{CC}" MATCHES "sparc" OR
-    "$ENV{CC}" MATCHES "x32"
-)
-    add_custom_target(valgrind_test)
-    add_custom_target(valgrind_repl)
-    add_custom_target(valgrind_repl_hanging)
-    add_custom_target(valgrind_usage)
-    add_custom_target(valgrind DEPENDS valgrind_test valgrind_repl valgrind_repl_hanging valgrind_usage)
 else()
     add_custom_target(valgrind_test COMMAND valgrind --error-exitcode=1 --leak-check=full bin/fewer -t)
     add_custom_target(valgrind_repl COMMAND valgrind --error-exitcode=1 --leak-check=full bin/fewer <fewer-script.txt)
@@ -131,6 +111,15 @@ endif()
 # Broken or missing valgrind
 if(
     MSVC OR
+    "$ENV{CC}" MATCHES "aarch64" OR
+    "$ENV{CC}" MATCHES "alpha" OR
+    "$ENV{CC}" MATCHES "arm" OR
+    "$ENV{CC}" MATCHES "hppa" OR
+    "$ENV{CC}" MATCHES "mips" OR
+    "$ENV{CC}" MATCHES "powerpc" OR
+    "$ENV{CC}" MATCHES "riscv" OR
+    "$ENV{CC}" MATCHES "sparc" OR
+    "$ENV{CC}" MATCHES "x32" OR
     CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
     CMAKE_SYSTEM_NAME MATCHES "FreeBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "Haiku" OR

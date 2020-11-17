@@ -1,0 +1,6 @@
+#!/bin/sh
+set -euf
+unset IFS
+
+cabal update
+cabal install happy

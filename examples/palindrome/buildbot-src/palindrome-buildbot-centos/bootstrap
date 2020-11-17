@@ -1,0 +1,18 @@
+#!/bin/sh
+set -euf
+unset IFS
+
+sudo yum update -y
+sudo yum install -y https://repo.ius.io/ius-release-el7.rpm
+sudo yum install -y epel-release
+sudo yum install -y \
+    cmake3 \
+    cppcheck \
+    git \
+    python36u \
+    python36u-pip \
+    valgrind
+sudo pip3.6 install cpplint
+
+git clone https://github.com/mcandre/sail.git /home/vagrant/sail
+sudo sh -c "echo \"export PATH=\\\"\\\$PATH:/home/vagrant/sail/bin\\\"\" >>/etc/profile"

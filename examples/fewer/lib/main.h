@@ -6,4 +6,4 @@
 #define _POSIX_C_SOURCE 200809L
 #endif
 
-void usage(char *program);
+void usage(char **argv);

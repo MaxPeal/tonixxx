@@ -108,8 +108,8 @@ void program_main(const argdata_t *ad) {
     exit(repl(config));
 }
 #else
-void usage(char *program) {
-    fprintf(stderr, "Usage: %s [OPTIONS]\n", program);
+void usage(char **argv) {
+    fprintf(stderr, "Usage: %s [OPTIONS]\n", argv[0]);
     fprintf(stderr, "Options:\n");
     fprintf(stderr, "-t\tRun self-test\n");
     fprintf(stderr, "-h\tShow usage information\n");
@@ -118,13 +118,12 @@ void usage(char *program) {
 int main(int argc, char **argv) {
     bool test = false;
     int i, root = -1;
-    char *program = argv[0];
 
     for (i = 1; i < argc; i++) {
         char *arg = argv[i];
 
         if (strcmp(arg, "-h") == 0) {
-            usage(program);
+            usage(argv);
             return EXIT_SUCCESS;
         }
 
@@ -133,7 +132,7 @@ int main(int argc, char **argv) {
             continue;
         }
 
-        usage(program);
+        usage(argv);
         return EXIT_FAILURE;
     }
 
@@ -168,7 +167,7 @@ int main(int argc, char **argv) {
 
         if (fd == -1) {
             DWORD err = GetLastError();
-            char *errStr = NULL;
+            char *err_msg = NULL;
             FormatMessageA(
                 FORMAT_MESSAGE_ALLOCATE_BUFFER |
                     FORMAT_MESSAGE_FROM_SYSTEM |
@@ -176,13 +175,13 @@ int main(int argc, char **argv) {
                 NULL,
                 err,
                 0,
-                (LPSTR) &errStr,
+                (LPSTR) &err_msg,
                 0,
                 NULL
             );
 
-            fprintf(stderr, "%s\n", errStr);
-            LocalFree(errStr);
+            fprintf(stderr, "%s\n", err_msg);
+            LocalFree(err_msg);
             return EXIT_FAILURE;
         }
 
