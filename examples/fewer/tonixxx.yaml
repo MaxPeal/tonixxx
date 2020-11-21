@@ -8,6 +8,7 @@ steps:
   - "cmake --build . --config Release"
   - "cmake --build . --target leaks"
   - "CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release"
+  - "cmake --build . --target doxygen"
 
 outputdirectory: "bin"
 
@@ -23,6 +24,7 @@ recipes:
       - "cmake3 --build . --config Release"
       - "cmake3 --build . --target leaks"
       - "CTEST_OUTPUT_ON_FAILURE=1 ctest3 -C Release"
+      - "cmake3 --build . --target doxygen"
   - label: "linux-glibc-2.24-amd64"
     box: "mcandre/fewer-buildbot-debian-amd64"
   - label: "linux-glibc-2.28-arm64"

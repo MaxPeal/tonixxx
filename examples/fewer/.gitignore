@@ -1,4 +1,11 @@
-bin
+html/
+latex/
+debug.log
+bin/
+debug/
+CTestTestfile.cmake
+Testing/
+
 # Created by https://www.gitignore.io/api/c,cmake
 
 ### C ###
@@ -49,23 +56,20 @@ bin
 # Kernel Module Compile Results
 *.mod*
 *.cmd
-.tmp_versions/
 modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
 
+
 ### CMake ###
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
-Testing
-/Makefile
+Makefile
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
-build
-
 
 # End of https://www.gitignore.io/api/c,cmake

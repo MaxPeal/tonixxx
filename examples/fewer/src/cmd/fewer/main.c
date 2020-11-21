@@ -1,84 +1,31 @@
-// Copyright 2017 Andrew Pennebaker
+/**
+ * @copyright 2020 YelloSoft
+ */
 
-#include "fewer.h"
+#include "main.h"
 
 #include <errno.h>
 #include <fcntl.h>
-#include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 
-#if defined(_MSC_VER)
+#if defined(__CloudABI__)
+#include <argdata.h>
+#include <program.h>
+#elif defined(_MSC_VER)
 #include <direct.h>
 #include <io.h>
 #else
 #include <unistd.h>
 #endif
 
-#if defined(_MSC_VER) || defined(__MirBSD__) || defined(__minix)
-#include <stdarg.h>
-#endif
-
-#if defined(_MSC_VER)
-int fchdir(int fd) {
-    DWORD result;
-    char base_path[X_PATH_MAX];
-
-    result = GetFinalPathNameByHandleA(
-        (HANDLE) fd,
-        base_path,
-        sizeof(base_path)/sizeof(base_path[0]) - 1,
-        FILE_NAME_NORMALIZED
-    );
-
-    if (result > sizeof(base_path)/sizeof(base_path[0])) {
-        return -1;
-    }
-
-    if (result == 0) {
-        return -1;
-    }
-
-    errno = 0;
-    fd = _chdir(base_path);
-    return fd;
-}
-#endif
-
-#if defined(_MSC_VER) || defined(__MirBSD__) || defined(__minix)
-int openat(int fd, const char *path, int flags, ...) {
-    mode_t mode = 0;
-
-    if (flags & O_CREAT) {
-        va_list arg;
-        va_start(arg, flags);
-        mode = va_arg(arg, mode_t);
-        va_end(arg);
-    }
-
-    errno = 0;
-    if (fchdir(fd) != 0) {
-        return -1;
-    }
-
-    errno = 0;
-#if defined(_MSC_VER)
-    if (_sopen_s(&fd, path, flags, _SH_DENYNO, mode) != 0) {
-        return -1;
-    }
-#else
-    fd = open(path, flags, mode);
-#endif
-
-    return fd;
-}
-#endif
+#include "fewer/fewer.h"
 
 static const char *PROMPT = "> ";
 
-int show_commands(FILE *console) {
+static int show_commands(FILE *console) {
     fprintf(console, "l <path>\tLoad file\n");
     fprintf(console, "n\t\tShow next byte\n");
     fprintf(console, "r <hex pair>\tRender an input byte\n");
@@ -92,36 +39,7 @@ int show_commands(FILE *console) {
 #endif
 }
 
-void render_boi(FILE *console, unsigned int b, /*@out@*/ char *s, size_t s_len) {
-    int write_count = snprintf(s, s_len, "%02x", b);
-
-    if (write_count < 0) {
-        fprintf(console, "Encoding error\n");
-    } else if ((size_t) write_count > s_len - 1) {
-        fprintf(console, "Buffer requires %d character allocation to render value\n", write_count);
-    }
-}
-
-short parse_boi(char *s) {
-    char *endptr = s;
-    unsigned long int n = strtoul(s, &endptr, 16);
-
-    if (endptr == s) {
-        return -1;
-    }
-
-    if (n == ULONG_MAX) {
-        return -1;
-    }
-
-    if (n > UINT_MAX) {
-        return -1;
-    }
-
-    return (short) n;
-}
-
-void chomp(char *s, size_t length) {
+static void chomp(char *s, size_t length) {
     if (length == 0) {
         return;
     }
@@ -140,7 +58,7 @@ void chomp(char *s, size_t length) {
     }
 }
 
-bool validate_fewer_config(fewer_config *config) {
+static bool validate_fewer_config(fewer_config *config) {
     if (config->console_err == NULL) {
         return false;
     }
@@ -167,7 +85,7 @@ bool validate_fewer_config(fewer_config *config) {
     return true;
 }
 
-int unit_test(fewer_config *config) {
+static int unit_test(fewer_config *config) {
     char hex_buf[3];
 
     for (short d, c = 0; c < 0x100; c++) {
@@ -188,7 +106,7 @@ int unit_test(fewer_config *config) {
     return EXIT_SUCCESS;
 }
 
-int repl(fewer_config *config) {
+static int repl(fewer_config *config) {
     int fd, c;
     FILE *f = NULL;
     char hex_buf[3], instruction[X_PATH_MAX + 2], command = '\0', *content = NULL;
@@ -396,3 +314,204 @@ int repl(fewer_config *config) {
         }
     }
 }
+
+#if defined(__CloudABI__)
+void program_main(const argdata_t *ad) {
+    argdata_map_iterator_t ad_iter;
+    const argdata_t *key_ad, *value_ad;
+    const char *key = NULL;
+    int
+        console_err_fd = -1,
+        console_out_fd = -1,
+        console_in_fd = -1,
+        root = -1;
+    FILE
+        *console_err = NULL,
+        *console_out = NULL,
+        *console_in = NULL;
+    bool test = false;
+
+    argdata_map_iterate(ad, &ad_iter);
+
+    while (argdata_map_get(&ad_iter, &key_ad, &value_ad)) {
+        if (argdata_get_str_c(key_ad, &key) == 0) {
+            if (strcmp(key, "stderr") == 0) {
+                argdata_get_fd(value_ad, &console_err_fd);
+
+                //
+                // Fix assert(), perror(), etc.
+                //
+
+                errno = 0;
+                FILE *f2 = fdopen(console_err_fd, "w");
+
+                if (f2 == NULL) {
+                    exit(EXIT_FAILURE);
+                }
+
+                fswap(f2, stderr);
+
+                errno = 0;
+                if (fclose(f2) == EOF) {
+                    perror(NULL);
+                    exit(EXIT_FAILURE);
+                }
+
+                console_err = stderr;
+            } else if (strcmp(key, "stdout") == 0) {
+                argdata_get_fd(value_ad, &console_out_fd);
+
+                errno = 0;
+                console_out = fdopen(console_out_fd, "w");
+
+                if (console_out == NULL) {
+                    perror(NULL);
+                    exit(EXIT_FAILURE);
+                }
+            } else if (strcmp(key, "stdin") == 0) {
+                argdata_get_fd(value_ad, &console_in_fd);
+
+                errno = 0;
+                console_in = fdopen(console_in_fd, "r");
+
+                if (console_in == NULL) {
+                    perror(NULL);
+                    exit(EXIT_FAILURE);
+                }
+            } else if (strcmp(key, "root") == 0) {
+                argdata_get_fd(value_ad, &root);
+            } else if (strcmp(key, "test") == 0) {
+                argdata_get_bool(value_ad, &test);
+            }
+        }
+
+        argdata_map_next(&ad_iter);
+    }
+
+    fewer_config *config = &(fewer_config) {
+        .console_err = console_err,
+        .console_out = console_out,
+        .console_in = console_in,
+        .root = root,
+        .test = (int) test
+    };
+
+    if (config->test) {
+        exit(unit_test(config));
+    }
+
+    exit(repl(config));
+}
+#else
+void usage(char **argv) {
+    fprintf(stderr, "Usage: %s [OPTIONS]\n", argv[0]);
+    fprintf(stderr, "Options:\n");
+    fprintf(stderr, "-t\tRun self-test\n");
+    fprintf(stderr, "-h\tShow usage information\n");
+}
+
+int main(int argc, char **argv) {
+    bool test = false;
+    int i, root = -1;
+
+    for (i = 1; i < argc; i++) {
+        char *arg = argv[i];
+
+        if (strcmp(arg, "-h") == 0) {
+            usage(argv);
+            return EXIT_SUCCESS;
+        }
+
+        if (strcmp(arg, "-t") == 0) {
+            test = true;
+            continue;
+        }
+
+        usage(argv);
+        return EXIT_FAILURE;
+    }
+
+    if (!test) {
+        char cwd[X_PATH_MAX];
+        char *cwd_ptr;
+
+        errno = 0;
+
+#if defined(_MSC_VER)
+        cwd_ptr = _getcwd(cwd, X_PATH_MAX);
+#else
+        cwd_ptr = getcwd(cwd, X_PATH_MAX);
+#endif
+
+        if (cwd_ptr == NULL) {
+            perror(NULL);
+            return EXIT_FAILURE;
+        }
+
+#if defined(_MSC_VER)
+        int fd = (int) CreateFileA(
+            cwd,
+            GENERIC_READ,
+            FILE_SHARE_READ |
+                FILE_SHARE_DELETE,
+            NULL,
+            OPEN_EXISTING,
+            FILE_FLAG_BACKUP_SEMANTICS,
+            NULL
+        );
+
+        if (fd == -1) {
+            DWORD err = GetLastError();
+            char *err_msg = NULL;
+            FormatMessageA(
+                FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                    FORMAT_MESSAGE_FROM_SYSTEM |
+                    FORMAT_MESSAGE_IGNORE_INSERTS,
+                NULL,
+                err,
+                0,
+                (LPSTR) &err_msg,
+                0,
+                NULL
+            );
+
+            fprintf(stderr, "%s\n", err_msg);
+            LocalFree(err_msg);
+            return EXIT_FAILURE;
+        }
+
+        root = fd;
+#else
+        errno = 0;
+        FILE *cwd_file = fopen(cwd, "r");
+
+        if (cwd_file == NULL) {
+            perror(NULL);
+            return EXIT_FAILURE;
+        }
+
+        errno = 0;
+        root = fileno(cwd_file);
+#endif
+
+        if (root == -1) {
+            perror(NULL);
+            return EXIT_FAILURE;
+        }
+    }
+
+    fewer_config *config = &(fewer_config) {
+        .console_err = stderr,
+        .console_out = stdout,
+        .console_in = stdin,
+        .root = root,
+        .test = test
+    };
+
+    if (config->test) {
+        return unit_test(config);
+    }
+
+    return repl(config);
+}
+#endif
