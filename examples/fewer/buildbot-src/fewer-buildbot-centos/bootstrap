@@ -8,11 +8,13 @@ sudo yum install -y epel-release
 sudo yum install -y \
     cmake3 \
     cppcheck \
+    doxygen \
     git \
+    graphviz \
     python36u \
     python36u-pip \
     valgrind
-sudo pip3.6 install cpplint
+sudo pip3.6 install -r /vagrant/requirements-dev.txt
 
 git clone https://github.com/mcandre/sail.git /home/vagrant/sail
 sudo sh -c "echo \"export PATH=\\\"\\\$PATH:/home/vagrant/sail/bin\\\"\" >>/etc/profile"

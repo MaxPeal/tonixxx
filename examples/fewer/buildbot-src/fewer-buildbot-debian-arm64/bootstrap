@@ -6,7 +6,9 @@ apt-get update
 apt-get install -y \
     cmake \
     cppcheck \
+    doxygen \
     git \
+    graphviz \
     make \
     python3-pip \
     python3-setuptools \
@@ -21,7 +23,7 @@ rm -rf /var/lib/apt/lists/* \
     /var/cache/apt/srcpkgcache.bin
 
 pip3 install wheel
-pip3 install cpplint
+pip3 install -r /vagrant/requirements-dev.txt
 
 git clone https://github.com/mcandre/sail.git /home/vagrant/sail
 echo "export PATH=\"\$PATH:/home/vagrant/sail/bin\"" >>/etc/profile
