@@ -170,5 +170,6 @@ tonixxx is not magic, but simply a Go wrapper for Vagrant. It won't do the hard 
 * Does support UNIX and Windows hosts, as well as UNIX and Windows targets
 * Does support configuration commenting
 * Works best with *reasonably modern* guests featuring preemptive multitasking
+* WSL hosts may present [difficulties](https://github.com/hashicorp/vagrant/issues/12065)
 
 Good luck and keep coding!
