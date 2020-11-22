@@ -49,7 +49,7 @@ $ cmake[3] --build . --target lint
 $ cmake[3] --build . --config Release
 $ cmake[3] --build . --target leaks
 $ CTEST_OUTPUT_ON_FAILURE=1 ctest[3] -C Release
-$ cmake --build . --target doxygen
+$ cmake --build . --target doc
 ```
 
 # PORT
