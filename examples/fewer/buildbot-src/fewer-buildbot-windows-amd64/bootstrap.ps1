@@ -37,4 +37,4 @@ $env:PATH += ";$pythonPath;$pythonScriptPath"
 $userPath = (Get-ItemProperty "Registry::HKEY_CURRENT_USER\Environment").PATH
 Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Value "$userPath;$pythonPath;$pythonScriptPath"
 python -m pip install -U pip
-pip3 install -r C:\vagrant\requirements-dev.txt
+pip3 install -r C:\Users\vagrant\AppData\Local\Temp\requirements-dev.txt

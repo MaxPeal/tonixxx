@@ -23,7 +23,7 @@ rm -rf /var/lib/apt/lists/* \
     /var/cache/apt/srcpkgcache.bin
 
 pip3 install wheel
-pip3 install -r /vagrant/requirements-dev.txt
+pip3 install -r /tmp/requirements-dev.txt
 
 git clone https://github.com/mcandre/sail.git /home/vagrant/sail
 echo "export PATH=\"\$PATH:/home/vagrant/sail/bin\"" >>/etc/profile

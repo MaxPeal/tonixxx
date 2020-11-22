@@ -14,7 +14,7 @@ sudo yum install -y \
     python36u \
     python36u-pip \
     valgrind
-sudo pip3.6 install -r /vagrant/requirements-dev.txt
+sudo pip3.6 install -r /tmp/requirements-dev.txt
 
 git clone https://github.com/mcandre/sail.git /home/vagrant/sail
 sudo sh -c "echo \"export PATH=\\\"\\\$PATH:/home/vagrant/sail/bin\\\"\" >>/etc/profile"

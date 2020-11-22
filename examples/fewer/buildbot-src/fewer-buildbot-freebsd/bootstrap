@@ -16,7 +16,7 @@ cp -r /usr/local/lib/vera++ /home/vagrant/.vera++
 ln -sf /vagrant/vera /home/vagrant/.vera++/profiles/default
 sudo python3 -m ensurepip
 sudo pip3 install --upgrade pip
-sudo pip3 install -r /vagrant/requirements-dev.txt
+sudo pip3 install -r /tmp/requirements-dev.txt
 sudo pkg clean -y
 
 git clone https://github.com/mcandre/sail.git /home/vagrant/sail

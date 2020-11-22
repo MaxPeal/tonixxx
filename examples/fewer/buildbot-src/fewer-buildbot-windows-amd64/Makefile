@@ -4,7 +4,7 @@ BOX=$(BOX_BASENAME).box
 
 .PHONY: launch-vm clean-vm clean-boxes clean-vagrant-metadata
 
-launch-vm: Vagrantfile bootstrap.ps1
+launch-vm: Vagrantfile bootstrap.ps1 requirements-dev.txt
 	vagrant up
 
 clean-vm:
