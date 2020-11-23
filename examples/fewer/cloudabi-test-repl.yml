@@ -1,7 +1,0 @@
-%TAG ! tag:nuxi.nl,2015:cloudabi/
----
-stderr: !fd "stderr"
-stdout: !fd "stdout"
-stdin: !fd 3
-root: !file
-  path: "."

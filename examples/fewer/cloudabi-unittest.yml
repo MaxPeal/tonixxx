@@ -1,5 +1,0 @@
-%TAG ! tag:nuxi.nl,2015:cloudabi/
----
-stderr: !fd "stderr"
-stdout: !fd "stdout"
-test: !!bool true

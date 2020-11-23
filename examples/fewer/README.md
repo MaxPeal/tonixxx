@@ -19,23 +19,9 @@ $ fewer
 $
 ```
 
-Note that load (`l`) file path is relative to a root directory (either configured explicitly with CloudABI, or else the current working directory).
+Note that load (`l`) file path is relative to the current working directory.
 
 See the `h` command for more information.
-
-# CONFIGURATION
-
-## Conventional libc
-
-See `fewer -h` for usage information.
-
-## CloudABI
-
-Supply CloudABI YAML content to stdin. See [cloudabi.yml](cloudabi.yml) and related examples.
-
-A `root` path for restricting file access is required, unless `test` is enabled.
-
-Note that some assertions/perrors may trigger an abort when `stderr` is unconfigured.
 
 # LICENSE
 

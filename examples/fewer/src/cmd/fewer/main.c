@@ -11,10 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__CloudABI__)
-#include <argdata.h>
-#include <program.h>
-#elif defined(_MSC_VER)
+#if defined(_MSC_VER)
 #include <direct.h>
 #include <io.h>
 #else
@@ -41,18 +38,11 @@
 
 static const char *PROMPT = "> ";
 
-static int show_commands(FILE *console) {
+static void show_commands(FILE *console) {
     fprintf(console, "l <path>\tLoad file\n");
     fprintf(console, "n\t\tShow next byte\n");
     fprintf(console, "r <hex pair>\tRender an input byte\n");
     fprintf(console, "q\t\tQuit\n");
-
-#if defined(__CloudABI__)
-    errno = 0;
-    return fflush(console);
-#else
-    return 0;
-#endif
 }
 
 static void chomp(char *s, size_t length) {
@@ -189,14 +179,6 @@ static int repl(fewer_config *config) {
     while (true) {
         fprintf(config->console_out, "%s", PROMPT);
 
-#if defined(__CloudABI__)
-        errno = 0;
-        if (fflush(config->console_out) == EOF) {
-            perror(NULL);
-            return EXIT_FAILURE;
-        }
-#endif
-
         if (fgets(instruction, sizeof(instruction)/sizeof(instruction[0]), config->console_in) == NULL) {
             if (ferror(config->console_in) != 0) {
                 return EXIT_FAILURE;
@@ -208,12 +190,7 @@ static int repl(fewer_config *config) {
         chomp(instruction, strlen(instruction));
 
         if (strlen(instruction) == 0) {
-            errno = 0;
-            if (show_commands(config->console_err) == EOF) {
-                perror(NULL);
-                return EXIT_FAILURE;
-            }
-
+            show_commands(config->console_err);
             continue;
         }
 
@@ -224,10 +201,7 @@ static int repl(fewer_config *config) {
                 content = strchr(instruction, ' ');
 
                 if (content == NULL || strlen(content) < 2) {
-                    if (show_commands(config->console_err) == EOF) {
-                        return EXIT_FAILURE;
-                    }
-
+                    show_commands(config->console_err);
                     break;
                 }
 
@@ -245,15 +219,6 @@ static int repl(fewer_config *config) {
 
                 if (fd == -1) {
                     perror(NULL);
-
-#if defined(__CloudABI__)
-                    errno = 0;
-                    if (fflush(config->console_err) == EOF) {
-                        perror(NULL);
-                        return EXIT_FAILURE;
-                    }
-#endif
-
                     break;
                 }
 
@@ -267,29 +232,12 @@ static int repl(fewer_config *config) {
 
                 if (f == NULL) {
                     perror(NULL);
-
-#if defined(__CloudABI__)
-                    errno = 0;
-                    if (fflush(config->console_err) == EOF) {
-                        perror(NULL);
-                        return EXIT_FAILURE;
-                    }
-#endif
                 }
 
                 break;
             case 'n':
                 if (f == NULL) {
                     fprintf(config->console_err, "No file loaded\n");
-
-#if defined(__CloudABI__)
-                    errno = 0;
-                    if (fflush(config->console_err) == EOF) {
-                        perror(NULL);
-                        return EXIT_FAILURE;
-                    }
-#endif
-
                     break;
                 }
 
@@ -307,34 +255,19 @@ static int repl(fewer_config *config) {
 
                 render_boi(config->console_err, (unsigned int) c, &hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]));
                 fprintf(config->console_out, "%s\n", hex_buf);
-
-#if defined(__CloudABI__)
-                errno = 0;
-                if (fflush(config->console_out) == EOF) {
-                    perror(NULL);
-                    return EXIT_FAILURE;
-                }
-#endif
-
                 break;
             case 'r':
                 content = strchr(instruction, ' ');
 
                 if (content == NULL || strlen(content) < 2) {
-                    if (show_commands(config->console_err) == EOF) {
-                        return EXIT_FAILURE;
-                    }
-
+                    show_commands(config->console_err);
                     break;
                 }
 
                 content++;
 
                 if (strlen(content) > sizeof(hex_buf)/sizeof(hex_buf[0]) - 1) {
-                    if (show_commands(config->console_err) == EOF) {
-                        return EXIT_FAILURE;
-                    }
-
+                    show_commands(config->console_err);
                     break;
                 }
 
@@ -348,28 +281,10 @@ static int repl(fewer_config *config) {
 
                 if (c == -1) {
                     fprintf(config->console_err, "Error parsing hexadecimal %s\n", hex_buf);
-
-#if defined(__CloudABI__)
-                    errno = 0;
-                    if (fflush(config->console_err) == EOF) {
-                        perror(NULL);
-                        return EXIT_FAILURE;
-                    }
-#endif
-
                     break;
                 }
 
                 fprintf(config->console_out, "%c\n", (unsigned int) c);
-
-#if defined(__CloudABI__)
-                errno = 0;
-                if (fflush(config->console_out) == EOF) {
-                    perror(NULL);
-                    return EXIT_FAILURE;
-                }
-#endif
-
                 break;
             case 'q':
                 if (f != NULL && fclose(f) == EOF) {
@@ -379,102 +294,12 @@ static int repl(fewer_config *config) {
 
                 return EXIT_SUCCESS;
             default:
-                if (show_commands(config->console_err) == EOF) {
-                    return EXIT_FAILURE;
-                }
+                show_commands(config->console_err);
         }
     }
 }
 
-#if defined(__CloudABI__)
-void program_main(const argdata_t *ad) {
-    argdata_map_iterator_t ad_iter;
-    const argdata_t *key_ad, *value_ad;
-    const char *key = NULL;
-    int
-        console_err_fd = -1,
-        console_out_fd = -1,
-        console_in_fd = -1,
-        root = -1;
-    FILE
-        *console_err = NULL,
-        *console_out = NULL,
-        *console_in = NULL;
-    bool test = false;
-
-    argdata_map_iterate(ad, &ad_iter);
-
-    while (argdata_map_get(&ad_iter, &key_ad, &value_ad)) {
-        if (argdata_get_str_c(key_ad, &key) == 0) {
-            if (strcmp(key, "stderr") == 0) {
-                argdata_get_fd(value_ad, &console_err_fd);
-
-                //
-                // Fix assert(), perror(), etc.
-                //
-
-                errno = 0;
-                FILE *f2 = fdopen(console_err_fd, "w");
-
-                if (f2 == NULL) {
-                    exit(EXIT_FAILURE);
-                }
-
-                fswap(f2, stderr);
-
-                errno = 0;
-                if (fclose(f2) == EOF) {
-                    perror(NULL);
-                    exit(EXIT_FAILURE);
-                }
-
-                console_err = stderr;
-            } else if (strcmp(key, "stdout") == 0) {
-                argdata_get_fd(value_ad, &console_out_fd);
-
-                errno = 0;
-                console_out = fdopen(console_out_fd, "w");
-
-                if (console_out == NULL) {
-                    perror(NULL);
-                    exit(EXIT_FAILURE);
-                }
-            } else if (strcmp(key, "stdin") == 0) {
-                argdata_get_fd(value_ad, &console_in_fd);
-
-                errno = 0;
-                console_in = fdopen(console_in_fd, "r");
-
-                if (console_in == NULL) {
-                    perror(NULL);
-                    exit(EXIT_FAILURE);
-                }
-            } else if (strcmp(key, "root") == 0) {
-                argdata_get_fd(value_ad, &root);
-            } else if (strcmp(key, "test") == 0) {
-                argdata_get_bool(value_ad, &test);
-            }
-        }
-
-        argdata_map_next(&ad_iter);
-    }
-
-    fewer_config *config = &(fewer_config) {
-        .console_err = console_err,
-        .console_out = console_out,
-        .console_in = console_in,
-        .root = root,
-        .test = (int) test
-    };
-
-    if (config->test) {
-        exit(unit_test(config));
-    }
-
-    exit(repl(config));
-}
-#else
-void usage(char **argv) {
+static void usage(char **argv) {
     fprintf(stderr, "Usage: %s [OPTIONS]\n", argv[0]);
     fprintf(stderr, "Options:\n");
     fprintf(stderr, "-t\tRun self-test\n");
@@ -546,7 +371,6 @@ int main(int argc, char **argv) {
                 NULL
             );
 
-            fprintf(stderr, "%s\n", err_msg);
             LocalFree(err_msg);
             return EXIT_FAILURE;
         }
@@ -563,12 +387,12 @@ int main(int argc, char **argv) {
 
         errno = 0;
         root = fileno(cwd_file);
-#endif
 
         if (root == -1) {
             perror(NULL);
             return EXIT_FAILURE;
         }
+#endif
     }
 
     fewer_config *config = &(fewer_config) {
@@ -585,4 +409,3 @@ int main(int argc, char **argv) {
 
     return repl(config);
 }
-#endif
