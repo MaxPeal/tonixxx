@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 enable_testing()
+list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 
 if("$ENV{CLOUD_ABI_TRIPLET}" MATCHES "cloudabi")
     set(CMAKE_C_COMPILER "$ENV{CLOUD_ABI_TRIPLET}-cc")

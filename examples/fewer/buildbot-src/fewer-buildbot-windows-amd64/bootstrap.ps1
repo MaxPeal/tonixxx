@@ -19,10 +19,23 @@ $userPath = (Get-ItemProperty "Registry::HKEY_CURRENT_USER\Environment").PATH
 Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Value "$userPath;$cppcheckPath"
 
 #
-# Install doxygen + graphviz
+# Install doxygen, add to session PATH, persist PATH.
 #
-choco install -force -y doxygen.portable
-choco install -force -y graphviz.portable
+choco install -force -y doxygen.install
+$doxygenPath = "C:\Program Files\doxygen\bin"
+$env:PATH += ";$doxygenPath"
+$userPath = (Get-ItemProperty "Registry::HKEY_CURRENT_USER\Environment").PATH
+Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Value "$userPath;$doxygenPath"
+
+#
+# Install graphviz, add to session PATH, persist PATH.
+#
+choco install -force -y graphviz
+$doxygenPath = "C:\Program Files\Graphviz 2.44.1\bin"
+$env:PATH += ";$doxygenPath"
+$userPath = (Get-ItemProperty "Registry::HKEY_CURRENT_USER\Environment").PATH
+Set-ItemProperty -Path "Registry::HKEY_CURRENT_USER\Environment" -Name PATH -Value "$userPath;$doxygenPath"
+dot -c
 
 # Update PowerShell SSL protocols
 [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"

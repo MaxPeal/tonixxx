@@ -58,6 +58,61 @@ static void chomp(char *s, size_t length) {
     }
 }
 
+#if defined(_MSC_VER)
+int fchdir(int fd) {
+    DWORD result;
+    char base_path[X_PATH_MAX];
+
+    result = GetFinalPathNameByHandleA(
+        (HANDLE) fd,
+        base_path,
+        sizeof(base_path)/sizeof(base_path[0]) - 1,
+        FILE_NAME_NORMALIZED
+    );
+
+    if (result > sizeof(base_path)/sizeof(base_path[0])) {
+        return -1;
+    }
+
+    if (result == 0) {
+        return -1;
+    }
+
+    errno = 0;
+    fd = _chdir(base_path);
+    return fd;
+}
+#endif
+
+#if defined(_MSC_VER) || defined(__MirBSD__) || defined(__minix)
+int openat(int fd, const char *path, int flags, ...) {
+    mode_t mode = 0;
+
+    if (flags & O_CREAT) {
+        va_list arg;
+        va_start(arg, flags);
+        mode = va_arg(arg, mode_t);
+        va_end(arg);
+    }
+
+    errno = 0;
+    if (fchdir(fd) != 0) {
+        return -1;
+    }
+
+    errno = 0;
+#if defined(_MSC_VER)
+    if (_sopen_s(&fd, path, flags, _SH_DENYNO, mode) != 0) {
+        return -1;
+    }
+#else
+    fd = open(path, flags, mode);
+#endif
+
+    return fd;
+}
+#endif
+
 static bool validate_fewer_config(fewer_config *config) {
     if (config->console_err == NULL) {
         return false;

@@ -50,19 +50,6 @@ typedef int mode_t;
 int fchdir(int fd);
 #endif
 
-#if defined(_MSC_VER) || defined(__MirBSD__) || defined(__minix)
-/**
- * openat shims missing POSIX feature.
- *
- * @param fd directory
- * @param path relative file location
- * @param flags options
- *
- * @returns -1 on error.
- */
-int openat(int fd, const char *path, int flags, ...);
-#endif
-
 /**
  * render_boi formats hexadecimal pairs.
  *
