@@ -54,24 +54,8 @@ add_custom_target(cpplint COMMAND sail include src | xargs -n 1 cpplint)
 add_custom_target(vera++ COMMAND sail include src | xargs -n 1 vera++)
 
 # Missing linter ports
-if(
-    CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
-    CMAKE_SYSTEM_NAME MATCHES "MirBSD" OR
-    CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
-    CMAKE_SYSTEM_NAME MATCHES "Minix" OR
-    "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
-)
-    add_custom_target(lint DEPENDS)
-elseif(MSVC)
+if(MSVC)
     add_custom_target(lint DEPENDS cppcheck)
-elseif(CMAKE_SYSTEM_VERSION MATCHES "HBSD")
-    add_custom_target(lint DEPENDS cpplint)
-elseif(
-    CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
-    CMAKE_SYSTEM_VERSION MATCHES "gentoo" OR
-    LSB_RELEASE MATCHES "Void"
-)
-    add_custom_target(lint DEPENDS cppcheck cpplint)
 else()
     add_custom_target(lint DEPENDS cppcheck cpplint vera++)
 endif()
@@ -86,26 +70,8 @@ add_custom_target(valgrind DEPENDS valgrind_test valgrind_repl valgrind_repl_han
 if(
     MSVC OR
     "$ENV{CC}" MATCHES "aarch64" OR
-    "$ENV{CC}" MATCHES "alpha" OR
-    "$ENV{CC}" MATCHES "arm" OR
-    "$ENV{CC}" MATCHES "hppa" OR
-    "$ENV{CC}" MATCHES "mips" OR
-    "$ENV{CC}" MATCHES "powerpc" OR
-    "$ENV{CC}" MATCHES "riscv" OR
-    "$ENV{CC}" MATCHES "sparc" OR
-    "$ENV{CC}" MATCHES "x32" OR
-    CMAKE_SYSTEM_NAME MATCHES "DragonFly" OR
     CMAKE_SYSTEM_NAME MATCHES "FreeBSD" OR
-    CMAKE_SYSTEM_NAME MATCHES "Haiku" OR
-    CMAKE_SYSTEM_VERSION MATCHES "HBSD" OR
-    CMAKE_SYSTEM_NAME MATCHES "SunOS" OR
-    CMAKE_SYSTEM_NAME MATCHES "Darwin" OR
-    CMAKE_SYSTEM_NAME MATCHES "Minix" OR
-    CMAKE_SYSTEM_NAME MATCHES "MirBSD" OR
-    CMAKE_SYSTEM_NAME MATCHES "NetBSD" OR
-    LSB_RELEASE MATCHES "Void" OR
-    CMAKE_SYSTEM_NAME MATCHES "OpenBSD" OR
-    "${CMAKE_GNU_C_MACHINE}" MATCHES "uclibc"
+    CMAKE_SYSTEM_NAME MATCHES "Darwin"
 )
     add_custom_target(leaks)
 else()
