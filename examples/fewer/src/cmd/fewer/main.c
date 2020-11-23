@@ -23,6 +23,22 @@
 
 #include "fewer/fewer.h"
 
+#if defined(_XOPEN_PATH_MAX)
+#define X_PATH_MAX _XOPEN_PATH_MAX
+#elif defined(MAXPATHLEN)
+#define X_PATH_MAX MAXPATHLEN
+#elif defined(_POSIX_PATH_MAX)
+#define X_PATH_MAX _POSIX_PATH_MAX
+#elif defined(_MAX_PATH)
+#define X_PATH_MAX _MAX_PATH
+#elif defined(_PC_PATH_MAX)
+#define X_PATH_MAX _PC_PATH_MAX
+#elif defined(PATH_MAX)
+#define X_PATH_MAX PATH_MAX
+#else
+#define X_PATH_MAX 1024
+#endif
+
 static const char *PROMPT = "> ";
 
 static int show_commands(FILE *console) {
@@ -59,7 +75,7 @@ static void chomp(char *s, size_t length) {
 }
 
 #if defined(_MSC_VER)
-int fchdir(int fd) {
+static int fchdir(int fd) {
     DWORD result;
     char base_path[X_PATH_MAX];
 

@@ -66,7 +66,7 @@ enable_testing()
 
 add_test(NAME palindrometest COMMAND palindrome -t)
 
-add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --inline-suppr --suppressions-list=suppressions.cfg -DX_PATH_MAX=1024 --error-exitcode=1 lib)
+add_custom_target(cppcheck COMMAND cppcheck -q --enable=all --inline-suppr --suppressions-list=suppressions.cfg --error-exitcode=1 lib)
 add_custom_target(cpplint COMMAND sail lib | xargs -n 1 cpplint)
 add_custom_target(vera++ COMMAND sail lib | xargs -n 1 vera++)
 

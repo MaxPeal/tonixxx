@@ -24,32 +24,6 @@ typedef int mode_t;
 #include <sys/param.h>
 #endif
 
-#if defined(_XOPEN_PATH_MAX)
-/** X_PATH_MAX shims missing POSIX feature. */
-#define X_PATH_MAX _XOPEN_PATH_MAX
-#elif defined(MAXPATHLEN)
-/** X_PATH_MAX shims missing POSIX feature. */
-#define X_PATH_MAX MAXPATHLEN
-#elif defined(_POSIX_PATH_MAX)
-/** X_PATH_MAX shims missing POSIX feature. */
-#define X_PATH_MAX _POSIX_PATH_MAX
-#elif defined(_MAX_PATH)
-/** X_PATH_MAX shims missing POSIX feature. */
-#define X_PATH_MAX _MAX_PATH
-#elif defined(PATH_MAX)
-/** X_PATH_MAX shims missing POSIX feature. */
-#define X_PATH_MAX PATH_MAX
-#else
-/** X_PATH_MAX shims missing POSIX feature. */
-#define X_PATH_MAX 1024
-#endif
-
-#if defined(_MSC_VER)
-// Change directory given a directory file descriptor.
-// Returns -1 and sets errno on failure.
-int fchdir(int fd);
-#endif
-
 /**
  * render_boi formats hexadecimal pairs.
  *
