@@ -24,7 +24,7 @@ endif()
 set(WINDOWS_C_FLAGS "${CMAKE_C_FLAGS} /O2 /WX /W4 /wd4204")
 set(UNIX_C_FLAGS "${CMAKE_C_FLAGS} -O2 -Werror")
 set(GNU_C_FLAGS "${UNIX_C_FLAGS} -std=gnu99 -Wextra -Wall -pedantic")
-set(LLVM_FLAGS "-Wmost -Weverything -Wno-documentation-unknown-command")
+set(LLVM_FLAGS "-Wmost -Weverything -Wno-documentation-unknown-command -Wno-reserved-id-macro")
 set(CLANG_C_FLAGS "${GNU_C_FLAGS} ${LLVM_FLAGS}")
 
 if(MSVC)

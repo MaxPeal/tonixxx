@@ -11,6 +11,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(__APPLE__)
+#include <sys/syslimits.h>
+#else
+#include <limits.h>
+#endif
+
 #if defined(_MSC_VER)
 #include <direct.h>
 #include <io.h>
@@ -19,20 +25,6 @@
 #endif
 
 #include "fewer/fewer.h"
-
-#if defined(_XOPEN_PATH_MAX)
-#define X_PATH_MAX _XOPEN_PATH_MAX
-#elif defined(MAXPATHLEN)
-#define X_PATH_MAX MAXPATHLEN
-#elif defined(_POSIX_PATH_MAX)
-#define X_PATH_MAX _POSIX_PATH_MAX
-#elif defined(_MAX_PATH)
-#define X_PATH_MAX _MAX_PATH
-#elif defined(PATH_MAX)
-#define X_PATH_MAX PATH_MAX
-#else
-#define X_PATH_MAX 1024
-#endif
 
 static const char *PROMPT = "> ";
 
@@ -64,11 +56,14 @@ static void chomp(char *s, size_t length) {
 
 #if defined(_MSC_VER)
 #include <windows.h>
+
+#define PATH_MAX MAX_PATH
+
 typedef int mode_t;
 
 static int fchdir(int fd) {
     DWORD result;
-    char base_path[X_PATH_MAX];
+    char base_path[PATH_MAX];
 
     result = GetFinalPathNameByHandleA(
         (HANDLE) fd,
@@ -77,11 +72,7 @@ static int fchdir(int fd) {
         FILE_NAME_NORMALIZED
     );
 
-    if (result > sizeof(base_path)/sizeof(base_path[0])) {
-        return -1;
-    }
-
-    if (result == 0) {
+    if (result == 0 || result > sizeof(base_path)/sizeof(base_path[0])) {
         return -1;
     }
 
@@ -171,7 +162,7 @@ static int unit_test(fewer_config *config) {
 static int repl(fewer_config *config) {
     int fd, c;
     FILE *f = NULL;
-    char hex_buf[3], instruction[X_PATH_MAX + 2], command = '\0', *content = NULL;
+    char hex_buf[3], instruction[PATH_MAX + 2], command = '\0', *content = NULL;
 
     if (!validate_fewer_config(config)) {
         return EXIT_FAILURE;
@@ -329,15 +320,15 @@ int main(int argc, char **argv) {
     }
 
     if (!test) {
-        char cwd[X_PATH_MAX];
+        char cwd[PATH_MAX];
         char *cwd_ptr;
 
         errno = 0;
 
 #if defined(_MSC_VER)
-        cwd_ptr = _getcwd(cwd, X_PATH_MAX);
+        cwd_ptr = _getcwd(cwd, PATH_MAX);
 #else
-        cwd_ptr = getcwd(cwd, X_PATH_MAX);
+        cwd_ptr = getcwd(cwd, PATH_MAX);
 #endif
 
         if (cwd_ptr == NULL) {
