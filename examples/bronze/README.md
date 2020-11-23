@@ -24,6 +24,12 @@ $ bronze
 $ tonixxx boil
 ```
 
+# CLEAN
+
+```console
+$ tonixxx clean
+```
+
 # LICENSE
 
 FreeBSD

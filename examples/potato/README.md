@@ -25,6 +25,12 @@ FreeBSD
 $ tonixxx boil
 ```
 
+# CLEAN
+
+```console
+$ tonixxx clean
+```
+
 # PROVISIONING
 
 See `buildbot-src` for more information about buildbot provisioning.
