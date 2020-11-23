@@ -14,8 +14,6 @@ $ tree ~/.tonixxx/fewer/bin
 ~/.tonixxx/fewer/bin
 ├── freebsd-amd64
 │   └── fewer
-├── linux-glibc-2.17-amd64
-│   └── fewer
 ├── linux-glibc-2.24-amd64
 │   └── fewer
 ├── linux-glibc-2.28-arm64

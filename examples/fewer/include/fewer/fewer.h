@@ -9,10 +9,6 @@
  * @ref render_boi formats hexadecimal pairs.
  */
 
-#if defined(__sun)
-#define __EXTENSIONS__
-#endif
-
 /**
  * render_boi formats hexadecimal pairs.
  *
