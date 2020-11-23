@@ -9,8 +9,8 @@ QUIET                  = YES
 WARN_AS_ERROR          = YES
 
 INPUT                  = include/fewer \
-                         src \
-                         src/cmd/fewer
+                            src \
+                            src/cmd/fewer
 
 GENERATE_LATEX         = NO
 

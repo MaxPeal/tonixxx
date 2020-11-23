@@ -2,10 +2,12 @@
 project: "fewer"
 
 steps:
+  - "export CTEST_OUTPUT_ON_FAILURE=1"
   - "cd \"$TONIXXX_SYNC\""
+  - "sh clean-cmake.sh"
   - "cmake ."
   - "cmake --build . --target lint"
-  - "cmake --build . --config Release"
+  - "cmake --build ."
   - "cmake --build . --target leaks"
   - "ctest -C Release"
   - "cmake --build . --target doc"
@@ -17,14 +19,6 @@ recipes:
     box: "mcandre/fewer-buildbot-freebsd"
   - label: "linux-glibc-2.17-amd64"
     box: "mcandre/fewer-buildbot-centos"
-    steps:
-      - "cd \"$TONIXXX_SYNC\""
-      - "cmake3 ."
-      - "cmake3 --build . --target lint"
-      - "cmake3 --build . --config Release"
-      - "cmake3 --build . --target leaks"
-      - "ctest3 -C Release"
-      - "cmake3 --build . --target doc"
   - label: "linux-glibc-2.24-amd64"
     box: "mcandre/fewer-buildbot-debian-amd64"
   - label: "linux-glibc-2.28-arm64"

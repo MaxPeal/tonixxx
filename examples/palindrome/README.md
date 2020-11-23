@@ -32,16 +32,6 @@ FreeBSD
 # BUILD
 
 ```console
-$ cmake[3] .
-$ cmake[3] --build . --target lint
-$ cmake[3] --build . --config Release
-$ cmake[3] --build . --target leaks
-$ CTEST_OUTPUT_ON_FAILURE=1 ctest[3] -C Release
-```
-
-# PORT
-
-```console
 $ tonixxx boil
 ```
 

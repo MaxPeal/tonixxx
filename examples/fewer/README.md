@@ -44,17 +44,6 @@ FreeBSD
 # BUILD
 
 ```console
-$ cmake[3] .
-$ cmake[3] --build . --target lint
-$ cmake[3] --build . -C Release
-$ cmake[3] --build . --target leaks
-$ ctest[3] -C Release
-$ cmake[3] --build . --target doc
-```
-
-# PORT
-
-```console
 $ tonixxx boil
 ```
 

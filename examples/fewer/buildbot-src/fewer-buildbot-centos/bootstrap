@@ -14,6 +14,10 @@ sudo yum install -y \
     python36u \
     python36u-pip \
     valgrind
+
+sudo ln -s cmake3 /usr/bin/cmake
+sudo ln -s ctest3 /usr/bin/ctest
+
 sudo pip3.6 install -r /tmp/requirements-dev.txt
 
 git clone https://github.com/mcandre/sail.git /home/vagrant/sail

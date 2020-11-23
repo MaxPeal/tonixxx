@@ -43,27 +43,7 @@ FreeBSD
 # BUILD
 
 ```console
-$ cabal install --only-dependencies --enable-documentation
-$ cabal install --only-dependencies --enable-tests
-$ shake
-```
-
-# PORT
-
-```console
 $ tonixxx boil
-```
-
-# LINT
-
-```console
-$ shake lint
-```
-
-# TEST
-
-```console
-$ shake test
 ```
 
 # PUBLISH

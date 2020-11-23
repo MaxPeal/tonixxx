@@ -18,6 +18,12 @@ $ bronze
 
 (None)
 
+# BUILD
+
+```console
+$ tonixxx boil
+```
+
 # LICENSE
 
 FreeBSD

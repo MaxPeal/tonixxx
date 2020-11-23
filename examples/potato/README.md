@@ -19,13 +19,7 @@ Need a paperweight? Buy a potato. Bake until tender, coat lightly with seasoning
 
 FreeBSD
 
-# LINT + BUILD
-
-```console
-$ dub run dale
-```
-
-# PORT
+# BUILD
 
 ```console
 $ tonixxx boil
