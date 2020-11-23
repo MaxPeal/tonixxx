@@ -16,7 +16,7 @@
  * @param s hexadecimal pair buffer
  * @param s_len buffer length
  */
-void render_boi(unsigned int b, /*@out@*/ char *s, size_t s_len);
+void render_boi(unsigned int b, char *s, size_t s_len);
 
 /**
  * parse_boi reads hexadecimal pairs.
