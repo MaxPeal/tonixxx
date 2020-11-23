@@ -12,11 +12,11 @@
 /**
  * render_boi formats hexadecimal pairs.
  *
- * @param b hexpair pair
  * @param s hexadecimal pair buffer
  * @param s_len buffer length
+ * @param b hexpair pair
  */
-void render_boi(unsigned int b, char *s, size_t s_len);
+void render_boi(char *s, size_t s_len, unsigned int b);
 
 /**
  * parse_boi reads hexadecimal pairs.

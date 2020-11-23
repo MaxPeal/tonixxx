@@ -23,7 +23,7 @@
 
 #include "fewer/fewer.h"
 
-void render_boi(unsigned int b, char *s, size_t s_len) {
+void render_boi(char *s, size_t s_len, unsigned int b) {
     int write_count = snprintf(s, s_len, "%02x", b);
 
     if (write_count < 0) {

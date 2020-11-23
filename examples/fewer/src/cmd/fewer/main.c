@@ -142,7 +142,7 @@ static int unit_test(fewer_config *config) {
     char hex_buf[3];
 
     for (short d, c = 0; c < 0x100; c++) {
-        render_boi((unsigned int) c, &hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]));
+        render_boi(&hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]), (unsigned int) c);
         d = parse_boi(hex_buf);
 
         if (d == -1) {
@@ -245,7 +245,7 @@ static int repl(fewer_config *config) {
                     return EXIT_SUCCESS;
                 }
 
-                render_boi((unsigned int) c, &hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]));
+                render_boi(&hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]), (unsigned int) c);
                 fprintf(config->console_out, "%s\n", hex_buf);
                 break;
             case 'r':
