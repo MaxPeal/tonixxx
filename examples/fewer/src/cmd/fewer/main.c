@@ -28,8 +28,6 @@
 #define X_PATH_MAX _POSIX_PATH_MAX
 #elif defined(_MAX_PATH)
 #define X_PATH_MAX _MAX_PATH
-#elif defined(_PC_PATH_MAX)
-#define X_PATH_MAX _PC_PATH_MAX
 #elif defined(PATH_MAX)
 #define X_PATH_MAX PATH_MAX
 #else
@@ -150,7 +148,7 @@ static int unit_test(fewer_config *config) {
     char hex_buf[3];
 
     for (short d, c = 0; c < 0x100; c++) {
-        render_boi(config->console_err, (unsigned int) c, &hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]));
+        render_boi((unsigned int) c, &hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]));
         d = parse_boi(hex_buf);
 
         if (d == -1) {
@@ -253,7 +251,7 @@ static int repl(fewer_config *config) {
                     return EXIT_SUCCESS;
                 }
 
-                render_boi(config->console_err, (unsigned int) c, &hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]));
+                render_boi((unsigned int) c, &hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]));
                 fprintf(config->console_out, "%s\n", hex_buf);
                 break;
             case 'r':

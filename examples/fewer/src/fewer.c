@@ -3,6 +3,7 @@
  */
 
 #include <errno.h>
+#include <limits.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,13 +23,13 @@
 
 #include "fewer/fewer.h"
 
-void render_boi(FILE *console, unsigned int b, /*@out@*/ char *s, size_t s_len) {
+void render_boi(unsigned int b, /*@out@*/ char *s, size_t s_len) {
     int write_count = snprintf(s, s_len, "%02x", b);
 
     if (write_count < 0) {
-        fprintf(console, "Encoding error\n");
+        fprintf(stderr, "error during encoding\n");
     } else if ((size_t) write_count > s_len - 1) {
-        fprintf(console, "Buffer requires %d character allocation to render value\n", write_count);
+        fprintf(stderr, "buffer requires %d character allocation to render value\n", write_count);
     }
 }
 

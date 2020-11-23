@@ -16,23 +16,14 @@
 typedef int mode_t;
 #endif
 
-#include <limits.h>
-#include <stdbool.h>
-#include <stdio.h>
-
-#if defined(__MirBSD__)
-#include <sys/param.h>
-#endif
-
 /**
  * render_boi formats hexadecimal pairs.
  *
- * @param console error stream
  * @param b hexpair pair
  * @param s hexadecimal pair buffer
  * @param s_len buffer length
  */
-void render_boi(FILE *console, unsigned int b, /*@out@*/ char *s, size_t s_len);
+void render_boi(unsigned int b, /*@out@*/ char *s, size_t s_len);
 
 /**
  * parse_boi reads hexadecimal pairs.
