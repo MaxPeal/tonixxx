@@ -63,6 +63,9 @@ static void chomp(char *s, size_t length) {
 }
 
 #if defined(_MSC_VER)
+#include <windows.h>
+typedef int mode_t;
+
 static int fchdir(int fd) {
     DWORD result;
     char base_path[X_PATH_MAX];

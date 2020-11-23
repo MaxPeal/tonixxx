@@ -11,9 +11,6 @@
 
 #if defined(__sun)
 #define __EXTENSIONS__
-#elif defined(_MSC_VER)
-#include <windows.h>
-typedef int mode_t;
 #endif
 
 /**
