@@ -2,14 +2,12 @@
 project: "fewer"
 
 steps:
-  - "export CTEST_OUTPUT_ON_FAILURE=1"
-  - "cd \"$TONIXXX_SYNC\""
   - "sh clean-cmake.sh"
   - "cmake ."
   - "cmake --build . --target lint"
   - "cmake --build . --config Release"
   - "cmake --build . --target leaks"
-  - "ctest -C Release"
+  - "CTEST_OUTPUT_ON_FAILURE=1 ctest -C Release"
   - "cmake --build . --target doc"
 
 outputdirectory: "bin"
