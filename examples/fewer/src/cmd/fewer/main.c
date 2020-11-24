@@ -3,21 +3,19 @@
  */
 
 #include <errno.h>
+
+#include <limits.h>
+#if defined(__APPLE__)
+#include <sys/syslimits.h>
+#elif defined(_MSC_VER)
+#include <windows.h>
+#define PATH_MAX MAX_PATH
+#endif
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#if defined(_MSC_VER)
-#include <direct.h>
-#include <io.h>
-#include <windows.h>
-#define PATH_MAX MAX_PATH
-#elif defined(__APPLE__)
-#include <sys/syslimits.h>
-#else
-#include <limits.h>
-#endif
 
 #include "fewer/fewer.h"
 
@@ -50,7 +48,7 @@ static void chomp(char *s, size_t length) {
 static int unit_test() {
     char hex_buf[3];
 
-    for (int c = 0x00; c < 0x100; c++) {
+    for (int c = 0; c < UCHAR_MAX; c++) {
         render_boi(hex_buf, c);
 
         int d = parse_boi(hex_buf);
