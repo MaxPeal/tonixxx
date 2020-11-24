@@ -18,17 +18,12 @@
 #include <direct.h>
 #include <io.h>
 #include <windows.h>
+#define PATH_MAX MAX_PATH
 #else
 #include <unistd.h>
 #endif
 
 #include "fewer/fewer.h"
-
-#if defined(_MSC_VER)
-#define PATH_MAX MAX_PATH
-#endif
-
-static const char *PROMPT = "> ";
 
 static void show_commands() {
     fprintf(stderr, "l <path>\tLoad file\n");
@@ -59,13 +54,10 @@ static void chomp(char *s, size_t length) {
 static int unit_test() {
     char hex_buf[3];
 
-    for (int d, c = 0; c < 0x100; c++) {
-        if (render_boi(hex_buf, c) != 0) {
-            fprintf(stderr, "error during parsing\n");
-            return EXIT_FAILURE;
-        }
+    for (int c = 0x00; c < 0x100; c++) {
+        render_boi(hex_buf, c);
 
-        d = parse_boi(hex_buf);
+        int d = parse_boi(hex_buf);
 
         if (d < 0) {
             fprintf(stderr, "error during formatting\n");
@@ -85,11 +77,13 @@ static int repl() {
     int c;
     FILE *f = NULL;
     char hex_buf[3], instruction[PATH_MAX + 2], command = '\0', *content = NULL;
+    size_t hex_buf_sz = sizeof(hex_buf), hex_buf_len = hex_buf_sz - 1, instruction_sz = sizeof(instruction);
+    char *PROMPT = "> ";
 
     while (true) {
         printf("%s", PROMPT);
 
-        if (fgets(instruction, sizeof(instruction)/sizeof(instruction[0]), stdin) == NULL) {
+        if (fgets(instruction, instruction_sz, stdin) == NULL) {
             if (ferror(stdin) != 0) {
                 return EXIT_FAILURE;
             }
@@ -168,18 +162,13 @@ static int repl() {
 
                 content++;
 
-                if (strlen(content) > sizeof(hex_buf)/sizeof(hex_buf[0]) - 1) {
+                if (strlen(content) > hex_buf_len) {
                     show_commands();
                     break;
                 }
 
-#if defined(_MSC_VER)
-                strncpy_s(hex_buf, sizeof(hex_buf)/sizeof(hex_buf[0]), content, strlen(content));
-#else
-                strncpy(hex_buf, content, sizeof(hex_buf)/sizeof(hex_buf[0]));
-#endif
-
-                c = (int) parse_boi(hex_buf);
+                (void) snprintf(hex_buf, hex_buf_sz, "%s", content);
+                c = parse_boi(hex_buf);
 
                 if (c == -1) {
                     fprintf(stderr, "error parsing hexadecimal %s\n", hex_buf);

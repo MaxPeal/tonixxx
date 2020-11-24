@@ -13,16 +13,14 @@
  * render_boi formats a hexadecimal pair.
  *
  * @param hexpair buffer (3 bytes)
- * @param b value
- *
- * @returns zero. -1 indicates error.
+ * @param c value
  */
-int render_boi(char *hexpair, unsigned int b);
+void render_boi(char *hexpair, int c);
 
 /**
  * parse_boi reads a hexadecimal pair.
  *
- * @param hexpair hexadecimal pair (3 bytes)
+ * @param hexpair hexadecimal pair (2 characters + NULL terminator)
  *
  * @returns value. -1 indicates an error.
  */
