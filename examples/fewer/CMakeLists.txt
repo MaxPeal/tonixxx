@@ -1,9 +1,7 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.4)
 set(CMAKE_MESSAGE_LOG_LEVEL "WARNING")
-
-project(fewer)
-
 set(EXECUTABLE_OUTPUT_PATH "bin")
+project(fewer)
 
 if(MSVC)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
@@ -63,7 +61,7 @@ add_custom_target(valgrind DEPENDS valgrind_test valgrind_repl valgrind_repl_han
 # Broken or missing valgrind
 if(
     MSVC OR
-    "$ENV{CC}" MATCHES "aarch64" OR
+    CMAKE_C_COMPILER MATCHES "aarch64" OR
     CMAKE_SYSTEM_NAME MATCHES "FreeBSD" OR
     CMAKE_SYSTEM_NAME MATCHES "Darwin"
 )
