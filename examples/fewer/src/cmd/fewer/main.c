@@ -8,19 +8,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__APPLE__)
-#include <sys/syslimits.h>
-#else
-#include <limits.h>
-#endif
-
 #if defined(_MSC_VER)
 #include <direct.h>
 #include <io.h>
 #include <windows.h>
 #define PATH_MAX MAX_PATH
+#elif defined(__APPLE__)
+#include <sys/syslimits.h>
 #else
-#include <unistd.h>
+#include <limits.h>
 #endif
 
 #include "fewer/fewer.h"
