@@ -2,10 +2,9 @@
  * @copyright 2020 YelloSoft
  */
 
-#include "main.h"
-
 #include <errno.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,11 +30,11 @@
 
 static const char *PROMPT = "> ";
 
-static void show_commands(FILE *console) {
-    fprintf(console, "l <path>\tLoad file\n");
-    fprintf(console, "n\t\tShow next byte\n");
-    fprintf(console, "r <hex pair>\tRender an input byte\n");
-    fprintf(console, "q\t\tQuit\n");
+static void show_commands() {
+    fprintf(stderr, "l <path>\tLoad file\n");
+    fprintf(stderr, "n\t\tShow next byte\n");
+    fprintf(stderr, "r <hex pair>\tRender an input byte\n");
+    fprintf(stderr, "q\t\tQuit\n");
 }
 
 static void chomp(char *s, size_t length) {
@@ -55,33 +54,6 @@ static void chomp(char *s, size_t length) {
     if (length > 1 && s[length - 2] == '\r') {
         s[length - 2] = '\0';
     }
-}
-
-static bool validate_fewer_config(fewer_config *config) {
-    if (config->console_err == NULL) {
-        return false;
-    }
-
-    if (config->test) {
-        return true;
-    }
-
-    if (config->root == -1) {
-        fprintf(config->console_err, "root is unset\n");
-        return false;
-    }
-
-    if (config->console_out == NULL) {
-        fprintf(config->console_err, "console_out is unset\n");
-        return false;
-    }
-
-    if (config->console_in == NULL) {
-        fprintf(config->console_err, "console_in is unset\n");
-        return false;
-    }
-
-    return true;
 }
 
 static int unit_test() {
@@ -109,20 +81,16 @@ static int unit_test() {
     return EXIT_SUCCESS;
 }
 
-static int repl(fewer_config *config) {
+static int repl() {
     int c;
     FILE *f = NULL;
     char hex_buf[3], instruction[PATH_MAX + 2], command = '\0', *content = NULL;
 
-    if (!validate_fewer_config(config)) {
-        return EXIT_FAILURE;
-    }
-
     while (true) {
-        fprintf(config->console_out, "%s", PROMPT);
+        printf("%s", PROMPT);
 
-        if (fgets(instruction, sizeof(instruction)/sizeof(instruction[0]), config->console_in) == NULL) {
-            if (ferror(config->console_in) != 0) {
+        if (fgets(instruction, sizeof(instruction)/sizeof(instruction[0]), stdin) == NULL) {
+            if (ferror(stdin) != 0) {
                 return EXIT_FAILURE;
             }
 
@@ -132,7 +100,7 @@ static int repl(fewer_config *config) {
         chomp(instruction, strlen(instruction));
 
         if (strlen(instruction) == 0) {
-            show_commands(config->console_err);
+            show_commands();
             continue;
         }
 
@@ -143,14 +111,14 @@ static int repl(fewer_config *config) {
                 content = strchr(instruction, ' ');
 
                 if (content == NULL || strlen(content) < 2) {
-                    show_commands(config->console_err);
+                    show_commands();
                     break;
                 }
 
                 content++;
 
                 if (f != NULL && fclose(f) == EOF) {
-                    fprintf(config->console_err, "error closing file\n");
+                    fprintf(stderr, "error closing file\n");
                     return EXIT_FAILURE;
                 }
 
@@ -171,7 +139,7 @@ static int repl(fewer_config *config) {
                 break;
             case 'n':
                 if (f == NULL) {
-                    fprintf(config->console_err, "no file loaded\n");
+                    fprintf(stderr, "no file loaded\n");
                     break;
                 }
 
@@ -180,7 +148,7 @@ static int repl(fewer_config *config) {
 
                 if (c == EOF) {
                     if (ferror(f) != 0) {
-                        fprintf(config->console_err, "error reading character from file\n");
+                        fprintf(stderr, "error reading character from file\n");
                         return EXIT_FAILURE;
                     }
 
@@ -188,20 +156,20 @@ static int repl(fewer_config *config) {
                 }
 
                 render_boi(hex_buf, c);
-                fprintf(config->console_out, "%s\n", hex_buf);
+                printf("%s\n", hex_buf);
                 break;
             case 'r':
                 content = strchr(instruction, ' ');
 
                 if (content == NULL || strlen(content) < 2) {
-                    show_commands(config->console_err);
+                    show_commands();
                     break;
                 }
 
                 content++;
 
                 if (strlen(content) > sizeof(hex_buf)/sizeof(hex_buf[0]) - 1) {
-                    show_commands(config->console_err);
+                    show_commands();
                     break;
                 }
 
@@ -214,21 +182,21 @@ static int repl(fewer_config *config) {
                 c = (int) parse_boi(hex_buf);
 
                 if (c == -1) {
-                    fprintf(config->console_err, "Error parsing hexadecimal %s\n", hex_buf);
+                    fprintf(stderr, "error parsing hexadecimal %s\n", hex_buf);
                     break;
                 }
 
-                fprintf(config->console_out, "%c\n", c);
+                printf("%c\n", c);
                 break;
             case 'q':
                 if (f != NULL && fclose(f) == EOF) {
-                    fprintf(config->console_err, "Error closing file\n");
+                    fprintf(stderr, "error closing file\n");
                     return EXIT_FAILURE;
                 }
 
                 return EXIT_SUCCESS;
             default:
-                show_commands(config->console_err);
+                show_commands();
         }
     }
 }
@@ -242,9 +210,8 @@ static void usage(char **argv) {
 
 int main(int argc, char **argv) {
     bool test = false;
-    int i, root = -1;
 
-    for (i = 1; i < argc; i++) {
+    for (int i = 1; i < argc; i++) {
         char *arg = argv[i];
 
         if (strcmp(arg, "-h") == 0) {
@@ -261,85 +228,9 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    if (!test) {
-        char cwd[PATH_MAX];
-        char *cwd_ptr;
-
-        errno = 0;
-
-#if defined(_MSC_VER)
-        cwd_ptr = _getcwd(cwd, PATH_MAX);
-#else
-        cwd_ptr = getcwd(cwd, PATH_MAX);
-#endif
-
-        if (cwd_ptr == NULL) {
-            perror(NULL);
-            return EXIT_FAILURE;
-        }
-
-#if defined(_MSC_VER)
-        int fd = (int) CreateFileA(
-            cwd,
-            GENERIC_READ,
-            FILE_SHARE_READ |
-                FILE_SHARE_DELETE,
-            NULL,
-            OPEN_EXISTING,
-            FILE_FLAG_BACKUP_SEMANTICS,
-            NULL
-        );
-
-        if (fd == -1) {
-            DWORD err = GetLastError();
-            char *err_msg = NULL;
-            FormatMessageA(
-                FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                    FORMAT_MESSAGE_FROM_SYSTEM |
-                    FORMAT_MESSAGE_IGNORE_INSERTS,
-                NULL,
-                err,
-                0,
-                (LPSTR) &err_msg,
-                0,
-                NULL
-            );
-
-            LocalFree(err_msg);
-            return EXIT_FAILURE;
-        }
-
-        root = fd;
-#else
-        errno = 0;
-        FILE *cwd_file = fopen(cwd, "r");
-
-        if (cwd_file == NULL) {
-            perror(NULL);
-            return EXIT_FAILURE;
-        }
-
-        errno = 0;
-        root = fileno(cwd_file);
-
-        if (root == -1) {
-            perror(NULL);
-            return EXIT_FAILURE;
-        }
-#endif
-    }
-
-    fewer_config *config = &(fewer_config) {
-        .console_err = stderr,
-        .console_out = stdout,
-        .console_in = stdin,
-        .root = root,
-        .test = test
-    };
-
-    if (config->test) {
+    if (test) {
         return unit_test();
     }
 
-    return repl(config);
+    return repl();
 }

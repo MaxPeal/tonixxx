@@ -10,10 +10,10 @@
 #include "fewer/fewer.h"
 
 int render_boi(char *hexpair, unsigned int b) {
-    size_t sz = 3;
-    int write_count = snprintf(hexpair, sz, "%02x", b);
+    size_t pair_sz = 3;
+    int bytes_written = snprintf(hexpair, pair_sz, "%02x", b);
 
-    if (write_count < 0 || (size_t) write_count > sz) {
+    if (bytes_written < 0 || (size_t) bytes_written > pair_sz) {
         return -1;
     }
 
@@ -23,8 +23,11 @@ int render_boi(char *hexpair, unsigned int b) {
 int parse_boi(char *hexpair) {
     char pair[3];
     size_t pair_sz = sizeof(pair);
-    memcpy(pair, hexpair, pair_sz - 1);
-    pair[pair_sz - 1] = '\0';
+    int bytes_written = snprintf(pair, pair_sz, "%.*s", 2, hexpair);
+
+    if (bytes_written < 0 || (size_t) bytes_written > pair_sz) {
+        return -1;
+    }
 
     errno = 0;
     int n = (int) strtol(pair, NULL, 16);
