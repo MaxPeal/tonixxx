@@ -2,14 +2,21 @@
 set -euf
 unset IFS
 
+#
+# Fix rsync
+#
+sudo sh -c "echo \"vagrant\\tUsers/vagrant/vagrant_root\" >>/etc/synthetic.conf"
+mkdir -p /Users/vagrant/vagrant_root
+
 brew update || echo 'Homebrew partially broke during update'
 brew install \
     cmake \
     cppcheck \
     doxygen \
     graphviz \
-    valgrind \
+    python3 \
     vera++
+
 cp -r /usr/local/lib/vera++ /Users/vagrant/.vera++
 ln -sf /vagrant/vera /Users/vagrant/.vera++/profiles/default
 

@@ -10,19 +10,20 @@
  */
 
 /**
- * render_boi formats hexadecimal pairs.
+ * render_boi formats a hexadecimal pair.
  *
- * @param s hexadecimal pair buffer
- * @param s_len buffer length
- * @param b hexpair pair
+ * @param hexpair buffer (3 bytes)
+ * @param b value
+ *
+ * @returns zero. -1 indicates error.
  */
-void render_boi(char *s, size_t s_len, unsigned int b);
+int render_boi(char *hexpair, unsigned int b);
 
 /**
- * parse_boi reads hexadecimal pairs.
+ * parse_boi reads a hexadecimal pair.
  *
- * @param s hexadecimal pair
+ * @param hexpair hexadecimal pair (3 bytes)
  *
  * @returns value. -1 indicates an error.
  */
-short parse_boi(char *s);
+int parse_boi(char *hexpair);

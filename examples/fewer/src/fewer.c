@@ -3,51 +3,35 @@
  */
 
 #include <errno.h>
-#include <limits.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
-
-#if defined(_MSC_VER)
-#include <direct.h>
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
-
-#if defined(_MSC_VER) || defined(__MirBSD__) || defined(__minix)
-#include <stdarg.h>
-#endif
 
 #include "fewer/fewer.h"
 
-void render_boi(char *s, size_t s_len, unsigned int b) {
-    int write_count = snprintf(s, s_len, "%02x", b);
+int render_boi(char *hexpair, unsigned int b) {
+    size_t sz = 3;
+    int write_count = snprintf(hexpair, sz, "%02x", b);
 
-    if (write_count < 0) {
-        fprintf(stderr, "error during encoding\n");
-    } else if ((size_t) write_count > s_len - 1) {
-        fprintf(stderr, "buffer requires %d character allocation to render value\n", write_count);
+    if (write_count < 0 || (size_t) write_count > sz) {
+        return -1;
     }
+
+    return 0;
 }
 
-short parse_boi(char *s) {
-    char *endptr = s;
-    unsigned long int n = strtoul(s, &endptr, 16);
+int parse_boi(char *hexpair) {
+    char pair[3];
+    size_t pair_sz = sizeof(pair);
+    memcpy(pair, hexpair, pair_sz - 1);
+    pair[pair_sz - 1] = '\0';
 
-    if (endptr == s) {
+    errno = 0;
+    int n = (int) strtol(pair, NULL, 16);
+
+    if (errno != 0) {
         return -1;
     }
 
-    if (n == ULONG_MAX) {
-        return -1;
-    }
-
-    if (n > UINT_MAX) {
-        return -1;
-    }
-
-    return (short) n;
+    return n;
 }

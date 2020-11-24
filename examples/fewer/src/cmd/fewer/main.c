@@ -5,9 +5,7 @@
 #include "main.h"
 
 #include <errno.h>
-#include <fcntl.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -20,11 +18,16 @@
 #if defined(_MSC_VER)
 #include <direct.h>
 #include <io.h>
+#include <windows.h>
 #else
 #include <unistd.h>
 #endif
 
 #include "fewer/fewer.h"
+
+#if defined(_MSC_VER)
+#define PATH_MAX MAX_PATH
+#endif
 
 static const char *PROMPT = "> ";
 
@@ -54,63 +57,6 @@ static void chomp(char *s, size_t length) {
     }
 }
 
-#if defined(_MSC_VER)
-#include <windows.h>
-
-#define PATH_MAX MAX_PATH
-
-typedef int mode_t;
-
-static int fchdir(int fd) {
-    DWORD result;
-    char base_path[PATH_MAX];
-
-    result = GetFinalPathNameByHandleA(
-        (HANDLE) fd,
-        base_path,
-        sizeof(base_path)/sizeof(base_path[0]) - 1,
-        FILE_NAME_NORMALIZED
-    );
-
-    if (result == 0 || result > sizeof(base_path)/sizeof(base_path[0])) {
-        return -1;
-    }
-
-    errno = 0;
-    fd = _chdir(base_path);
-    return fd;
-}
-#endif
-
-#if defined(_MSC_VER) || defined(__MirBSD__) || defined(__minix)
-int openat(int fd, const char *path, int flags, ...) {
-    mode_t mode = 0;
-
-    if (flags & O_CREAT) {
-        va_list arg;
-        va_start(arg, flags);
-        mode = va_arg(arg, mode_t);
-        va_end(arg);
-    }
-
-    errno = 0;
-    if (fchdir(fd) != 0) {
-        return -1;
-    }
-
-    errno = 0;
-#if defined(_MSC_VER)
-    if (_sopen_s(&fd, path, flags, _SH_DENYNO, mode) != 0) {
-        return -1;
-    }
-#else
-    fd = open(path, flags, mode);
-#endif
-
-    return fd;
-}
-#endif
-
 static bool validate_fewer_config(fewer_config *config) {
     if (config->console_err == NULL) {
         return false;
@@ -138,20 +84,24 @@ static bool validate_fewer_config(fewer_config *config) {
     return true;
 }
 
-static int unit_test(fewer_config *config) {
+static int unit_test() {
     char hex_buf[3];
 
-    for (short d, c = 0; c < 0x100; c++) {
-        render_boi(&hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]), (unsigned int) c);
+    for (int d, c = 0; c < 0x100; c++) {
+        if (render_boi(hex_buf, c) != 0) {
+            fprintf(stderr, "error during parsing\n");
+            return EXIT_FAILURE;
+        }
+
         d = parse_boi(hex_buf);
 
-        if (d == -1) {
-            fprintf(config->console_err, "Error parsing hexadecimal sequence %s\n", hex_buf);
+        if (d < 0) {
+            fprintf(stderr, "error during formatting\n");
             return EXIT_FAILURE;
         }
 
         if (d != c) {
-            fprintf(config->console_err, "Character %02x corrupted to %02x during hexadecimal translation\n", c, d);
+            fprintf(stderr, "got: %c (0x%02x), expected: %c (0x%02x)\n", d, d, c, c);
             return EXIT_FAILURE;
         }
     }
@@ -160,7 +110,7 @@ static int unit_test(fewer_config *config) {
 }
 
 static int repl(fewer_config *config) {
-    int fd, c;
+    int c;
     FILE *f = NULL;
     char hex_buf[3], instruction[PATH_MAX + 2], command = '\0', *content = NULL;
 
@@ -199,37 +149,29 @@ static int repl(fewer_config *config) {
 
                 content++;
 
-                if (f != NULL) {
-                    if (fclose(f) == EOF) {
-                        fprintf(config->console_err, "Error closing file\n");
-                        return EXIT_FAILURE;
-                    }
+                if (f != NULL && fclose(f) == EOF) {
+                    fprintf(config->console_err, "error closing file\n");
+                    return EXIT_FAILURE;
                 }
-
-                errno = 0;
-                fd = openat(config->root, content, O_RDONLY);
-
-                if (fd == -1) {
-                    perror(NULL);
-                    break;
-                }
-
-                errno = 0;
 
 #if defined(_MSC_VER)
-                f = _fdopen(fd, "rb");
+                 if (fopen_s(&f, content, "rb") != 0) {
+                    fprintf(stderr, "error opening file %s\n", content);
+                    return EXIT_FAILURE;
+                }
 #else
-                f = fdopen(fd, "rb");
-#endif
+                f = fopen(content, "rb");
 
                 if (f == NULL) {
-                    perror(NULL);
+                    fprintf(stderr, "error opening file %s\n", content);
+                    return EXIT_FAILURE;
                 }
+#endif
 
                 break;
             case 'n':
                 if (f == NULL) {
-                    fprintf(config->console_err, "No file loaded\n");
+                    fprintf(config->console_err, "no file loaded\n");
                     break;
                 }
 
@@ -238,14 +180,14 @@ static int repl(fewer_config *config) {
 
                 if (c == EOF) {
                     if (ferror(f) != 0) {
-                        fprintf(config->console_err, "Error reading character from file\n");
+                        fprintf(config->console_err, "error reading character from file\n");
                         return EXIT_FAILURE;
                     }
 
                     return EXIT_SUCCESS;
                 }
 
-                render_boi(&hex_buf[0], sizeof(hex_buf)/sizeof(hex_buf[0]), (unsigned int) c);
+                render_boi(hex_buf, c);
                 fprintf(config->console_out, "%s\n", hex_buf);
                 break;
             case 'r':
@@ -276,7 +218,7 @@ static int repl(fewer_config *config) {
                     break;
                 }
 
-                fprintf(config->console_out, "%c\n", (unsigned int) c);
+                fprintf(config->console_out, "%c\n", c);
                 break;
             case 'q':
                 if (f != NULL && fclose(f) == EOF) {
@@ -396,7 +338,7 @@ int main(int argc, char **argv) {
     };
 
     if (config->test) {
-        return unit_test(config);
+        return unit_test();
     }
 
     return repl(config);

@@ -70,7 +70,7 @@ Finally, `sudo` may be requisite for producing buildbot boxes for alternate arch
 
 ## Recommended
 
-* [VirtualBox](https://www.virtualbox.org/)
+* [VirtualBox + extension pack](https://www.virtualbox.org/wiki/Downloads)
 * [VMware](https://www.vmware.com/)
 * [qemu](https://www.qemu.org/) 2.12+
 * [KVM](https://wiki.qemu.org/Features/KVM)
