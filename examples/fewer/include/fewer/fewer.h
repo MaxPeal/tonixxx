@@ -15,7 +15,7 @@
  * @param hexpair buffer (3 bytes)
  * @param c value
  */
-void render_boi(char *hexpair, int c);
+void render_boi(char *hexpair, unsigned char c);
 
 /**
  * parse_boi reads a hexadecimal pair.

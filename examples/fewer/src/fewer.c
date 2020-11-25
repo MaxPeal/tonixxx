@@ -8,7 +8,7 @@
 
 #include "fewer/fewer.h"
 
-void render_boi(char *hexpair, int c) {
+void render_boi(char *hexpair, unsigned char c) {
     (void) snprintf(hexpair, 3, "%02x", c);
 }
 

@@ -49,7 +49,7 @@ static int unit_test() {
     char hex_buf[3];
 
     for (int c = 0; c < UCHAR_MAX; c++) {
-        render_boi(hex_buf, c);
+        render_boi(hex_buf, (unsigned char) c);
 
         int d = parse_boi(hex_buf);
 
@@ -143,7 +143,7 @@ static int repl() {
                     return EXIT_SUCCESS;
                 }
 
-                render_boi(hex_buf, c);
+                render_boi(hex_buf, (unsigned char) c);
                 printf("%s\n", hex_buf);
                 break;
             case 'p':
