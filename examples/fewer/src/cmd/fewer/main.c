@@ -22,7 +22,7 @@
 static void show_commands() {
     fprintf(stderr, "l <path>\tLoad file\n");
     fprintf(stderr, "n\t\tShow next byte\n");
-    fprintf(stderr, "r <hex pair>\tRender an input byte\n");
+    fprintf(stderr, "p <hex pair>\tParse a hexpair\n");
     fprintf(stderr, "q\t\tQuit\n");
 }
 
@@ -146,7 +146,7 @@ static int repl() {
                 render_boi(hex_buf, c);
                 printf("%s\n", hex_buf);
                 break;
-            case 'r':
+            case 'p':
                 content = strchr(instruction, ' ');
 
                 if (content == NULL || strlen(content) < 2) {
