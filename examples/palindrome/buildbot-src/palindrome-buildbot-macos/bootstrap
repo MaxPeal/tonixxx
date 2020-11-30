@@ -2,16 +2,25 @@
 set -euf
 unset IFS
 
+#
+# Fix rsync
+#
+sudo sh -c "echo \"vagrant\\tUsers/vagrant/vagrant_root\" >>/etc/synthetic.conf"
+mkdir -p /Users/vagrant/vagrant_root
+
 brew update || echo 'Homebrew partially broke during update'
 brew install \
     cmake \
     cppcheck \
-    valgrind \
-    vera++    
+    doxygen \
+    graphviz \
+    python3 \
+    vera++
+
 cp -r /usr/local/lib/vera++ /Users/vagrant/.vera++
 ln -sf /vagrant/vera /Users/vagrant/.vera++/profiles/default
 
-pip3 install cpplint
+pip3 install -r /tmp/requirements-dev.txt
 
 git clone https://github.com/mcandre/sail.git /Users/vagrant/sail
 sudo sh -c "echo \"export PATH=\\\"\\\$PATH:/Users/vagrant/sail/bin\\\"\" >>/etc/profile"

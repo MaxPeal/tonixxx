@@ -15,8 +15,6 @@ apt-get install -y \
     rsync \
     valgrind \
     vera++
-update-alternatives --set cc /usr/bin/clang
-update-alternatives --set c++ /usr/bin/clang++
 echo "export PATH=\"\$PATH:/home/vagrant/.local/bin\"" >>/etc/profile
 cp -r /usr/lib/vera++ /home/vagrant/.vera++
 ln -sf /vagrant/vera /home/vagrant/.vera++/profiles/default

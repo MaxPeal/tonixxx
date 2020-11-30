@@ -2,6 +2,7 @@
 project: "fewer"
 
 steps:
+  - "cd \"$TONIXXX_SYNC\""
   - "sh clean-cmake.sh"
   - "cmake ."
   - "cmake --build . --target lint"

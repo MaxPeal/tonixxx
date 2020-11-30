@@ -1,10 +1,10 @@
 Vagrant.configure("2") do |config|
-    config.vm.box = "mcandre/vagrant-macos-python3"
-    config.vm.box_version = "0.0.1"
+    config.vm.box = "kishikawakatsumi/macos-catalina-xcode12"
 
     # Prepare for vagrant package
     config.ssh.insert_key = false
     config.vm.synced_folder ".", "/vagrant", type: "rsync", disabled: true
 
+    config.vm.provision "file", source: "requirements-dev.txt", destination: "/tmp/requirements-dev.txt"
     config.vm.provision "shell", path: "bootstrap", privileged: false
 end
