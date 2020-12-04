@@ -14,11 +14,11 @@
  */
 namespace pal {
     /**
-     * @brief palindrome examines text for symmetry.
+     * @brief Palindrome examines text for symmetry.
      *
      * @param s text
      *
      * @returns whether the string is a palindrome.
      */
-    bool palindrome(std::string s);
+    bool Palindrome(std::string s);
 }

@@ -7,7 +7,7 @@
 
 #include "palindrome/palindrome.hpp"
 
-bool pal::palindrome(std::string s) {
+bool pal::Palindrome(std::string s) {
     std::string s2(s);
     std::reverse(s2.begin(), s2.end());
     return s2 == s;
