@@ -41,7 +41,6 @@ include_directories(include)
 add_executable(palindrome src/cmd/palindrome/main.cpp src/palindrome.cpp)
 
 enable_testing()
-
 add_test(NAME palindrometest COMMAND palindrome -t)
 
 add_custom_target(cppcheck COMMAND cppcheck -q --force --enable=all --inline-suppr --suppressions-list=suppressions.cfg --error-exitcode=1 -I include src)

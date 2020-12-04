@@ -34,7 +34,6 @@ include_directories(include)
 add_executable(fewer src/cmd/fewer/main.c src/fewer.c)
 
 enable_testing()
-
 add_test(NAME fewer_unit_test COMMAND bin/fewer -t)
 add_test(NAME fewer_integration_test COMMAND sh -c "bin/fewer <fewer-script.txt")
 add_test(NAME fewer_integration_test_hanging COMMAND sh -c "bin/fewer <fewer-script-hanging.txt")
