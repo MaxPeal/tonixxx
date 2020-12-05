@@ -7,8 +7,8 @@ cd docs
 
 HOST_PATH="github.com/${TRAVIS_REPO_SLUG}.git"
 
-git clone -b gh-pages "https://git@${HOST_PATH}"
-cd "$GH_REPO_NAME"
+git clone -b gh-pages "https://${GH_REPO_TOKEN}@${HOST_PATH}"
+cd "${TRAVIS_REPO_SLUG#*/}"
 
 git config --global push.default simple
 git config user.name "TravisCI"
