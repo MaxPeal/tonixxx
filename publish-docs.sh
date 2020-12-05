@@ -31,7 +31,7 @@ for DOXYGEN_FILE in $DOXYGEN_FILES; do
 
     echo "PROJECT: $PROJECT"
 
-    cd "${DOCS}/${PROJECT}"
+    cd "${PROJECT}"
 
     doxygen Doxyfile
 
