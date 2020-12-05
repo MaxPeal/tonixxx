@@ -5,16 +5,13 @@ os: "linux"
 dist: "focal"
 
 branches:
-  except:
-  - "gh-pages"
+  only:
+  - "master"
 
 addons:
   apt:
     packages:
     - "doxygen"
-    - "doxygen-doc"
-    - "doxygen-latex"
-    - "doxygen-gui"
     - "graphviz"
 
 script:
