@@ -26,6 +26,8 @@ cd "$TRAVIS_BUILD_DIR"
 
 DOXYGEN_FILES="$(find . -name Doxyfile)"
 
+echo "DOXYGEN_FILES: $DOXYGEN_FILES"
+
 for DOXYGEN_FILE in $DOXYGEN_FILES; do
     PROJECT="$(readlink -f "$(dirname -- "$DOXYGEN_FILE")")"
 
