@@ -1,4 +1,5 @@
 ---
+# generic
 language: "cpp"
 
 os: "linux"
