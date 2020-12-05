@@ -1,0 +1,23 @@
+---
+sudo: false
+
+branches:
+  except:
+  - "gh-pages"
+
+env:
+  global:
+  - secure: "cXg6kil7QT23N1B1aNAUV6edoHq7Nv2y8+MqyVBFyTmOZHfVeACDuoYCgHWzWat3/brtUQ40YTyWkYB+Gmo7eOaz/HRDdjyyROC+Rlmj3Ig1o6408oHwvBRbK7/wO1w/ktpxVa4ogWCNQT0MN/baWVny/2rrmcFTQRHDGXvyiRzD7lxDqZfCUSvSvK8PHZwECzJJNiqJwBy3++IjJGTX3ow9t42nrqnH0ZgtziGyLXW2lwVZchu6G9/AHEJpje1fNDVTgWA3x73ISOH5gadkgeq1JkROzFx577nr1UGK/7FhZbi6viTlU2L+aiTJqm4kW8EXgV4gtS0c45Yk4C4qC9V6IBPJeLt/bHkfwiPDcVvAG8VmUyty3BZFMHcv+uz46sSBIVDpK8tFB0MB14VgEFFGQAS8YST2struBCd0H0yTu0u1/T9p07Bs+LtNLuMS7BXzxhjSIAtbGqknfR55EgECCBqBwR/Y6bqu4yvNUGUZyxhSWKf/X7nvBODe/pKj1C5xpf2EffTjQnKpwZ0ShOToetVtIgDCRemUzeDlOlc4VIpef9nLIkwkkSD//kr+5SsBU6zhw8JkO5aik9UXo5ImVtzLrW73E7jRzR/lFhXG0IrjEpF4ghWX+frlWYH0Cbr0gJ7XenoyiOKPC1wsXHXI71TL5MVspsYYq/2AjqY="
+
+addons:
+  apt:
+    packages:
+    - doxygen
+    - doxygen-doc
+    - doxygen-latex
+    - doxygen-gui
+    - graphviz
+
+after_success:
+- cd "$TRAVIS_BUILD_DIR"
+- sh publish-docs.sh
