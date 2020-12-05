@@ -43,6 +43,8 @@ for DOXYGEN_FILE in $DOXYGEN_FILES; do
     cp -r html "${PAGE_REPO}/${PROJECT}"
 
     echo "COPIED ARTIFACTS"
+
+    cd "$TRAVIS_BUILD_DIR"
 done
 
 cd "$PAGE_REPO"
