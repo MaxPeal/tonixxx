@@ -18,6 +18,11 @@ rm -rf *
 
 find . -name Doxyfile -exec doxygen "{}" \;
 
-git add --all
-git commit -m 'doxygen'
-git push -f "https://${GH_REPO_TOKEN}@${HOST_PATH}" 2>&1 >/dev/null
+if [ -z "$(find . -name html | grep .)" ]; then
+    echo "missing doxygen artifacts"
+    exit 1
+else
+    git add --all
+    git commit -m 'doxygen'
+    git push -f "https://${GH_REPO_TOKEN}@${HOST_PATH}" 2>&1 >/dev/null
+fi
