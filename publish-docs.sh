@@ -18,6 +18,6 @@ rm -rf *
 
 find . -name Doxyfile -exec doxygen "{}" \;
 
-git add -a
+git add --all
 git commit -m 'doxygen'
 git push -f "https://${GH_REPO_TOKEN}@${HOST_PATH}" 2>&1 >/dev/null
