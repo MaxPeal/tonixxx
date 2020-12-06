@@ -36,16 +36,16 @@ for DOXYGEN_FILE in $DOXYGEN_FILES; do
 done
 
 cd "$PAGE_REPO"
+
+echo "$(date)" >README.md
+
 git config --global push.default simple
 git config user.name 'TravisCI'
 git config user.email 'travis@travis-ci.org'
 git add --force --all
 
-RESULT="$(git commit -m "Travis build: ${TRAVIS_BUILD_NUMBER}" -m "Commit: ${TRAVIS_COMMIT}" || echo '')"
-
-if [ -z "$RESULT" ]; then
-    echo 'no doc changes observed'
-    exit
-fi
+git commit \
+    -m "Travis build: ${TRAVIS_BUILD_NUMBER}" \
+    -m "Commit: ${TRAVIS_COMMIT}"
 
 git push -f "https://${GH_REPO_TOKEN}@${HOST_PATH}" 2>&1 >/dev/null
