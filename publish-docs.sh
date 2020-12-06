@@ -9,10 +9,17 @@ mkdir "$DOCS"
 
 HOST_PATH="github.com/${TRAVIS_REPO_SLUG}.git"
 
-git clone -b gh-pages "https://git@${HOST_PATH}" "$PAGE_REPO"
+git clone \
+    -b gh-pages \
+    "https://git@${HOST_PATH}" \
+    "$PAGE_REPO"
 
 cd "$PAGE_REPO"
-find . -type f -not -path '*/\.*' -exec rm -rf "{}" \;
+find \
+    . \
+    -type f \
+    -not -path '*/\.*' \
+    -exec rm -rf "{}" \;
 cd "$TRAVIS_BUILD_DIR"
 
 DOXYGEN_FILES="$(find . -name Doxyfile)"
@@ -33,5 +40,7 @@ git config --global push.default simple
 git config user.name 'TravisCI'
 git config user.email 'travis@travis-ci.org'
 git add --force --all
-git commit -m "Travis build: ${TRAVIS_BUILD_NUMBER}" -m "Commit: ${TRAVIS_COMMIT}"
+git commit \
+    -m "Travis build: ${TRAVIS_BUILD_NUMBER}" \
+    -m "Commit: ${TRAVIS_COMMIT}"
 git push -f "https://${GH_REPO_TOKEN}@${HOST_PATH}" 2>&1 >/dev/null
