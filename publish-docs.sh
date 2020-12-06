@@ -24,6 +24,9 @@ for DOXYGEN_FILE in $DOXYGEN_FILES; do
     cd "${PROJECT}"
     doxygen Doxyfile
     mkdir -p "${PAGE_REPO}/${PROJECT_BASE}"
+
+    ls
+
     cp -r html/* "${PAGE_REPO}/${PROJECT_BASE}"
     cd "$TRAVIS_BUILD_DIR"
 done
