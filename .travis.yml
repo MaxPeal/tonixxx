@@ -3,6 +3,7 @@
 language: "cpp"
 
 os: "linux"
+virt: "lxd"
 dist: "focal"
 
 branches:
