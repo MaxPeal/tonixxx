@@ -9,7 +9,7 @@ Caveats:
 * Whitespace sensitive
 * High likelihood of error for non-ASCII text
 
-# EXAMPLES
+# EXAMPLE
 
 ```console
 $ palindrome
@@ -24,6 +24,10 @@ $ palindrome -t
 $ echo "$?"
 0
 ```
+
+# DOCUMENTATION
+
+https://mcandre.github.io/tonixxx/examples/palindrome/
 
 # LICENSE
 

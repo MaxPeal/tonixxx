@@ -2,7 +2,7 @@
 
 The fewer command line tool navigates files one byte at a time, printing the next byte and the next as a hexadecimal pair. It's not particularly useful compared to `od`.
 
-# EXAMPLES
+# EXAMPLE
 
 ```console
 $ fewer
@@ -22,6 +22,10 @@ $
 Note that load (`l`) file path is relative to the current working directory.
 
 See the `h` command for more information.
+
+# DOCUMENTATION
+
+https://mcandre.github.io/tonixxx/examples/fewer/
 
 # LICENSE
 
