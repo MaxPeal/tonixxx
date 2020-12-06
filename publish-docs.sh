@@ -12,7 +12,7 @@ HOST_PATH="github.com/${TRAVIS_REPO_SLUG}.git"
 git clone -b gh-pages "https://git@${HOST_PATH}" "$PAGE_REPO"
 
 cd "$PAGE_REPO"
-rm -rf *
+find . -type f -not -path '*/\.*' -exec rm -rf "{}" \;
 cd "$TRAVIS_BUILD_DIR"
 
 DOXYGEN_FILES="$(find . -name Doxyfile)"
@@ -24,10 +24,7 @@ for DOXYGEN_FILE in $DOXYGEN_FILES; do
     cd "${PROJECT}"
     doxygen Doxyfile
     mkdir -p "${PAGE_REPO}/${PROJECT_BASE}"
-
-    ls
-
-    cp -r html/* "${PAGE_REPO}/${PROJECT_BASE}"
+    cp -r html/. "${PAGE_REPO}/${PROJECT_BASE}/"
     cd "$TRAVIS_BUILD_DIR"
 done
 
