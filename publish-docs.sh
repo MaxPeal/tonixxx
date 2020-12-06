@@ -14,6 +14,9 @@ git clone \
     "https://git@${HOST_PATH}" \
     "$PAGE_REPO"
 
+#
+# Clean slate in case the net effect involves a removal of an old doc file.
+#
 cd "$PAGE_REPO"
 find \
     . \
