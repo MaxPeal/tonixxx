@@ -51,7 +51,7 @@ static int unit_test() {
     for (int c = 0; c < UCHAR_MAX; c++) {
         render_boi(hex_buf, (unsigned char) c);
 
-        int d = parse_boi(hex_buf);
+        const int d = parse_boi(hex_buf);
 
         if (d < 0) {
             fprintf(stderr, "error during formatting\n");
@@ -71,8 +71,8 @@ static int repl() {
     int c;
     FILE *f = NULL;
     char hex_buf[3], instruction[PATH_MAX + 2], command = '\0', *content = NULL;
-    size_t hex_buf_sz = sizeof(hex_buf), hex_buf_len = hex_buf_sz - 1, instruction_sz = sizeof(instruction);
-    char *PROMPT = "> ";
+    const size_t hex_buf_sz = sizeof(hex_buf), hex_buf_len = hex_buf_sz - 1, instruction_sz = sizeof(instruction);
+    const char *PROMPT = "> ";
 
     while (true) {
         printf("%s", PROMPT);
@@ -195,7 +195,7 @@ int main(int argc, char **argv) {
     bool test = false;
 
     for (int i = 1; i < argc; i++) {
-        char *arg = argv[i];
+        const char *arg = argv[i];
 
         if (strcmp(arg, "-h") == 0) {
             usage(argv);

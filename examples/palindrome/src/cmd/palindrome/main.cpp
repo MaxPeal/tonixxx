@@ -41,7 +41,7 @@ static int Test() {
 }
 
 int main(int argc, char **argv) {
-    auto args = std::vector<std::string_view>{argv, argv + argc};
+    const auto args = std::vector<std::string_view>{argv, argv + argc};
 
     if (args.size() > 2) {
         Usage(args);

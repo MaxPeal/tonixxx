@@ -18,7 +18,7 @@ int parse_boi(char *hexpair) {
     }
 
     errno = 0;
-    int c = (int) strtol(hexpair, NULL, 16);
+    const int c = (int) strtol(hexpair, NULL, 16);
 
     if (errno != 0) {
         return -1;
