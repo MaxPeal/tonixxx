@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['parse_5fboi_10',['parse_boi',['../fewer_8h.html#a8d208565da8a838688aaa47808e6f3ef',1,'parse_boi(char *hexpair):&#160;fewer.c'],['../fewer_8c.html#a8d208565da8a838688aaa47808e6f3ef',1,'parse_boi(char *hexpair):&#160;fewer.c']]]
+  ['parse_5fboi_10',['parse_boi',['../fewer_8h.html#a2279a176f40d204a6c0bba5550c07e35',1,'parse_boi(const char *hexpair):&#160;fewer.c'],['../fewer_8c.html#a2279a176f40d204a6c0bba5550c07e35',1,'parse_boi(const char *hexpair):&#160;fewer.c']]]
 ];
