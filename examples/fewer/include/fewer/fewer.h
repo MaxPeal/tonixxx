@@ -24,4 +24,4 @@ void render_boi(char *hexpair, unsigned char c);
  *
  * @returns value. -1 indicates an error.
  */
-int parse_boi(char *hexpair);
+int parse_boi(const char *hexpair);

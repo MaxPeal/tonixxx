@@ -20,5 +20,5 @@ namespace pal {
      *
      * @returns whether the string is a palindrome.
      */
-    bool Palindrome(std::string s);
+    bool Palindrome(const std::string &s);
 }

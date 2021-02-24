@@ -131,7 +131,6 @@ static int repl() {
                     break;
                 }
 
-                errno = 0;
                 c = fgetc(f);
 
                 if (c == EOF) {
@@ -184,14 +183,14 @@ static int repl() {
     }
 }
 
-static void usage(char **argv) {
+static void usage(const char **argv) {
     fprintf(stderr, "Usage: %s [OPTIONS]\n", argv[0]);
     fprintf(stderr, "Options:\n");
     fprintf(stderr, "-t\tRun self-test\n");
     fprintf(stderr, "-h\tShow usage information\n");
 }
 
-int main(int argc, char **argv) {
+int main(int argc, const char **argv) {
     bool test = false;
 
     for (int i = 1; i < argc; i++) {

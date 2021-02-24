@@ -12,7 +12,7 @@ void render_boi(char *hexpair, unsigned char c) {
     (void) snprintf(hexpair, 3, "%02x", c);
 }
 
-int parse_boi(char *hexpair) {
+int parse_boi(const char *hexpair) {
     if (hexpair[2] != '\0') {
         return -1;
     }
