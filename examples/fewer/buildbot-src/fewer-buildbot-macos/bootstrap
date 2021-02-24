@@ -23,4 +23,4 @@ ln -sf /vagrant/vera /Users/vagrant/.vera++/profiles/default
 pip3 install -r /tmp/requirements-dev.txt
 
 git clone https://github.com/mcandre/sail.git /Users/vagrant/sail
-sudo sh -c "echo \"export PATH=\\\"\\\$PATH:/Users/vagrant/sail/bin\\\"\" >>/etc/profile"
+sudo su -c "echo \"export PATH=\\\"\\\$PATH:/Users/vagrant/sail/bin\\\"\" >>/etc/profile"
