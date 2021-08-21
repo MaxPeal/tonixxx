@@ -5,11 +5,11 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
+	"path"
 
 	"github.com/magefile/mage/mg"
-	"github.com/mcandre/tonixxx"
 	"github.com/mcandre/mage-extras"
+	"github.com/mcandre/zipc"
 )
 
 // artifactsPath describes where artifacts are produced.
@@ -18,8 +18,28 @@ var artifactsPath = "bin"
 // Default references the default build task.
 var Default = Test
 
-// Test runs the unit test suite.
-func Test() error { return mageextras.UnitTest() }
+// UnitTests runs the unit test suite.
+func UnitTest() error { return mageextras.UnitTest() }
+
+// collectingWalker collects file paths recursively.
+type collectingWalker struct {
+	Paths []string
+}
+
+// Walk records paths recursively.
+func (o *collectingWalker) Walk(path string, info os.FileInfo, err error) error {
+	if !info.IsDir() {
+		o.Paths = append(o.Paths, path)
+	}
+
+	return nil
+}
+
+// IntegrationTest executes a self-test.
+func IntegrationTest() error { mg.Deps(Port); return nil }
+
+// Text runs unit and integration tests.
+func Test() error { mg.Deps(UnitTest); mg.Deps(IntegrationTest); return nil }
 
 // CoverHTML denotes the HTML formatted coverage filename.
 var CoverHTML = "cover.html"
@@ -28,7 +48,10 @@ var CoverHTML = "cover.html"
 var CoverProfile = "cover.out"
 
 // CoverageHTML generates HTML formatted coverage data.
-func CoverageHTML() error { mg.Deps(CoverageProfile); return mageextras.CoverageHTML(CoverHTML, CoverProfile) }
+func CoverageHTML() error {
+	mg.Deps(CoverageProfile)
+	return mageextras.CoverageHTML(CoverHTML, CoverProfile)
+}
 
 // CoverageProfile generates raw coverage data.
 func CoverageProfile() error { return mageextras.CoverageProfile(CoverProfile) }
@@ -51,21 +74,6 @@ func Errcheck() error { return mageextras.Errcheck("-blank") }
 // Nakedret runs nakedret.
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
 
-func Safety() error {
-	command := exec.Command("safety", "check")
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-	return command.Run()
-}
-
-// YamlLint runs yamllint.
-func YamlLint() error {
-	command := exec.Command("yamllint", "-s", ".yamllint", ".")
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-	return command.Run()
-}
-
 // Lint runs the lint suite.
 func Lint() error {
 	mg.Deps(GoVet)
@@ -74,30 +82,38 @@ func Lint() error {
 	mg.Deps(GoImports)
 	mg.Deps(Errcheck)
 	mg.Deps(Nakedret)
-	mg.Deps(YamlLint)
 	return nil
 }
 
-// Compile checks compilability.
-func Compile() error { return mageextras.Compile() }
-
 // portBasename labels the artifact basename.
-var portBasename = fmt.Sprintf("tonixxx-%s", tonixxx.Version)
+var portBasename = fmt.Sprintf("zipc-%s", zipc.Version)
 
 // repoNamespace identifies the Go namespace for this project.
-var repoNamespace = "github.com/mcandre/tonixxx"
+var repoNamespace = "github.com/mcandre/zipc"
 
-// Factorio cross-compiles Go binaries for a multitude of platforms.
-func Factorio() error { return mageextras.Factorio(portBasename) }
+// Goxcart cross-compiles Go binaries with additional targets enabled.
+func Goxcart() error {
+	return mageextras.Goxcart(
+		artifactsPath,
+		"-repo",
+		repoNamespace,
+		"-banner",
+		portBasename,
+	)
+}
 
 // Port builds and compresses artifacts.
-func Port() error { mg.Deps(Factorio); return mageextras.Archive(portBasename, artifactsPath) }
+func Port() error {
+	mg.Deps(Goxcart)
+	archiveFilename := fmt.Sprintf("%s.zip", portBasename)
+	return zipc.Compress(path.Join("bin", archiveFilename), []string{portBasename}, artifactsPath)
+}
 
 // Install builds and installs Go applications.
 func Install() error { return mageextras.Install() }
 
 // Uninstall deletes installed Go applications.
-func Uninstall() error { return mageextras.Uninstall("tonixxx") }
+func Uninstall() error { return mageextras.Uninstall("zipc") }
 
 // CleanCoverage deletes coverage data.
 func CleanCoverage() error {

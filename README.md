@@ -24,13 +24,19 @@ $ tree ~/.tonixxx/fewer/bin
 │   └── fewer.exe
 ```
 
+# API DOCUMENTATION
+
+https://godoc.org/github.com/mcandre/tonixxx
+
 # DOWNLOAD
 
 https://github.com/mcandre/tonixxx/releases
 
-# API DOCUMENTATION
+# INSTALL FROM SOURCE
 
-https://godoc.org/github.com/mcandre/tonixxx
+```console
+$ go install github.com/mcandre/tonixxx/cmd/tonixxx@latest
+```
 
 # ABOUT
 
@@ -82,60 +88,9 @@ Finally, `sudo` may be requisite for producing buildbot boxes for alternate arch
 * [Taurine](https://itunes.apple.com/us/app/taurine/id960276676) (macOS), [Caffeine](http://www.zhornsoftware.co.uk/caffeine/) (Windows), [Caffeine](https://launchpad.net/caffeine) (Linux) can prevent hibernation during any long builds
 * [tree](https://linux.die.net/man/1/tree)
 
-# BUILDTIME REQUIREMENTS
+# CONTRIBUTING
 
-* [Go](https://golang.org/) 1.11+
-
-## Recommended
-
-* [Docker](https://www.docker.com/)
-* [Mage](https://magefile.org/) (e.g., `go get github.com/magefile/mage`)
-* [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports) (e.g. `go get golang.org/x/tools/cmd/goimports`)
-* [golint](https://github.com/golang/lint) (e.g. `go get github.com/golang/lint/golint`)
-* [errcheck](https://github.com/kisielk/errcheck) (e.g. `go get github.com/kisielk/errcheck`)
-* [nakedret](https://github.com/alexkohler/nakedret) (e.g. `go get github.com/alexkohler/nakedret`)
-* [shadow](golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow) (e.g. `go get -u golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow`)
-* [goxcart](https://github.com/mcandre/goxcart) (e.g., `go get github.com/mcandre/goxcart/...`)
-* [zipc](https://github.com/mcandre/zipc) (e.g. `go get github.com/mcandre/zipc/...`)
-* [karp](https://github.com/mcandre/karp) (e.g., `go get github.com/mcandre/karp/...`)
-* [Python](https://www.python.org/) 2
-
-## INSTALL FROM REMOTE GIT REPOSITORY
-
-```console
-$ go get github.com/mcandre/tonixxx/...
-```
-
-(Yes, include the ellipsis as well, it's the magic Go syntax for downloading, building, and installing all components of a package, including any libraries and command line tools.)
-
-## INSTALL FROM LOCAL GIT REPOSITORY
-
-```console
-$ mkdir -p "$GOPATH/src/github.com/mcandre"
-$ git clone https://github.com/mcandre/tonixxx.git "$GOPATH/src/github.com/mcandre/tonixxx"
-$ cd "$GOPATH/src/github.com/mcandre/tonixxx"
-$ git submodule update --init
-$ go install ./...
-```
-
-## UNINSTALL
-
-```console
-$ mage uninstall
-```
-
-## LINT
-
-```console
-$ mage lint
-$ mage compile
-```
-
-## PORT
-
-```console
-$ mage port
-```
+For more information on developing tonixxx itself, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
 # HONORABLE MENTIONS
 

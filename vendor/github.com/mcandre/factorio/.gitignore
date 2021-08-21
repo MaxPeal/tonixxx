@@ -1,5 +1,4 @@
-cover.html
-/bin
+bin
 # Created by https://www.toptal.com/developers/gitignore/api/go
 # Edit at https://www.toptal.com/developers/gitignore?templates=go
 
@@ -21,7 +20,7 @@ cover.html
 # vendor/
 
 ### Go Patch ###
-# /vendor/
+/vendor/
 /Godeps/
 
 # End of https://www.toptal.com/developers/gitignore/api/go
