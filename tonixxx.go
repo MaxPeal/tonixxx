@@ -7,7 +7,7 @@ import (
 )
 
 // Version is semver.
-const Version = "0.0.11"
+const Version = "0.0.12"
 
 // ConfigBasename provides the default filename for tonixxx configuration.
 const ConfigBasename = "tonixxx.yaml"
