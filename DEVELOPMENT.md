@@ -6,7 +6,13 @@
 # INSTALL
 
 ```console
-$ go install ./...
+$ mage install
+```
+
+# UNINSTALL
+
+```console
+$ mage uninstall
 ```
 
 # TEST
