@@ -95,90 +95,90 @@ static int repl() {
         command = instruction[0];
 
         switch (command) {
-            case 'l':
-                content = strchr(instruction, ' ');
+        case 'l':
+            content = strchr(instruction, ' ');
 
-                if (content == NULL || strlen(content) < 2) {
-                    show_commands();
-                    break;
-                }
+            if (content == NULL || strlen(content) < 2) {
+                show_commands();
+                break;
+            }
 
-                content++;
+            content++;
 
-                if (f != NULL && fclose(f) == EOF) {
-                    fprintf(stderr, "error closing file\n");
-                    return EXIT_FAILURE;
-                }
+            if (f != NULL && fclose(f) == EOF) {
+                fprintf(stderr, "error closing file\n");
+                return EXIT_FAILURE;
+            }
 
 #if defined(_MSC_VER)
-                 if (fopen_s(&f, content, "rb") != 0) {
-                    fprintf(stderr, "error opening file %s\n", content);
-                    return EXIT_FAILURE;
-                }
+            if (fopen_s(&f, content, "rb") != 0) {
+                fprintf(stderr, "error opening file %s\n", content);
+                return EXIT_FAILURE;
+            }
 #else
-                f = fopen(content, "rb");
+            f = fopen(content, "rb");
 
-                if (f == NULL) {
-                    fprintf(stderr, "error opening file %s\n", content);
-                    return EXIT_FAILURE;
-                }
+            if (f == NULL) {
+                fprintf(stderr, "error opening file %s\n", content);
+                return EXIT_FAILURE;
+            }
 #endif
 
+            break;
+        case 'n':
+            if (f == NULL) {
+                fprintf(stderr, "no file loaded\n");
                 break;
-            case 'n':
-                if (f == NULL) {
-                    fprintf(stderr, "no file loaded\n");
-                    break;
-                }
+            }
 
-                c = fgetc(f);
+            c = fgetc(f);
 
-                if (c == EOF) {
-                    if (ferror(f) != 0) {
-                        fprintf(stderr, "error reading character from file\n");
-                        return EXIT_FAILURE;
-                    }
-
-                    return EXIT_SUCCESS;
-                }
-
-                render_boi(hex_buf, (unsigned char) c);
-                printf("%s\n", hex_buf);
-                break;
-            case 'p':
-                content = strchr(instruction, ' ');
-
-                if (content == NULL || strlen(content) < 2) {
-                    show_commands();
-                    break;
-                }
-
-                content++;
-
-                if (strlen(content) > hex_buf_len) {
-                    show_commands();
-                    break;
-                }
-
-                (void) snprintf(hex_buf, hex_buf_sz, "%s", content);
-                c = parse_boi(hex_buf);
-
-                if (c == -1) {
-                    fprintf(stderr, "error parsing hexadecimal %s\n", hex_buf);
-                    break;
-                }
-
-                printf("%c\n", c);
-                break;
-            case 'q':
-                if (f != NULL && fclose(f) == EOF) {
-                    fprintf(stderr, "error closing file\n");
+            if (c == EOF) {
+                if (ferror(f) != 0) {
+                    fprintf(stderr, "error reading character from file\n");
                     return EXIT_FAILURE;
                 }
 
                 return EXIT_SUCCESS;
-            default:
+            }
+
+            render_boi(hex_buf, (unsigned char) c);
+            printf("%s\n", hex_buf);
+            break;
+        case 'p':
+            content = strchr(instruction, ' ');
+
+            if (content == NULL || strlen(content) < 2) {
                 show_commands();
+                break;
+            }
+
+            content++;
+
+            if (strlen(content) > hex_buf_len) {
+                show_commands();
+                break;
+            }
+
+            (void) snprintf(hex_buf, hex_buf_sz, "%s", content);
+            c = parse_boi(hex_buf);
+
+            if (c == -1) {
+                fprintf(stderr, "error parsing hexadecimal %s\n", hex_buf);
+                break;
+            }
+
+            printf("%c\n", c);
+            break;
+        case 'q':
+            if (f != NULL && fclose(f) == EOF) {
+                fprintf(stderr, "error closing file\n");
+                return EXIT_FAILURE;
+            }
+
+            return EXIT_SUCCESS;
+        default:
+            show_commands();
         }
     }
 }

@@ -22,8 +22,8 @@ recipes:
     box: "mcandre/fewer-buildbot-debian-arm64"
     presteps:
       - "export CC=aarch64-linux-gnu-gcc"
-  - label: "macos-amd64"
-    box: "mcandre/fewer-buildbot-macos"
-  - label: "windows-amd64"
-    guesttype: "Cygwin"
-    box: "mcandre/fewer-buildbot-windows-amd64"
+  # - label: "macos-amd64"
+  #   box: "mcandre/fewer-buildbot-macos"
+  # - label: "windows-amd64"
+  #   guesttype: "Cygwin"
+  #   box: "mcandre/fewer-buildbot-windows-amd64"
