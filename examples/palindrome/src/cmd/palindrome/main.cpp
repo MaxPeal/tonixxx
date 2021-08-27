@@ -15,10 +15,10 @@
 #include "palindrome/palindrome.hpp"
 
 static void Usage(std::vector<std::string_view> args) {
-    std::cout << "Usage: " << args.front() << " [OPTIONS]" << std::endl <<
-        std::endl <<
-        "-t\tSelf test" << std::endl <<
-        "-h\tShow usage information" << std::endl;
+    std::cout << "Usage: " << args.front() << " [OPTIONS]" << std::endl
+              << std::endl
+              << "-t\tSelf test" << std::endl
+              << "-h\tShow usage information" << std::endl;
 }
 
 static int Test() {
@@ -42,7 +42,7 @@ static int Test() {
 }
 
 int main(int argc, char **argv) {
-    const auto args = std::vector<std::string_view>{argv, argv + argc};
+    const auto args = std::vector<std::string_view>{ argv, argv + argc };
 
     if (args.size() > 2) {
         Usage(args);
