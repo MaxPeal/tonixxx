@@ -13,12 +13,12 @@
  * @brief pal provides text analyzers.
  */
 namespace pal {
-    /**
-     * @brief Palindrome examines text for symmetry.
-     *
-     * @param s text
-     *
-     * @returns whether the string is a palindrome.
-     */
-    bool Palindrome(const std::string &s);
+/**
+ * @brief Palindrome examines text for symmetry.
+ *
+ * @param s text
+ *
+ * @returns whether the string is a palindrome.
+ */
+bool Palindrome(const std::string &s);
 }

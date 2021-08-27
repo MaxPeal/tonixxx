@@ -10,6 +10,7 @@ sudo pkg install -y \
     doxygen \
     git \
     graphviz \
+    llvm \
     python3 \
     vera++
 
