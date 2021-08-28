@@ -19,7 +19,7 @@
 
 #include "fewer/fewer.h"
 
-static void show_commands() {
+static void show_commands(void) {
     fprintf(stderr, "l <path>\tLoad file\n");
     fprintf(stderr, "n\t\tShow next byte\n");
     fprintf(stderr, "p <hex pair>\tParse a hexpair\n");
@@ -45,7 +45,7 @@ static void chomp(char *s, size_t length) {
     }
 }
 
-static int unit_test() {
+static int unit_test(void) {
     char hex_buf[3];
 
     for (int c = 0; c < UCHAR_MAX; c++) {
@@ -70,7 +70,7 @@ static int unit_test() {
     return EXIT_SUCCESS;
 }
 
-static int repl() {
+static int repl(void) {
     int c = 0;
     FILE *f = NULL;
     char hex_buf[3], instruction[PATH_MAX + 2], command = '\0', *content = NULL;
