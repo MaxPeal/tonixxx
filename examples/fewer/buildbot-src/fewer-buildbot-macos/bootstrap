@@ -11,6 +11,7 @@ mkdir -p /Users/vagrant/vagrant_root
 brew update || echo 'Homebrew partially broke during update'
 brew install \
     clang-format \
+    clang-tidy \
     cmake \
     cppcheck \
     doxygen \
