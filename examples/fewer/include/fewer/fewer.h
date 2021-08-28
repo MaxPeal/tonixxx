@@ -14,14 +14,14 @@
  *
  * @param hexpair buffer (3 bytes)
  * @param c value
+ * @returns negative value on error
  */
-void render_boi(char *hexpair, unsigned char c);
+int render_boi(char *hexpair, unsigned char c);
 
 /**
  * @brief parse_boi reads a hexadecimal pair.
  *
  * @param hexpair hexadecimal pair (2 characters + NULL terminator)
- *
- * @returns value. -1 indicates an error.
+ * @returns negative value on error, or else a value
  */
 int parse_boi(const char *hexpair);

@@ -49,7 +49,10 @@ static int unit_test() {
     char hex_buf[3];
 
     for (int c = 0; c < UCHAR_MAX; c++) {
-        render_boi(hex_buf, (unsigned char) c);
+        if (render_boi(hex_buf, (unsigned char) c) < 0) {
+            fprintf(stderr, "encoding error\n");
+            return EXIT_FAILURE;
+        }
 
         const int d = parse_boi(hex_buf);
 
@@ -142,7 +145,11 @@ static int repl() {
                 return EXIT_SUCCESS;
             }
 
-            render_boi(hex_buf, (unsigned char) c);
+            if (render_boi(hex_buf, (unsigned char) c) < 0) {
+                fprintf(stderr, "encoding error\n");
+                return EXIT_FAILURE;
+            }
+
             printf("%s\n", hex_buf);
             break;
         case 'p':
