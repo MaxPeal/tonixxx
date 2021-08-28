@@ -102,10 +102,10 @@ For more information on developing tonixxx itself, see [DEVELOPMENT.md](DEVELOPM
 
 # SEE ALSO
 
+* [factorio](https://github.com/mcandre/factorio) generates Go application ports based on the standard Go toolchain
+* [mucus](https://github.com/mcandre/mucus) provides base VM's for managing alternate architectures
+* [trust](https://github.com/japaric/trust) integrates CI systems with Rust ports.
 * [xgo](https://github.com/karalabe/xgo) automates cross-compiling Go applications, including cgo apps with native dependencies.
-* [goxcart](https://github.com/mcandre/goxcart) is a lean option for porting Go projects
-* [remy](https://github.com/mcandre/remy) is a lean option for porting Rust projects
-* [cartel](https://github.com/mcandre/cartel) provides Docker images for C/C++ cross-compilation toolchains
 
 # LICENSE
 
