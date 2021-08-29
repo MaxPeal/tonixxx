@@ -68,12 +68,13 @@ static int unit_test(void) {
     return EXIT_SUCCESS;
 }
 
+static const char *PROMPT = "> ";
+
 static int repl(void) {
     int c = 0;
     FILE *f = NULL;
     char hex_buf[3], instruction[PATH_MAX + 2], command = '\0', *content = NULL;
     const size_t hex_buf_sz = sizeof(hex_buf), hex_buf_len = hex_buf_sz - 1, instruction_sz = sizeof(instruction);
-    const char *PROMPT = "> ";
 
     while (true) {
         printf("%s", PROMPT);

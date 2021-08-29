@@ -11,7 +11,7 @@
 
 #include "palindrome/palindrome.hpp"
 
-static void Usage(std::vector<std::string_view> args) {
+static void Usage(const std::vector<std::string_view> &args) {
     std::cout << "Usage: " << args.front() << " [OPTIONS]" << std::endl
               << std::endl
               << "-t\tSelf test" << std::endl
