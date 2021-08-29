@@ -2,8 +2,6 @@
  * @copyright 2020 YelloSoft
  */
 
-#include <errno.h>
-
 #include <limits.h>
 #if defined(__APPLE__)
 #include <sys/syslimits.h>
