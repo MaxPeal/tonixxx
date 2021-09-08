@@ -90,9 +90,9 @@ Include dependency graph for fewer.c:</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a0394fd76698db06792c40dd56e7828c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fewer_8c.html#a0394fd76698db06792c40dd56e7828c9">render_boi</a> (char *hexpair, unsigned char c)</td></tr>
-<tr class="memdesc:a0394fd76698db06792c40dd56e7828c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">render_boi formats a hexadecimal pair.  <a href="fewer_8c.html#a0394fd76698db06792c40dd56e7828c9">More...</a><br /></td></tr>
-<tr class="separator:a0394fd76698db06792c40dd56e7828c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e70bab3f533afb7a86574edac155153"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fewer_8c.html#a7e70bab3f533afb7a86574edac155153">render_boi</a> (char *hexpair, unsigned char c)</td></tr>
+<tr class="memdesc:a7e70bab3f533afb7a86574edac155153"><td class="mdescLeft">&#160;</td><td class="mdescRight">render_boi formats a hexadecimal pair.  <a href="fewer_8c.html#a7e70bab3f533afb7a86574edac155153">More...</a><br /></td></tr>
+<tr class="separator:a7e70bab3f533afb7a86574edac155153"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2279a176f40d204a6c0bba5550c07e35"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fewer_8c.html#a2279a176f40d204a6c0bba5550c07e35">parse_boi</a> (const char *hexpair)</td></tr>
 <tr class="memdesc:a2279a176f40d204a6c0bba5550c07e35"><td class="mdescLeft">&#160;</td><td class="mdescRight">parse_boi reads a hexadecimal pair.  <a href="fewer_8c.html#a2279a176f40d204a6c0bba5550c07e35">More...</a><br /></td></tr>
 <tr class="separator:a2279a176f40d204a6c0bba5550c07e35"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -117,22 +117,22 @@ Functions</h2></td></tr>
 <p>parse_boi reads a hexadecimal pair. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">hexpair</td><td>hexadecimal pair (2 characters + NULL terminator)</td></tr>
+    <tr><td class="paramname">hexpair</td><td>hexadecimal pair (2 characters + NULL terminator) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>value. -1 indicates an error. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>negative value on error, or else a value </dd></dl>
 
 </div>
 </div>
-<a id="a0394fd76698db06792c40dd56e7828c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0394fd76698db06792c40dd56e7828c9">&#9670;&nbsp;</a></span>render_boi()</h2>
+<a id="a7e70bab3f533afb7a86574edac155153"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e70bab3f533afb7a86574edac155153">&#9670;&nbsp;</a></span>render_boi()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void render_boi </td>
+          <td class="memname">int render_boi </td>
           <td>(</td>
           <td class="paramtype">char *&#160;</td>
           <td class="paramname"><em>hexpair</em>, </td>

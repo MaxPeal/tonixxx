@@ -1,12 +1,10 @@
 <map id="src/cmd/palindrome/main.cpp" name="src/cmd/palindrome/main.cpp">
-<area shape="rect" id="node1" title=" " alt="" coords="351,5,501,47"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,95,71,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="95,95,162,121"/>
-<area shape="rect" id="node4" title=" " alt="" coords="186,95,261,121"/>
-<area shape="rect" id="node5" title=" " alt="" coords="285,95,365,121"/>
-<area shape="rect" id="node6" title=" " alt="" coords="389,95,463,121"/>
-<area shape="rect" id="node7" title=" " alt="" coords="645,169,703,196"/>
-<area shape="rect" id="node8" title=" " alt="" coords="539,95,636,121"/>
-<area shape="rect" id="node9" title=" " alt="" coords="660,95,723,121"/>
-<area shape="rect" id="node10" href="$palindrome_8hpp.html" title=" " alt="" coords="747,95,950,121"/>
+<area shape="rect" id="node1" title=" " alt="" coords="245,5,395,47"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,95,80,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="104,95,184,121"/>
+<area shape="rect" id="node4" title=" " alt="" coords="208,95,283,121"/>
+<area shape="rect" id="node5" title=" " alt="" coords="464,169,523,196"/>
+<area shape="rect" id="node6" title=" " alt="" coords="358,95,455,121"/>
+<area shape="rect" id="node7" title=" " alt="" coords="479,95,542,121"/>
+<area shape="rect" id="node8" href="$palindrome_8hpp.html" title=" " alt="" coords="567,95,769,121"/>
 </map>
