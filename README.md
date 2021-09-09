@@ -66,6 +66,10 @@ See `tonixxx -help` for more information on tonixxx invocation syntax.
 
 Finally, `sudo` may be requisite for producing buildbot boxes for alternate architecture VM's, a known issue with [vagrant-libvirt](https://github.com/vagrant-libvirt/vagrant-libvirt/pull/928), but critically, `sudo` should be avoided when importing or running buildbots.
 
+# LICENSE
+
+FreeBSD
+
 # RUNTIME REQUIREMENTS
 
 * [Vagrant](https://www.vagrantup.com/)
@@ -99,14 +103,11 @@ For more information on developing tonixxx itself, see [DEVELOPMENT.md](DEVELOPM
 * [factorio](https://github.com/mcandre/factorio) generates Go application ports based on the standard Go toolchain
 * [Go](https://golang.org/) provides superb out-of-the-box cross-compilation features. As a matter of fact, tonixxx was inspired as a workaround in order to support cross-compilation for non-Go projects, including Rust, C, and C++.
 * [libuv](https://libuv.org/) provides a cross-platform abstraction layer for C/C++ applications.
+* [LLVM](https://llvm.org/) bitcode offers an abstract assembler format for C/C++ code.
 * [mucus](https://github.com/mcandre/mucus) provides base VM's for managing alternate architectures
 * [trust](https://github.com/japaric/trust) integrates CI systems with Rust ports.
 * [WASM](https://webassembly.org/) provides a portable interface for C/C++ code.
 * [xgo](https://github.com/karalabe/xgo) automates cross-compiling Go applications, including cgo apps with native dependencies.
-
-# LICENSE
-
-FreeBSD
 
 # DISCLAIMER
 
